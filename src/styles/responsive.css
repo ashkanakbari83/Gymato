@@ -1,0 +1,160 @@
+/* Breakpoints */
+
+@media (min-width: 700px) {
+  .cta {
+    width: auto;
+    padding-inline: 48px;
+  }
+}
+
+@media (max-width: 900px) {
+  .tabs {
+    display: none;
+  }
+
+  .topbar-in {
+    height: 56px;
+    padding-inline: 16px;
+  }
+
+  .main {
+    padding: 24px 16px calc(100px + env(safe-area-inset-bottom));
+  }
+
+  .chips {
+    margin-inline: -16px;
+    padding-inline: 16px;
+  }
+
+  .dock {
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    position: fixed;
+    z-index: 35;
+    inset-inline: 0;
+    bottom: 0;
+    background: var(--card);
+    border-top: 1px solid var(--line);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+  }
+
+  .dock button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: 52px;
+    color: var(--mu);
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .dock .active {
+    color: var(--accent);
+  }
+}
+
+@media (max-width: 600px) {
+  .page-head h1 {
+    font-size: 24px;
+  }
+
+  .metrics b {
+    font-size: 26px;
+  }
+
+  .today {
+    padding: 26px 22px;
+    border-radius: 18px;
+  }
+
+  .panel,
+  .card {
+    padding: 20px 18px;
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+
+  .stack {
+    gap: 16px;
+  }
+
+  .grid-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .ex-grid {
+    grid-template-columns: repeat(2,1fr);
+    gap: 10px;
+  }
+
+  .setting {
+    flex-wrap: wrap;
+  }
+
+  .setting .seg {
+    width: 100%;
+  }
+
+  .setting .seg button {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .toast {
+    top: calc(64px + env(safe-area-inset-top));
+  }
+
+  .modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal-card {
+    width: 100%;
+    max-height: 92dvh;
+    border-radius: 20px 20px 0 0;
+    border-bottom: 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .pid {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 380px) {
+  .form-grid,
+  .log-fields,
+  .role-pick {
+    grid-template-columns: 1fr;
+  }
+
+  .metrics b {
+    font-size: 22px;
+  }
+
+  .row-end {
+    min-width: 52px;
+  }
+
+  .row-end .bar {
+    width: 52px;
+  }
+
+  .player-title-row h1 {
+    font-size: 23px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+}
