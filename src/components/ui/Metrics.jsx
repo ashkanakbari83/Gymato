@@ -1,5 +1,5 @@
 // Row of headline numbers. items: [{ value, label, suffix? }]
-import { faNum } from '../../lib/format';
+import { num } from '../../lib/format.js';
 
 /** Three-up number strip. items: [{ value, label, suffix? }] */
 export default function Metrics({ items }) {
@@ -8,7 +8,7 @@ export default function Metrics({ items }) {
       {items.map(({ value, label, suffix }) => (
         <div key={label}>
           <b>
-            {faNum(value)}
+            {num(value)}
             {suffix && <em>{suffix}</em>}
           </b>
           <small>{label}</small>

@@ -1,13 +1,10 @@
-// Account actions: sign-up, coach/athlete linking and the coach subscription.
-import { uid, makePublicId } from '../lib/format';
+// Account actions: sign-up, profile edits and notification handling.
+import { makePublicId, uid } from '../lib/format.js';
 
-/** Sign-up, coach <-> athlete linking and the coach subscription. */
-export function useAccountActions({ user, update, notify, closeModal, changeUser }) {
-  const notification = (userId, title, text) => ({ id: uid(), userId, title, text, read: false });
-
+export function useAccountActions({ user, update, notify, t, closeModal, changeUser, go, openModal }) {
   const signUp = (form) => {
     const id = uid();
-    const isCoach = form.role === 'coach';
+    const isTrainer = form.role === 'coach';
     update((d) => ({
       users: [
         ...d.users,
@@ -16,12 +13,12 @@ export function useAccountActions({ user, update, notify, closeModal, changeUser
           name: form.name.trim(),
           role: form.role,
           roles: [form.role],
-          goal: isCoach ? 'مربی‌گری' : form.goal,
-          level: isCoach ? 'پیشرفته' : form.level,
-          height: isCoach ? '' : Number(form.height) || '',
-          weight: isCoach ? '' : Number(form.weight) || '',
           publicId: makePublicId(d.users),
-          ...(isCoach ? { plan: 'free' } : {}),
+          province: form.province || '',
+          city: form.city || '',
+          ...(isTrainer
+            ? { specialties: [], bio: '', experienceYears: 0, offersCoaching: true }
+            : { age: Number(form.age) || '', height: Number(form.height) || '', weight: Number(form.weight) || '', goal: form.goal, level: form.level }),
         },
       ],
     }));
@@ -29,31 +26,21 @@ export function useAccountActions({ user, update, notify, closeModal, changeUser
     changeUser(id);
   };
 
-  /** Coach adds an athlete found by public ID. */
-  const linkAthlete = (athlete) => {
-    update((d) => ({
-      users: d.users.map((u) => (u.id === athlete.id ? { ...u, coachId: user.id } : u)),
-      notifications: [notification(athlete.id, 'مربی جدید', `${user.name} تو را به لیست شاگردانش اضافه کرد.`), ...d.notifications],
-    }));
-    closeModal();
-    notify(`${athlete.name} به شاگردان اضافه شد`);
+  const updateProfile = (changes) => {
+    update((d) => ({ users: d.users.map((u) => (u.id === user.id ? { ...u, ...changes } : u)) }));
+    notify(t('profile.saved'));
   };
 
-  /** Athlete picks a coach. */
-  const chooseCoach = (coach) => {
-    update((d) => ({
-      users: d.users.map((u) => (u.id === user.id ? { ...u, coachId: coach.id } : u)),
-      notifications: [notification(coach.id, 'شاگرد جدید', `${user.name} تو را به‌عنوان مربی انتخاب کرد.`), ...d.notifications],
-    }));
+  const markNotificationsRead = () =>
+    update((d) => ({ notifications: d.notifications.map((n) => (n.userId === user.id ? { ...n, read: true } : n)) }));
+
+  /** Follow a notification's `target` (see withNotification). */
+  const openTarget = (target) => {
+    if (!target) return;
     closeModal();
-    notify('مربی انتخاب شد');
+    if (target.kind === 'coaching') openModal({ type: 'coaching', requestId: target.requestId });
+    else if (target.kind === 'page') go(target.page);
   };
 
-  const upgradePlan = () => {
-    update((d) => ({ users: d.users.map((u) => (u.id === user.id ? { ...u, plan: 'pro' } : u)) }));
-    closeModal();
-    notify('اشتراک آزمایشی فعال شد');
-  };
-
-  return { signUp, linkAthlete, chooseCoach, upgradePlan };
+  return { signUp, updateProfile, markNotificationsRead, openTarget };
 }

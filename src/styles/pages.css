@@ -82,31 +82,6 @@
   background: var(--accent);
 }
 
-.coach-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.coach-row {
-  gap: 16px;
-}
-
-.coach-row>div {
-  flex: 1;
-  min-width: 0;
-}
-
-.coach-row b,
-.coach-row small {
-  display: block;
-}
-
-.coach-row small {
-  font-size: 13px;
-  color: var(--mu);
-}
-
 .id-row {
   display: flex;
   align-items: center;
@@ -250,46 +225,16 @@
   gap: 16px;
 }
 
-.prog,
 .deck {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.prog h3,
 .deck h3 {
   font-size: 18px;
   font-weight: 800;
   line-height: 1.5;
-}
-
-.prog-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 36px;
-}
-
-.tag {
-  font-size: 12px;
-  font-weight: 700;
-  padding: 4px 12px;
-  border-radius: 99px;
-  background: var(--soft);
-}
-
-.tag.live {
-  background: color-mix(in srgb,var(--accent) 14%,transparent);
-  color: var(--accent);
-}
-
-.prog-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 20px;
 }
 
 .deck .btns {

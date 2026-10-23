@@ -1,5 +1,5 @@
 // Empty-state block with an optional action.
-import { ChevronLeft } from 'lucide-react';
+import { ArrowForward } from './Arrow.jsx';
 
 export default function Empty({ icon: Icon, title, text, actionLabel, onAction }) {
   return (
@@ -11,7 +11,7 @@ export default function Empty({ icon: Icon, title, text, actionLabel, onAction }
       <p>{text}</p>
       {onAction && (
         <button className="btn ghost" onClick={onAction}>
-          {actionLabel} <ChevronLeft size={15} />
+          {actionLabel} <ArrowForward size={15} />
         </button>
       )}
     </div>

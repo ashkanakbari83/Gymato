@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Stickman from './Stickman';
+import Stickman from './Stickman.jsx';
 
 /** Shows /exercises/<id>.gif when it exists, otherwise the animated stickman. */
 export default function MoveMedia({ exercise }) {

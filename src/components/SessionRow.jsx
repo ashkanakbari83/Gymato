@@ -1,22 +1,20 @@
-import { useApp } from '../context/AppContext';
-import { estimateCalories } from '../lib/calories';
-import { faNum } from '../lib/format';
-import { shortDate } from '../lib/selectors';
+// A finished workout: name, date, sets, estimated calories and duration.
+import { useApp } from '../context/AppContext.jsx';
+import { estimateCalories } from '../lib/calories.js';
+import { num } from '../lib/format.js';
+import { shortDate } from '../lib/selectors.js';
 
-/** A finished workout: name, date, sets, estimated calories and duration. */
 export default function SessionRow({ session }) {
-  const { db } = useApp();
+  const { db, t } = useApp();
   const calories = estimateCalories(session.sets, db.exercises);
 
   return (
     <div className="row">
       <span className="row-main">
         <b>{session.name}</b>
-        <small>
-          {shortDate(session.date)} · {faNum(session.sets?.length ?? 0)} ست · ≈ {faNum(calories)} کالری
-        </small>
+        <small>{t('session.line', { date: shortDate(session.date), sets: num(session.sets?.length ?? 0), kcal: num(calories) })}</small>
       </span>
-      <span className="row-end">{faNum(Math.round((session.duration || 0) / 60))} دقیقه</span>
+      <span className="row-end">{t('common.minutes', { n: num(Math.round((session.duration || 0) / 60)) })}</span>
     </div>
   );
 }

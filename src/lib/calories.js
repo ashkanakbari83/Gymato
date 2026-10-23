@@ -1,6 +1,6 @@
 // Rough calorie estimates. Each exercise carries an average (kcalPerRep for rep-based
 // moves, kcalPerMin for timed ones); results are approximations, not measurements.
-import { faDecimal, faNum } from './format';
+import { decimal, num } from './format.js';
 
 /** Calories for one logged set ({ exerciseId, reps }) of the given exercise. */
 export function kcalForSet(exercise, set) {
@@ -19,9 +19,9 @@ export const estimateCalories = (sets = [], exercises) =>
 export const sessionsCalories = (sessions, exercises) =>
   estimateCalories(sessions.flatMap((s) => s.sets ?? []), exercises);
 
-/** Short label for the exercise detail: «≈ ۴٫۵ کالری به ازای ۱۰ تکرار». */
-export function describeCalories(exercise) {
-  if (exercise.kcalPerMin) return `≈ ${faDecimal(exercise.kcalPerMin)} کالری در دقیقه`;
-  if (exercise.kcalPerRep) return `≈ ${faDecimal(exercise.kcalPerRep * 10)} کالری به ازای ${faNum(10)} تکرار`;
+/** Short label for the exercise detail, e.g. «≈ 4.5 kcal per 10 reps». `t` is the translate function. */
+export function describeCalories(exercise, t) {
+  if (exercise.kcalPerMin) return t('cal.perMin', { value: decimal(exercise.kcalPerMin) });
+  if (exercise.kcalPerRep) return t('cal.perReps', { value: decimal(exercise.kcalPerRep * 10), n: num(10) });
   return null;
 }

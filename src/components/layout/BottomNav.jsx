@@ -1,18 +1,17 @@
 // Mobile tab bar (hidden on desktop via CSS).
-import { useApp } from '../../context/AppContext';
-import { getNavItems } from './navItems';
+import { useApp } from '../../context/AppContext.jsx';
+import { getNavItems, navTabFor } from './navItems.js';
 
-/** Mobile tab bar (hidden on desktop via CSS). */
 export default function BottomNav() {
-  const { isCoach, page, setPage } = useApp();
+  const { isTrainer, page, setPage, t } = useApp();
   if (page === 'player') return null;
 
   return (
-    <nav className="dock" aria-label="صفحه‌ها">
-      {getNavItems(isCoach).map(({ id, label, icon: Icon }) => (
-        <button key={id} className={page === id ? 'active' : ''} onClick={() => setPage(id)}>
+    <nav className="dock" aria-label={t('nav.pages')}>
+      {getNavItems(isTrainer).map(({ id, icon: Icon }) => (
+        <button key={id} className={navTabFor(page) === id ? 'active' : ''} onClick={() => setPage(id)}>
           <Icon size={22} />
-          <span>{label}</span>
+          <span>{t(`nav.${id}`)}</span>
         </button>
       ))}
     </nav>

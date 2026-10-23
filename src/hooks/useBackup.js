@@ -1,8 +1,9 @@
 // JSON export / import and reset of the locally stored data.
-import { clearState } from '../lib/storage';
+import { STATE_VERSION } from '../lib/constants.js';
+import { clearState } from '../lib/storage.js';
 
 /** JSON export / import and reset of the locally stored data. */
-export function useBackup({ db, setDb, setWorkout, notify }) {
+export function useBackup({ db, setDb, setWorkout, notify, t }) {
   const exportData = () => {
     const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
     const link = document.createElement('a');
@@ -10,7 +11,7 @@ export function useBackup({ db, setDb, setWorkout, notify }) {
     link.download = 'jimato-backup.json';
     link.click();
     URL.revokeObjectURL(link.href);
-    notify('نسخه پشتیبان آماده شد');
+    notify(t('backup.ready'));
   };
 
   const importData = (event) => {
@@ -21,20 +22,20 @@ export function useBackup({ db, setDb, setWorkout, notify }) {
     reader.onload = () => {
       try {
         const data = JSON.parse(reader.result);
-        if (!data.users || !data.exercises || !data.programs || !data.sessions) throw new Error('invalid');
-        if (!confirm('اطلاعات فعلی با نسخه پشتیبان جایگزین شود؟')) return;
+        if (data.version !== STATE_VERSION || !data.users || !data.programs || !data.requests) throw new Error('invalid');
+        if (!confirm(t('backup.confirmRestore'))) return;
         setDb(data);
         setWorkout(data.activeWorkout ?? null);
-        notify('بازیابی با موفقیت انجام شد');
+        notify(t('backup.restored'));
       } catch {
-        notify('فایل نامعتبر است یا ساختار پشتیبان پشتیبانی نمی‌شود');
+        notify(t('backup.invalid'));
       }
     };
     reader.readAsText(file);
   };
 
   const resetData = () => {
-    if (!confirm('همه اطلاعات فعلی با داده‌های نمونه جایگزین شوند؟')) return;
+    if (!confirm(t('backup.confirmReset'))) return;
     clearState();
     location.reload();
   };

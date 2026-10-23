@@ -1,25 +1,28 @@
-import { calcBmi, bmiCategory } from '../../lib/body';
-import { faDecimal, faNum } from '../../lib/format';
+// Height / weight / BMI strip a trainer sees when reviewing an athlete.
+import { useApp } from '../../context/AppContext.jsx';
+import { bmiCategory, calcBmi } from '../../lib/body.js';
+import { decimal, num } from '../../lib/format.js';
 
-/** Height / weight / BMI strip a coach sees when working with an athlete. */
-export default function AthleteBodyInfo({ athlete }) {
-  const bmi = calcBmi(athlete.height, athlete.weight);
+/** `source` is anything with height and weight (an athlete, or a request form). */
+export default function AthleteBodyInfo({ source }) {
+  const { t } = useApp();
+  const bmi = calcBmi(source.height, source.weight);
   const category = bmi && bmiCategory(bmi);
 
   return (
     <div className="body-info">
       <div>
-        <small>قد</small>
-        <b>{athlete.height ? <>{faNum(athlete.height)} <i>cm</i></> : '—'}</b>
+        <small>{t('body.height')}</small>
+        <b>{source.height ? <>{num(source.height)} <i>cm</i></> : '—'}</b>
       </div>
       <div>
-        <small>وزن</small>
-        <b>{athlete.weight ? <>{faNum(athlete.weight)} <i>kg</i></> : '—'}</b>
+        <small>{t('body.weight')}</small>
+        <b>{source.weight ? <>{num(source.weight)} <i>kg</i></> : '—'}</b>
       </div>
       <div>
         <small>BMI</small>
-        <b>{bmi ? faDecimal(bmi) : '—'}</b>
-        {category && <span className={`bmi-tag ${category.tone}`}>{category.label}</span>}
+        <b>{bmi ? decimal(bmi) : '—'}</b>
+        {category && <span className={`bmi-tag ${category.tone}`}>{t(category.labelKey)}</span>}
       </div>
     </div>
   );

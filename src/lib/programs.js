@@ -1,22 +1,8 @@
 // Pure helpers for programs: cloning, sessions and per-exercise targets.
-import { uid } from './format';
-
-/** Deep-enough copy of a program so edits never leak into the original. */
-export const cloneProgram = (program, overrides = {}) => ({
-  ...program,
-  exercises: [...program.exercises],
-  targets: { ...(program.targets ?? {}) },
-  sessions: (program.sessions ?? []).map((s) => ({ ...s, items: [...s.items] })),
-  ...overrides,
-});
-
-export const duplicateProgram = (program) =>
-  cloneProgram(program, { id: uid(), name: `${program.name} · کپی`, status: 'قالب' });
-
 /** Keep session items in sync with the selected exercises; new ones go to the first session. */
 export function buildSessions(sessions = [], exerciseIds = []) {
   const kept = sessions.map((s) => ({ ...s, items: s.items.filter((id) => exerciseIds.includes(id)) }));
-  const result = kept.length ? kept : [{ name: 'جلسه اول', items: [] }];
+  const result = kept.length ? kept : [{ name: 'روز ۱ · Day 1', items: [] }];
   const used = new Set(result.flatMap((s) => s.items));
   result[0] = { ...result[0], items: [...result[0].items, ...exerciseIds.filter((id) => !used.has(id))] };
   return result;
@@ -36,7 +22,14 @@ export function resolveTargets(overrides = {}, exercise) {
   };
 }
 
-export function describeTarget(exercise, target) {
-  if (exercise.type === 'weight') return 'وزنه و تکرار';
-  return `${target.reps} ${exercise.type === 'duration' ? 'ثانیه' : 'تکرار'}`;
+/** «12 reps» / «30 s» / «weights & reps»; `t` is the translate function. */
+export function describeTarget(exercise, target, t) {
+  if (exercise.type === 'weight') return t('player.weightAndReps');
+  return `${target.reps} ${t(exercise.type === 'duration' ? 'common.seconds' : 'common.reps')}`;
+}
+
+/** The next workout day: rotates through the program's sessions by how many workouts were already finished. */
+export function nextSession(program, finishedCount) {
+  const sessions = program.sessions ?? [];
+  return sessions[finishedCount % Math.max(1, sessions.length)] ?? null;
 }

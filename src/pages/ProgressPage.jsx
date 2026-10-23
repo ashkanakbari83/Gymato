@@ -1,16 +1,16 @@
+// Athlete statistics: headline numbers, last-7-days chart, per-exercise totals (with calories) and history.
 import { Activity, History } from 'lucide-react';
-import SessionRow from '../components/SessionRow';
-import Empty from '../components/ui/Empty';
-import Metrics from '../components/ui/Metrics';
-import ProgressBar from '../components/ui/ProgressBar';
-import { useApp } from '../context/AppContext';
-import { sessionsCalories } from '../lib/calories';
-import { faNum } from '../lib/format';
-import { getCompletedSessions, lastSevenDays, nextMilestone, totalsByExercise } from '../lib/selectors';
+import SessionRow from '../components/SessionRow.jsx';
+import Empty from '../components/ui/Empty.jsx';
+import Metrics from '../components/ui/Metrics.jsx';
+import ProgressBar from '../components/ui/ProgressBar.jsx';
+import { useApp } from '../context/AppContext.jsx';
+import { sessionsCalories } from '../lib/calories.js';
+import { num } from '../lib/format.js';
+import { exerciseName, getCompletedSessions, lastSevenDays, nextMilestone, totalsByExercise } from '../lib/selectors.js';
 
-/** Athlete statistics: headline numbers, last-7-days chart, per-exercise totals (with calories) and history. */
 export default function ProgressPage() {
-  const { db, user } = useApp();
+  const { db, user, lang, t } = useApp();
   const sessions = getCompletedSessions(db, user.id);
   const week = lastSevenDays(sessions);
   const peak = Math.max(1, ...week.map((d) => d.count));
@@ -19,18 +19,10 @@ export default function ProgressPage() {
 
   return (
     <div className="stack">
-      <Metrics
-        items={[
-          { value: sessions.length, label: 'تمرین' },
-          { value: minutes, label: 'دقیقه' },
-          { value: sessionsCalories(sessions, db.exercises), label: 'کالری (≈)' },
-        ]}
-      />
+      <Metrics items={[{ value: sessions.length, label: t('stat.workouts') }, { value: minutes, label: t('stat.minutes') }, { value: sessionsCalories(sessions, db.exercises), label: t('stat.kcal') }]} />
 
       <section className="panel">
-        <div className="section-title">
-          <h2>هفته اخیر</h2>
-        </div>
+        <div className="section-title"><h2>{t('progress.week')}</h2></div>
         <div className="bars">
           {week.map((day, i) => (
             <div key={i}>
@@ -42,48 +34,36 @@ export default function ProgressPage() {
       </section>
 
       <section className="panel">
-        <div className="section-title">
-          <h2>مجموع حرکات</h2>
-        </div>
+        <div className="section-title"><h2>{t('progress.totals')}</h2></div>
         {totals.length ? (
-          totals.map(({ name, n, unit, kcal }) => {
+          totals.map(({ id, exercise, n, timed, kcal }) => {
             const goal = nextMilestone(n);
             return (
-              <div className="tot" key={name}>
+              <div className="tot" key={id}>
                 <div>
-                  <b>{name}</b>
-                  <span>
-                    {faNum(n)} <i>{unit}</i>
-                  </span>
+                  <b>{exerciseName(exercise, lang)}</b>
+                  <span>{num(n)} <i>{t(timed ? 'common.seconds' : 'common.reps')}</i></span>
                 </div>
                 <ProgressBar value={(n / goal) * 100} />
-                <small>
-                  هدف بعدی {faNum(goal)} · ≈ {faNum(Math.round(kcal))} کالری
-                </small>
+                <small>{t('progress.nextGoal', { goal: num(goal), kcal: num(Math.round(kcal)) })}</small>
               </div>
             );
           })
         ) : (
-          <Empty icon={Activity} title="هنوز داده‌ای نیست" text="بعد از چند تمرین، مجموع هر حرکت اینجا نمایش داده می‌شود." />
+          <Empty icon={Activity} title={t('progress.noDataTitle')} text={t('progress.noDataText')} />
         )}
       </section>
 
       <section className="panel">
-        <div className="section-title">
-          <h2>تاریخچه</h2>
-        </div>
+        <div className="section-title"><h2>{t('progress.history')}</h2></div>
         {sessions.length ? (
-          <div className="list">
-            {sessions.map((session) => (
-              <SessionRow key={session.id} session={session} />
-            ))}
-          </div>
+          <div className="list">{sessions.map((s) => <SessionRow key={s.id} session={s} />)}</div>
         ) : (
-          <Empty icon={History} title="تاریخچه خالی است" text="بعد از اولین تمرین، نتیجه اینجا ذخیره می‌شود." />
+          <Empty icon={History} title={t('progress.noHistoryTitle')} text={t('progress.noHistoryText')} />
         )}
       </section>
 
-      <p className="muted foot">کالری‌ها تخمینی‌اند و بر اساس میانگین هر حرکت محاسبه می‌شوند.</p>
+      <p className="muted foot">{t('progress.kcalNote')}</p>
     </div>
   );
 }

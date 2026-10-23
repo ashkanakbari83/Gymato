@@ -1,11 +1,11 @@
-// Desktop top bar: brand, page tabs, notifications, settings, profile switcher.
+// Desktop top bar: brand, page tabs, notifications, settings and the account menu.
 import { Activity, Bell, Settings } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
-import { getNotifications } from '../../lib/selectors';
-import { getNavItems } from './navItems';
+import { useApp } from '../../context/AppContext.jsx';
+import { getNotifications } from '../../lib/selectors.js';
+import { getNavItems, navTabFor } from './navItems.js';
 
 export default function TopBar() {
-  const { db, user, isCoach, page, setPage, openModal } = useApp();
+  const { db, user, isTrainer, page, setPage, openModal, t } = useApp();
   const hasUnread = getNotifications(db, user.id).some((n) => !n.read);
 
   return (
@@ -15,26 +15,26 @@ export default function TopBar() {
           <span className="brand-mark">
             <Activity size={18} />
           </span>
-          جیماتو
+          {t('app.name')}
         </button>
 
-        <nav className="tabs" aria-label="صفحه‌ها">
-          {getNavItems(isCoach).map(({ id, label }) => (
-            <button key={id} className={page === id ? 'active' : ''} onClick={() => setPage(id)}>
-              {label}
+        <nav className="tabs" aria-label={t('nav.pages')}>
+          {getNavItems(isTrainer).map(({ id }) => (
+            <button key={id} className={navTabFor(page) === id ? 'active' : ''} onClick={() => setPage(id)}>
+              {t(`nav.${id}`)}
             </button>
           ))}
         </nav>
 
         <div className="top-actions">
-          <button className="icon-btn" aria-label="اعلان‌ها" onClick={() => openModal({ type: 'notifications' })}>
+          <button className="icon-btn" aria-label={t('nav.notifications')} onClick={() => openModal({ type: 'notifications' })}>
             <Bell size={20} />
             {hasUnread && <i className="dot" />}
           </button>
-          <button className="icon-btn" aria-label="تنظیمات" onClick={() => setPage('settings')}>
+          <button className="icon-btn" aria-label={t('nav.settings')} onClick={() => setPage('settings')}>
             <Settings size={20} />
           </button>
-          <button className="avatar-btn" aria-label="تغییر پروفایل" onClick={() => openModal({ type: 'switch' })}>
+          <button className="avatar-btn" aria-label={t('nav.account')} onClick={() => openModal({ type: 'account' })}>
             {user.name[0]}
           </button>
         </div>

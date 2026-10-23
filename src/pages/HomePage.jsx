@@ -1,9 +1,9 @@
-// Home: the coach dashboard or the athlete dashboard, depending on the active account.
-import { useApp } from '../context/AppContext';
-import AthleteHome from './AthleteHome';
-import CoachHome from './CoachHome';
+// Home: the trainer dashboard or the athlete dashboard, depending on the active account.
+import { useApp } from '../context/AppContext.jsx';
+import AthleteHome from './AthleteHome.jsx';
+import TrainerHome from './TrainerHome.jsx';
 
 export default function HomePage() {
-  const { isCoach } = useApp();
-  return isCoach ? <CoachHome /> : <AthleteHome />;
+  const { isTrainer } = useApp();
+  return isTrainer ? <TrainerHome /> : <AthleteHome />;
 }

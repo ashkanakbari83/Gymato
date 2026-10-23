@@ -1,4 +1,5 @@
-import { POSES } from '../../data/poses';
+import { POSES } from '../../data/poses.js';
+import { useApp } from '../../context/AppContext.jsx';
 
 const parsePose = (text) => text.trim().split(/\s+/).map((pair) => pair.split(',').map(Number));
 
@@ -32,10 +33,11 @@ const Motion = ({ attr, from, to }) => (
 
 /** Animated stick figure; stands in for a GIF until real ones are added to public/exercises/. */
 export default function Stickman({ id }) {
+  const { t } = useApp();
   const [a, b] = (POSES[id] ?? POSES.stand).map(parsePose);
 
   return (
-    <svg className="stickman" viewBox="0 0 200 140" role="img" aria-label="انیمیشن اجرای حرکت">
+    <svg className="stickman" viewBox="0 0 200 140" role="img" aria-label={t('ex.animation')}>
       <line className="sm-floor" x1="8" y1="126" x2="192" y2="126" />
       {EQUIPMENT[id]}
       {BONES.map(([from, to]) => (

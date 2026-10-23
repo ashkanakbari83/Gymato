@@ -1,16 +1,23 @@
 // Starting, finishing and leaving a workout.
-import { DEFAULT_FREE_WORKOUT } from '../lib/constants';
-import { uid } from '../lib/format';
+import { canStartProgram } from '../lib/access.js';
+import { DEFAULT_FREE_WORKOUT } from '../lib/constants.js';
+import { uid } from '../lib/format.js';
 
 /** Starting, finishing and leaving a workout. */
-export function useWorkoutActions({ user, update, notify, workout, setWorkout, setPage }) {
+export function useWorkoutActions({ db, user, update, notify, t, workout, setWorkout, setPage }) {
+  /**
+   * Starts a workout. A program is only started when the access rules allow it (free, purchased, or an
+   * active coaching subscription); with no program it is a free workout.
+   */
   const startWorkout = (program = null, session = program?.sessions?.[0]) => {
+    if (program && !canStartProgram(db, user, program)) return notify(t('error.locked'));
     setWorkout({
       id: uid(),
       userId: user.id,
-      programId: program?.id,
+      programId: program?.id ?? null,
+      programKind: program?.kind ?? null,
       targets: program?.targets ?? {},
-      name: session?.name ?? program?.name ?? 'تمرین آزاد',
+      name: session?.name ?? program?.title ?? t('player.freeWorkout'),
       exerciseIds: session?.items ?? program?.exercises ?? DEFAULT_FREE_WORKOUT,
       index: 0,
       setIndex: 0,
@@ -20,7 +27,7 @@ export function useWorkoutActions({ user, update, notify, workout, setWorkout, s
       restUntil: null,
     });
     setPage('player');
-    notify('تمرین شروع شد؛ موفق باشی!');
+    notify(t('player.started'));
   };
 
   const finishWorkout = () => {
@@ -28,6 +35,8 @@ export function useWorkoutActions({ user, update, notify, workout, setWorkout, s
     const session = {
       id: workout.id,
       userId: workout.userId,
+      programId: workout.programId,
+      programKind: workout.programKind,
       name: workout.name,
       date: new Date().toISOString(),
       status: 'completed',
@@ -38,11 +47,11 @@ export function useWorkoutActions({ user, update, notify, workout, setWorkout, s
     update((d) => ({ sessions: [session, ...d.sessions.filter((s) => s.id !== session.id)], activeWorkout: null }));
     setWorkout(null);
     setPage('progress');
-    notify('تمرین ذخیره شد؛ آفرین!');
+    notify(t('player.saved'));
   };
 
   const exitWorkout = () => {
-    if (!confirm('تمرین در حال اجرا ذخیره شود و خارج شوی؟')) return;
+    if (!confirm(t('player.confirmExit'))) return;
     update({ activeWorkout: workout });
     setPage('home');
   };

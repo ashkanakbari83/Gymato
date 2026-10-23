@@ -1,78 +1,59 @@
 // Settings: theme, language, onboarding replay and data backup.
 import { CircleHelp, Download, Moon, RotateCcw, Settings, Sun, Upload } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../context/AppContext.jsx';
 
-const THEMES = [
-  ['light', 'روشن', Sun],
-  ['dark', 'تیره', Moon],
-  ['system', 'سیستم', Settings],
-];
-const LANGUAGES = [
-  ['fa', 'فارسی'],
-  ['en', 'English'],
-];
+const THEMES = [['light', Sun], ['dark', Moon], ['system', Settings]];
+const LANGUAGES = [['fa', 'فارسی'], ['en', 'English']];
 
 export default function SettingsPage() {
-  const { db, update, exportData, importData, resetData, onboarding } = useApp();
+  const { db, update, exportData, importData, resetData, onboarding, t } = useApp();
 
   return (
     <div className="stack narrow">
       <section className="panel">
         <div className="setting">
-          <b>پوسته</b>
+          <b>{t('settings.theme')}</b>
           <div className="seg">
-            {THEMES.map(([id, label, Icon]) => (
+            {THEMES.map(([id, Icon]) => (
               <button key={id} className={db.theme === id ? 'on' : ''} onClick={() => update({ theme: id })}>
-                <Icon size={16} />
-                {label}
+                <Icon size={16} /> {t(`settings.theme.${id}`)}
               </button>
             ))}
           </div>
         </div>
         <div className="setting">
-          <b>زبان</b>
+          <b>{t('settings.language')}</b>
           <div className="seg">
             {LANGUAGES.map(([id, label]) => (
-              <button key={id} className={db.language === id ? 'on' : ''} onClick={() => update({ language: id })}>
-                {label}
-              </button>
+              <button key={id} className={db.language === id ? 'on' : ''} onClick={() => update({ language: id })}>{label}</button>
             ))}
           </div>
         </div>
         <div className="setting">
-          <b>راهنمای شروع</b>
-          <button className="btn ghost" onClick={onboarding.reopen}>
-            <CircleHelp size={16} /> نمایش دوباره
-          </button>
+          <b>{t('settings.guide')}</b>
+          <button className="btn ghost" onClick={onboarding.reopen}><CircleHelp size={16} /> {t('settings.showAgain')}</button>
         </div>
       </section>
 
       <section className="panel">
         <div className="setting">
-          <b>پشتیبان‌گیری</b>
-          <button className="btn ghost" onClick={exportData}>
-            <Download size={16} /> دریافت
-          </button>
+          <b>{t('settings.backup')}</b>
+          <button className="btn ghost" onClick={exportData}><Download size={16} /> {t('settings.download')}</button>
         </div>
         <div className="setting">
-          <b>بازیابی پشتیبان</b>
+          <b>{t('settings.restore')}</b>
           <label className="btn ghost upload">
-            <Upload size={16} /> انتخاب فایل
+            <Upload size={16} /> {t('settings.chooseFile')}
             <input type="file" accept="application/json,.json" onChange={importData} />
           </label>
         </div>
         <div className="setting">
-          <b>بازنشانی به داده نمونه</b>
-          <button className="btn danger" onClick={resetData}>
-            <RotateCcw size={16} /> بازنشانی
-          </button>
+          <b>{t('settings.reset')}</b>
+          <button className="btn danger" onClick={resetData}><RotateCcw size={16} /> {t('settings.resetBtn')}</button>
         </div>
       </section>
 
-      <p className="muted foot">
-        داده‌ها فقط در همین مرورگر ذخیره می‌شوند؛ حساب واقعی و همگام‌سازی به بک‌اند نیاز دارد. فایل GIF حرکت‌ها را در{' '}
-        <code>public/exercises/</code> بگذار.
-      </p>
+      <p className="muted foot">{t('settings.localNote')}</p>
     </div>
   );
 }

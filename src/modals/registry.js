@@ -1,26 +1,22 @@
-import {
-  ChooseCoachModal,
-  NotificationsModal,
-  SignupModal,
-  SwitchProfileModal,
-  UpgradeModal,
-} from './AccountModals';
-import { AddAthleteModal, AthleteDetailModal } from './AthleteModals';
-import ExerciseModal from './ExerciseModal';
-import { AssignModal, AssignSelectModal, DeckModal, ProgramModal } from './ProgramModals';
+// modal.type -> component. Open one with openModal({ type, ...props }); the props are passed to the component.
+import { AccountMenuModal, NotificationsModal, SignupModal } from './AccountModals.jsx';
+import CheckoutModal from './CheckoutModal.jsx';
+import CoachingModal from './CoachingModal.jsx';
+import DeckModal from './DeckModal.jsx';
+import ExerciseModal from './ExerciseModal.jsx';
+import GeneralProgramModal from './GeneralProgramModal.jsx';
+import ProgramEditorModal from './ProgramEditorModal.jsx';
+import RequestFormModal from './RequestFormModal.jsx';
 
-/** modal.type -> component. Open one with openModal({ type, ...props }). */
 export const MODALS = {
-  program: ProgramModal,
-  deck: DeckModal,
-  assign: AssignModal,
-  'assign-select': AssignSelectModal,
-  exercise: ExerciseModal,
-  switch: SwitchProfileModal,
+  account: AccountMenuModal,
   signup: SignupModal,
   notifications: NotificationsModal,
-  'choose-coach': ChooseCoachModal,
-  upgrade: UpgradeModal,
-  'athlete-add': AddAthleteModal,
-  'athlete-detail': AthleteDetailModal,
+  exercise: ExerciseModal,
+  deck: DeckModal,
+  'program-editor': ProgramEditorModal,
+  'general-program': GeneralProgramModal,
+  'coaching-request': RequestFormModal,
+  coaching: CoachingModal,
+  checkout: CheckoutModal,
 };

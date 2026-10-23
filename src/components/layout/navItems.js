@@ -1,21 +1,25 @@
-// Navigation items and page titles (the coach and athlete see different last tabs).
-import { CalendarDays, ChartNoAxesCombined, Dumbbell, LayoutDashboard, UserRound, Users } from 'lucide-react';
+// Navigation: the trainer and the athlete see different tabs. Labels come from `nav.<id>` in the dictionaries.
+import { CalendarDays, ChartNoAxesCombined, Dumbbell, LayoutDashboard, Search, Users } from 'lucide-react';
 
-export const getNavItems = (isCoach) => [
-  { id: 'home', label: 'خانه', icon: LayoutDashboard },
-  { id: 'exercises', label: 'حرکات', icon: Dumbbell },
-  { id: 'programs', label: 'برنامه‌ها', icon: CalendarDays },
-  { id: 'progress', label: 'پیشرفت', icon: ChartNoAxesCombined },
-  isCoach ? { id: 'athletes', label: 'شاگردها', icon: Users } : { id: 'profile', label: 'پروفایل', icon: UserRound },
-];
+const ITEMS = {
+  home: LayoutDashboard,
+  clients: Users,
+  trainers: Search,
+  programs: CalendarDays,
+  exercises: Dumbbell,
+  progress: ChartNoAxesCombined,
+};
 
-export const getPageTitle = (page, user, isCoach) =>
-  ({
-    home: isCoach ? 'نمای کلی' : `سلام، ${user.name}`,
-    exercises: 'حرکات',
-    programs: isCoach ? 'برنامه‌ها' : 'برنامه من',
-    progress: 'پیشرفت',
-    athletes: 'شاگردها',
-    profile: 'پروفایل',
-    settings: 'تنظیمات',
-  })[page] ?? 'جیماتو';
+const TRAINER_TABS = ['home', 'clients', 'programs', 'exercises'];
+const ATHLETE_TABS = ['home', 'exercises', 'trainers', 'programs', 'progress'];
+
+export const getNavItems = (isTrainer) => (isTrainer ? TRAINER_TABS : ATHLETE_TABS).map((id) => ({ id, icon: ITEMS[id] }));
+
+/** The tab to highlight for a page (a trainer's profile belongs to "trainers"). */
+export const navTabFor = (page) => (page === 'trainer' ? 'trainers' : page);
+
+export function getPageTitle(page, user, isTrainer, t) {
+  if (page === 'home') return t(isTrainer ? 'nav.home' : 'home.greeting', { name: user.name });
+  if (page === 'programs') return t(isTrainer ? 'programs.manageTitle' : 'programs.myTitle');
+  return t(`nav.${page}`);
+}

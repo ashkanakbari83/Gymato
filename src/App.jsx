@@ -1,26 +1,30 @@
 // App shell: top bar, current page, bottom nav, workout player, toast, modals and onboarding.
-import BottomNav from './components/layout/BottomNav';
-import PageHead from './components/layout/PageHead';
-import TopBar from './components/layout/TopBar';
-import Onboarding from './components/Onboarding';
-import Toast from './components/ui/Toast';
-import { AppProvider, useApp } from './context/AppContext';
-import ModalHost from './modals/ModalHost';
-import AthletesPage from './pages/AthletesPage';
-import ExercisesPage from './pages/ExercisesPage';
-import HomePage from './pages/HomePage';
-import ProfilePage from './pages/ProfilePage';
-import ProgramsPage from './pages/ProgramsPage';
-import ProgressPage from './pages/ProgressPage';
-import SettingsPage from './pages/SettingsPage';
-import WorkoutPlayer from './player/WorkoutPlayer';
+import BottomNav from './components/layout/BottomNav.jsx';
+import PageHead from './components/layout/PageHead.jsx';
+import TopBar from './components/layout/TopBar.jsx';
+import Onboarding from './components/Onboarding.jsx';
+import Toast from './components/ui/Toast.jsx';
+import { AppProvider, useApp } from './context/AppContext.jsx';
+import ModalHost from './modals/ModalHost.jsx';
+import ClientsPage from './pages/ClientsPage.jsx';
+import ExercisesPage from './pages/ExercisesPage.jsx';
+import HomePage from './pages/HomePage.jsx';
+import ProfilePage from './pages/ProfilePage.jsx';
+import ProgramsPage from './pages/ProgramsPage.jsx';
+import ProgressPage from './pages/ProgressPage.jsx';
+import SettingsPage from './pages/SettingsPage.jsx';
+import TrainerProfilePage from './pages/TrainerProfilePage.jsx';
+import TrainersPage from './pages/TrainersPage.jsx';
+import WorkoutPlayer from './player/WorkoutPlayer.jsx';
 
 const PAGES = {
   home: HomePage,
   exercises: ExercisesPage,
   programs: ProgramsPage,
   progress: ProgressPage,
-  athletes: AthletesPage,
+  clients: ClientsPage,
+  trainers: TrainersPage,
+  trainer: TrainerProfilePage,
   profile: ProfilePage,
   settings: SettingsPage,
 };
@@ -45,9 +49,9 @@ function Shell() {
   );
 }
 
-export default function App() {
+export default function App({ initial }) {
   return (
-    <AppProvider>
+    <AppProvider initial={initial}>
       <Shell />
     </AppProvider>
   );

@@ -1,24 +1,24 @@
 // Full-screen workout player. Layout rule: on a phone everything needed (animation, name,
 // how-to, set/timer, previous/next) is visible at once, with no scrolling.
-import { ChevronLeft, Clock3, Dumbbell, Pause, Play, X } from 'lucide-react';
+import { Clock3, Dumbbell, Pause, Play, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import MoveMedia from '../components/exercise/MoveMedia';
-import Empty from '../components/ui/Empty';
-import { useApp } from '../context/AppContext';
-import { useNow } from '../hooks/useNow';
-import { estimateCalories } from '../lib/calories';
-import { faNum, formatClock, uid } from '../lib/format';
-import { resolveTargets } from '../lib/programs';
-import FinishCard from './FinishCard';
-import HowTo from './HowTo';
-import RestBanner from './RestBanner';
-import SetCard from './SetCard';
+import MoveMedia from '../components/exercise/MoveMedia.jsx';
+import Empty from '../components/ui/Empty.jsx';
+import { useApp } from '../context/AppContext.jsx';
+import { useNow } from '../hooks/useNow.js';
+import { estimateCalories } from '../lib/calories.js';
+import { formatClock, num, uid } from '../lib/format.js';
+import { resolveTargets } from '../lib/programs.js';
+import { exerciseName } from '../lib/selectors.js';
+import { ArrowBack, ArrowForward } from '../components/ui/Arrow.jsx';
+import FinishCard from './FinishCard.jsx';
+import HowTo from './HowTo.jsx';
+import RestBanner from './RestBanner.jsx';
+import SetCard from './SetCard.jsx';
 
 const EMPTY_INPUTS = { reps: '', weight: '', duration: '' };
-const STATE_LABEL = { paused: 'تمرین متوقف شده', resting: 'زمان استراحت' };
-
 export default function WorkoutPlayer() {
-  const { workout, setWorkout, db, finishWorkout, exitWorkout } = useApp();
+  const { workout, setWorkout, db, finishWorkout, exitWorkout, lang, t } = useApp();
   const now = useNow();
   const [inputs, setInputs] = useState(EMPTY_INPUTS);
   const [countdown, setCountdown] = useState(null); // { start, seconds } while a timed hold runs
@@ -46,7 +46,7 @@ export default function WorkoutPlayer() {
   if (!workout) {
     return (
       <div className="player-screen">
-        <Empty icon={Dumbbell} title="تمرین فعالی نیست" text="برای شروع یک برنامه انتخاب کن." actionLabel="بازگشت" onAction={exitWorkout} />
+        <Empty icon={Dumbbell} title={t('player.noneTitle')} text={t('player.noneText')} actionLabel={t('common.back')} onAction={exitWorkout} />
       </div>
     );
   }
@@ -96,12 +96,12 @@ export default function WorkoutPlayer() {
   return (
     <div className="player-screen">
       <header className="player-top">
-        <button className="icon-btn" onClick={exitWorkout} aria-label="خروج از تمرین">
+        <button className="icon-btn" onClick={exitWorkout} aria-label={t('player.exit')}>
           <X />
         </button>
         <div>
           <b>{workout.name}</b>
-          <small>{STATE_LABEL[workout.state] ?? 'جلسه تمرینی'}</small>
+          <small>{t(`player.state.${workout.state}`)}</small>
         </div>
         <span className="elapsed">
           <Clock3 size={15} />
@@ -128,13 +128,13 @@ export default function WorkoutPlayer() {
 
           <div className="player-info">
             <div className="player-title-row">
-              <h1>{exercise.fa}</h1>
+              <h1>{exerciseName(exercise, lang)}</h1>
               <span className="player-count">
-                {faNum(workout.index + 1)} از {faNum(ids.length)}
+                {t('player.counter', { n: num(workout.index + 1), total: num(ids.length) })}
               </span>
             </div>
             <p>{exercise.desc}</p>
-            <HowTo title={exercise.fa} steps={exercise.steps} />
+            <HowTo title={exerciseName(exercise, lang)} steps={exercise.steps} />
           </div>
 
           {isResting ? (
@@ -161,13 +161,13 @@ export default function WorkoutPlayer() {
 
           <div className="player-controls">
             <button className="btn ghost" disabled={workout.index === 0} onClick={() => goTo(workout.index - 1)}>
-              <ChevronLeft size={17} /> قبل
+              <ArrowBack size={17} /> {t('player.prev')}
             </button>
             <button className="pause-btn" onClick={() => patch({ state: isPaused ? 'active' : 'paused' })}>
-              {isPaused ? <Play size={17} /> : <Pause size={17} />} {isPaused ? 'ادامه' : 'مکث'}
+              {isPaused ? <Play size={17} /> : <Pause size={17} />} {isPaused ? t('player.resume') : t('player.pause')}
             </button>
             <button className="btn ghost" disabled={workout.index >= ids.length - 1} onClick={() => goTo(workout.index + 1)}>
-              بعد <ChevronLeft size={17} />
+              {t('player.next')} <ArrowForward size={17} />
             </button>
           </div>
 
@@ -176,10 +176,10 @@ export default function WorkoutPlayer() {
               <span>
                 <Pause size={28} />
               </span>
-              <h2>تمرین متوقف است</h2>
-              <p>هر زمان آماده بودی ادامه بده.</p>
+              <h2>{t('player.pausedTitle')}</h2>
+              <p>{t('player.pausedText')}</p>
               <button className="btn" onClick={() => patch({ state: 'active' })}>
-                <Play size={17} /> ادامه تمرین
+                <Play size={17} /> {t('player.resumeWorkout')}
               </button>
             </div>
           )}

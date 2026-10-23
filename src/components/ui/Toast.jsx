@@ -1,6 +1,6 @@
 // Transient confirmation message.
 import { CheckCircle2 } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/AppContext.jsx';
 
 export default function Toast() {
   const { toast } = useApp();

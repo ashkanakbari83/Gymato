@@ -1,19 +1,20 @@
+// Pick exercises from the bank and set sets / reps / rest for each. Works on a `draft`
+// ({ exercises: ids[], targets: { [id]: { sets, reps, rest } } }), so it is shared by the general-program,
+// custom-program and deck editors. Pass `decks` to show quick-add chips.
 import { Plus } from 'lucide-react';
-import { faNum } from '../../lib/format';
-import { defaultTarget } from '../../lib/programs';
+import { useApp } from '../../context/AppContext.jsx';
+import { num } from '../../lib/format.js';
+import { defaultTarget } from '../../lib/programs.js';
+import { exerciseName } from '../../lib/selectors.js';
 
 const TARGET_FIELDS = [
-  { key: 'sets', label: () => 'ست' },
-  { key: 'reps', label: (e) => (e.type === 'duration' ? 'ثانیه' : 'تکرار') },
-  { key: 'rest', label: () => 'استراحت (ث)', min: 0 },
+  { key: 'sets', label: () => 'plan.sets' },
+  { key: 'reps', label: (e) => (e.type === 'duration' ? 'common.seconds' : 'common.reps') },
+  { key: 'rest', label: () => 'plan.rest', min: 0 },
 ];
 
-/**
- * Pick exercises from the bank and set sets / reps / rest for each.
- * Works on a `draft` ({ exercises: ids[], targets: { [id]: {sets,reps,rest} } }) so it
- * can be shared by the program and deck editors. Pass `decks` to show quick-add chips.
- */
-export default function ExercisePlanner({ exercises, draft, setDraft, decks = [] }) {
+export default function ExercisePlanner({ exercises, draft, setDraft, decks = [], error }) {
+  const { lang, t } = useApp();
   const selected = draft.exercises ?? [];
   const targets = draft.targets ?? {};
 
@@ -40,9 +41,9 @@ export default function ExercisePlanner({ exercises, draft, setDraft, decks = []
     <>
       {decks.length > 0 && (
         <div className="deck-chips">
-          <small>افزودن سریع از دک</small>
+          <small>{t('plan.quickAdd')}</small>
           {decks.map((deck) => (
-            <button key={deck.id} onClick={() => addDeck(deck)}>
+            <button key={deck.id} type="button" onClick={() => addDeck(deck)}>
               <Plus size={13} />
               {deck.name}
             </button>
@@ -51,9 +52,10 @@ export default function ExercisePlanner({ exercises, draft, setDraft, decks = []
       )}
 
       <div className="modal-subtitle">
-        <b>حرکات و ست‌ها</b>
-        <small>{faNum(selected.length)} حرکت انتخاب شده</small>
+        <b>{t('plan.title')}</b>
+        <small>{t('plan.selected', { n: num(selected.length) })}</small>
       </div>
+      {error && <small className="field-error">{error}</small>}
 
       <div className="exercise-picker">
         {exercises.map((exercise) => {
@@ -64,17 +66,15 @@ export default function ExercisePlanner({ exercises, draft, setDraft, decks = []
               <label className="picker-row">
                 <input type="checkbox" checked={on} onChange={(e) => toggle(exercise, e.target.checked)} />
                 <span>
-                  <b>{exercise.fa}</b>
-                  <small>
-                    {exercise.cat} · {exercise.muscle}
-                  </small>
+                  <b>{exerciseName(exercise, lang)}</b>
+                  <small>{t(`cat.${exercise.cat}`, {})}</small>
                 </span>
               </label>
               {on && (
                 <div className="target-inputs">
                   {TARGET_FIELDS.map(({ key, label, min = 1 }) => (
                     <label key={key}>
-                      {label(exercise)}
+                      {t(label(exercise))}
                       <input type="number" min={min} value={target[key] ?? ''} onChange={(e) => setTarget(exercise.id, key, e.target.value)} />
                     </label>
                   ))}

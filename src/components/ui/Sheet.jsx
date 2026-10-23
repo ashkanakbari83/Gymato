@@ -1,11 +1,11 @@
 // Modal shell: centered dialog on desktop, bottom sheet on mobile. Closes on Escape or backdrop click.
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/AppContext.jsx';
 
 /** Modal shell: centered dialog on desktop, bottom sheet on mobile. */
 export default function Sheet({ title, children, onClose, bodyClassName = '' }) {
-  const { closeModal } = useApp();
+  const { closeModal, t } = useApp();
   const close = onClose ?? closeModal;
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export default function Sheet({ title, children, onClose, bodyClassName = '' }) 
         {title && (
           <header className="modal-head">
             <h2>{title}</h2>
-            <button className="icon-btn" onClick={close} aria-label="بستن">
+            <button className="icon-btn" onClick={close} aria-label={t("common.close")}>
               <X size={20} />
             </button>
           </header>

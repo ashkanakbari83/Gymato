@@ -1,62 +1,67 @@
-import { ChevronLeft, Play } from 'lucide-react';
-import SessionRow from '../components/SessionRow';
-import Metrics from '../components/ui/Metrics';
-import { useApp } from '../context/AppContext';
-import { sessionsCalories } from '../lib/calories';
-import { faNum } from '../lib/format';
-import {
-  countActiveDays,
-  getActiveAssignment,
-  getCompletedSessions,
-  getProgram,
-  lastSevenDays,
-} from '../lib/selectors';
+// Athlete dashboard: today's workout (from a program the athlete may actually use), headline numbers,
+// week streak, items needing attention (payment / pending request) and the last workout.
+import { Play } from 'lucide-react';
+import SessionRow from '../components/SessionRow.jsx';
+import Metrics from '../components/ui/Metrics.jsx';
+import { ArrowForward } from '../components/ui/Arrow.jsx';
+import { useApp } from '../context/AppContext.jsx';
+import { canStartProgram } from '../lib/access.js';
+import { sessionsCalories } from '../lib/calories.js';
+import { num } from '../lib/format.js';
+import { getAthleteLibrary } from '../lib/marketplace.js';
+import { nextSession } from '../lib/programs.js';
+import { countActiveDays, exerciseName, getCompletedSessions, lastSevenDays } from '../lib/selectors.js';
 
-/** Athlete dashboard: today's workout, headline numbers, week streak, coach link and last workout. */
 export default function AthleteHome() {
-  const { db, user, workout, startWorkout, setPage, openModal } = useApp();
-
-  const assignment = getActiveAssignment(db, user.id);
-  const program = assignment ? getProgram(db, assignment.programId) : null;
-  const nextSession = program?.sessions?.[0];
-  const coach = db.users.find((u) => u.id === user.coachId);
+  const { db, user, workout, startWorkout, setPage, lang, t } = useApp();
+  const library = getAthleteLibrary(db, user.id);
   const sessions = getCompletedSessions(db, user.id);
-  const lastSession = sessions[0];
 
-  const moves = (nextSession?.items ?? program?.exercises ?? [])
-    .map((id) => db.exercises.find((e) => e.id === id))
-    .filter(Boolean);
+  // First program the athlete can really train with: active coaching first, then purchased, then free.
+  const program = [...library.active.map((c) => c.program), ...library.purchased, ...library.free].find((p) => canStartProgram(db, user, p)) ?? null;
+  const finished = program ? sessions.filter((s) => s.programId === program.id).length : 0;
+  const session = program ? nextSession(program, finished) : null;
+  const moves = (session?.items ?? []).map((id) => db.exercises.find((e) => e.id === id)).filter(Boolean);
   const week = lastSevenDays(sessions);
 
-  const goToWorkout = () => (workout ? setPage('player') : startWorkout(program, nextSession));
+  const goToWorkout = () => (workout ? setPage('player') : startWorkout(program, session));
+  const attention = [
+    library.awaitingPayment.length && { key: 'home.awaitingPayment', n: library.awaitingPayment.length },
+    library.pending.length && { key: 'home.pendingRequests', n: library.pending.length },
+  ].filter(Boolean);
 
   return (
     <div className="stack">
       <section className="today">
-        <small>{workout ? 'در حال اجرا' : assignment ? 'تمرین امروز' : 'تمرین آزاد'}</small>
-        <h2>{workout ? 'ادامه تمرین' : nextSession?.name ?? 'یک تمرین ساده'}</h2>
-        <p>{program ? `${program.name} · ${faNum(moves.length)} حرکت` : 'مربی انتخاب کن تا برنامه‌ات اینجا بیاید.'}</p>
-
+        <small>{workout ? t('home.inProgress') : program ? t('home.todayWorkout') : t('home.freeWorkout')}</small>
+        <h2>{workout ? t('home.continue') : session?.name ?? t('home.simpleWorkout')}</h2>
+        <p>{program ? `${program.title} · ${t('home.moves', { n: num(moves.length) })}` : t('home.noProgram')}</p>
         {moves.length > 0 && (
           <ul className="today-list">
             {moves.slice(0, 4).map((e) => (
-              <li key={e.id}>{e.fa}</li>
+              <li key={e.id}>{exerciseName(e, lang)}</li>
             ))}
-            {moves.length > 4 && <li>+{faNum(moves.length - 4)}</li>}
+            {moves.length > 4 && <li>+{num(moves.length - 4)}</li>}
           </ul>
         )}
-
         <button className="cta" onClick={goToWorkout}>
           <Play size={18} fill="currentColor" />
-          {workout ? 'ادامه' : 'شروع تمرین'}
+          {workout ? t('home.resume') : t('home.startWorkout')}
         </button>
       </section>
 
+      {attention.map(({ key, n }) => (
+        <button key={key} className="attention" onClick={() => setPage('programs')}>
+          <span>{t(key, { n: num(n) })}</span>
+          <ArrowForward size={16} />
+        </button>
+      ))}
+
       <Metrics
         items={[
-          { value: sessions.length, label: 'تمرین' },
-          { value: countActiveDays(sessions), label: 'روز فعال' },
-          { value: sessionsCalories(sessions, db.exercises), label: 'کالری سوزانده (≈)' },
+          { value: sessions.length, label: t('stat.workouts') },
+          { value: countActiveDays(sessions), label: t('stat.activeDays') },
+          { value: sessionsCalories(sessions, db.exercises), label: t('stat.kcal') },
         ]}
       />
 
@@ -71,27 +76,15 @@ export default function AthleteHome() {
         </div>
       </section>
 
-      <section className="panel coach-row">
-        <div>
-          <b>{coach ? `مربی: ${coach.name}` : 'مربی انتخاب نشده'}</b>
-          <small>
-            شناسه تو <code>{user.publicId}</code>
-          </small>
-        </div>
-        <button className="btn ghost" onClick={() => openModal({ type: 'choose-coach' })}>
-          {coach ? 'تغییر' : 'انتخاب مربی'}
-        </button>
-      </section>
-
-      {lastSession && (
+      {sessions[0] && (
         <section className="panel">
           <div className="section-title">
-            <h2>آخرین تمرین</h2>
+            <h2>{t('home.lastWorkout')}</h2>
             <button className="link" onClick={() => setPage('progress')}>
-              تاریخچه <ChevronLeft size={14} />
+              {t('home.history')} <ArrowForward size={14} />
             </button>
           </div>
-          <SessionRow session={lastSession} />
+          <SessionRow session={sessions[0]} />
         </section>
       )}
     </div>

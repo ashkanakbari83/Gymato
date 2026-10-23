@@ -1,168 +1,111 @@
-// Account sheets: profile switcher, sign-up, notifications, coach choice and subscription.
-import { Bell, Check, ChevronLeft, Plus, Trophy } from 'lucide-react';
+// Account sheets: account menu (profile + demo account switcher), sign-up and notifications.
+import { Bell, Check, Plus, UserRound } from 'lucide-react';
 import { useState } from 'react';
-import Empty from '../components/ui/Empty';
-import { Field, SelectField } from '../components/ui/Field';
-import Sheet from '../components/ui/Sheet';
-import { useApp } from '../context/AppContext';
-import { FREE_ATHLETE_LIMIT, GOALS, LEVELS } from '../lib/constants';
-import { faNum } from '../lib/format';
-import { getNotifications } from '../lib/selectors';
+import Empty from '../components/ui/Empty.jsx';
+import { ChipSelect, Field, SelectField } from '../components/ui/Field.jsx';
+import LocationFields from '../components/ui/LocationFields.jsx';
+import Sheet from '../components/ui/Sheet.jsx';
+import { ArrowForward } from '../components/ui/Arrow.jsx';
+import { useApp } from '../context/AppContext.jsx';
+import { GOALS, LEVELS } from '../lib/constants.js';
+import { formatDateTime } from '../lib/format.js';
+import { getNotifications } from '../lib/selectors.js';
 
-const roleLabel = (u) => (u.role === 'coach' ? 'مربی' : 'ورزشکار');
-
-export function SwitchProfileModal() {
-  const { db, user, changeUser, openModal, closeModal } = useApp();
+export function AccountMenuModal() {
+  const { db, user, changeUser, go, openModal, closeModal, t } = useApp();
   return (
-    <Sheet title="تغییر پروفایل">
+    <Sheet title={t('acct.title')}>
+      <div className="assign-program-preview">
+        <span className="avatar">{user.name[0]}</span>
+        <div>
+          <b>{user.name}</b>
+          <small>
+            {t(user.role === 'coach' ? 'role.coach' : 'role.athlete')} · {user.publicId}
+          </small>
+        </div>
+      </div>
+      <button className="btn wide" onClick={() => { closeModal(); go('profile'); }}>
+        <UserRound size={16} /> {t('acct.profile')}
+      </button>
+
+      <p className="modal-description sep">{t('acct.switchDemo')}</p>
       {db.users.map((u) => (
-        <button
-          key={u.id}
-          className={`select-user-row ${u.id === user.id ? 'current-user' : ''}`}
-          onClick={() => {
-            changeUser(u.id);
-            closeModal();
-          }}
-        >
+        <button key={u.id} className={`select-user-row ${u.id === user.id ? 'current-user' : ''}`} onClick={() => { changeUser(u.id); closeModal(); }}>
           <span className="avatar">{u.name[0]}</span>
           <span>
             <b>{u.name}</b>
-            <small>
-              {roleLabel(u)} · {u.goal}
-            </small>
+            <small>{t(u.role === 'coach' ? 'role.coach' : 'role.athlete')}</small>
           </span>
-          {u.id === user.id ? <Check size={18} /> : <ChevronLeft size={17} />}
+          {u.id === user.id ? <Check size={18} /> : <ArrowForward size={17} />}
         </button>
       ))}
       <button className="btn ghost wide" onClick={() => openModal({ type: 'signup' })}>
-        <Plus size={16} /> ساخت حساب جدید
+        <Plus size={16} /> {t('acct.newAccount')}
       </button>
-      <p className="modal-footnote">پروفایل‌ها نمونه‌های محلی هستند و ورود امن یا حساب‌های واقعی محسوب نمی‌شوند.</p>
+      <p className="modal-footnote">{t('acct.demoNote')}</p>
     </Sheet>
   );
 }
 
-const ROLES = [
-  ['athlete', 'ورزشکار', 'برنامه می‌گیرم و تمرین می‌کنم'],
-  ['coach', 'مربی', 'برنامه می‌نویسم و شاگرد مدیریت می‌کنم'],
-];
-
 export function SignupModal() {
-  const { signUp } = useApp();
-  const [form, setForm] = useState({ name: '', role: 'athlete', goal: GOALS[1], level: LEVELS[0], height: '', weight: '' });
+  const { signUp, t } = useApp();
+  const [form, setForm] = useState({ name: '', role: 'athlete', province: '', city: '', age: '', height: '', weight: '', goal: GOALS[0], level: LEVELS[0] });
   const set = (key) => (value) => setForm((f) => ({ ...f, [key]: value }));
   const isAthlete = form.role === 'athlete';
 
-  const submit = () => (form.name.trim() ? signUp(form) : alert('نام را وارد کن'));
-
   return (
-    <Sheet title="ساخت حساب جدید">
-      <Field label="نام" value={form.name} onChange={set('name')} />
-      <div className="role-pick">
-        {ROLES.map(([id, title, hint]) => (
-          <button key={id} className={form.role === id ? 'selected' : ''} onClick={() => set('role')(id)}>
-            <b>{title}</b>
-            <small>{hint}</small>
-          </button>
-        ))}
+    <Sheet title={t('acct.signupTitle')}>
+      <Field label={t('cr.name')} value={form.name} onChange={set('name')} />
+      <ChipSelect label={t('acct.role')} value={form.role} onChange={set('role')} options={[{ value: 'athlete', label: t('role.athlete') }, { value: 'coach', label: t('role.coach') }]} />
+      <div className="form-grid">
+        <LocationFields province={form.province} city={form.city} emptyLabel={t('common.notSet')} onChange={(loc) => setForm((f) => ({ ...f, ...loc }))} />
       </div>
       {isAthlete && (
         <>
-          <SelectField label="هدف تمرینی" value={form.goal} onChange={set('goal')} options={GOALS} />
-          <SelectField label="سطح تجربه" value={form.level} onChange={set('level')} options={LEVELS} />
+          <SelectField label={t('cr.goal')} value={form.goal} onChange={set('goal')} options={GOALS.map((id) => ({ value: id, label: t(`goal.${id}`) }))} />
+          <SelectField label={t('cr.level')} value={form.level} onChange={set('level')} options={LEVELS.map((id) => ({ value: id, label: t(`level.${id}`) }))} />
           <div className="form-grid">
-            <Field label="قد (سانتی‌متر)" type="number" value={form.height} onChange={set('height')} />
-            <Field label="وزن (کیلوگرم)" type="number" value={form.weight} onChange={set('weight')} />
+            <Field label={t('cr.age')} type="number" value={form.age} onChange={set('age')} />
+            <Field label={t('body.heightCm')} type="number" value={form.height} onChange={set('height')} />
+            <Field label={t('body.weightKg')} type="number" value={form.weight} onChange={set('weight')} />
           </div>
         </>
       )}
-      <button className="btn wide" onClick={submit}>
-        <Plus size={17} /> ساخت حساب و دریافت شناسه
+      <button className="btn wide" onClick={() => (form.name.trim() ? signUp(form) : alert(t('acct.nameRequired')))}>
+        <Plus size={17} /> {t('acct.create')}
       </button>
     </Sheet>
   );
 }
 
 export function NotificationsModal() {
-  const { db, user, update, closeModal } = useApp();
+  const { db, user, markNotificationsRead, openTarget, t } = useApp();
   const notes = getNotifications(db, user.id);
 
-  const markAllRead = () => {
-    update((d) => ({ notifications: d.notifications.map((n) => (n.userId && n.userId !== user.id ? n : { ...n, read: true })) }));
-    closeModal();
-  };
-
   return (
-    <Sheet title="اعلان‌ها">
+    <Sheet title={t('nav.notifications')}>
       {notes.length ? (
         notes.map((n) => (
-          <div className="notification-row" key={n.id}>
+          <button className="notification-row" key={n.id} onClick={() => openTarget(n.target)}>
             <span className="summary-icon">
               <Bell size={17} />
             </span>
             <div>
-              <b>{n.title}</b>
-              <p>{n.text}</p>
+              <b>{t(`notif.${n.type}.title`, n.params)}</b>
+              <p>{t(`notif.${n.type}.text`, n.params)}</p>
+              <small>{formatDateTime(n.createdAt)}</small>
             </div>
             {!n.read && <span className="unread-dot" />}
-          </div>
+          </button>
         ))
       ) : (
-        <Empty icon={Bell} title="اعلان تازه‌ای نیست" text="اعلان‌های محلی در این بخش نمایش داده می‌شوند." />
+        <Empty icon={Bell} title={t('notif.emptyTitle')} text={t('notif.emptyText')} />
       )}
-      <button className="btn ghost wide" onClick={markAllRead}>
-        علامت‌گذاری همه به‌عنوان خوانده‌شده
-      </button>
-    </Sheet>
-  );
-}
-
-/** Athlete picks a coach; a coach on the free plan can take at most 3 athletes. */
-export function ChooseCoachModal() {
-  const { db, user, chooseCoach } = useApp();
-  const coaches = db.users.filter((u) => u.role === 'coach');
-
-  return (
-    <Sheet title="انتخاب مربی">
-      <p>مربی‌ات را انتخاب کن تا برنامه تمرینی را برایت ثبت کند.</p>
-      {coaches.map((coach) => {
-        const count = db.users.filter((u) => u.coachId === coach.id).length;
-        const isCurrent = user.coachId === coach.id;
-        const isFull = coach.plan !== 'pro' && count >= FREE_ATHLETE_LIMIT && !isCurrent;
-        return (
-          <button key={coach.id} className={`select-user-row ${isCurrent ? 'current-user' : ''}`} disabled={isFull} onClick={() => chooseCoach(coach)}>
-            <span className="avatar">{coach.name[0]}</span>
-            <span>
-              <b>{coach.name}</b>
-              <small>{isFull ? 'ظرفیت این مربی تکمیل است' : `${faNum(count)} شاگرد · ${coach.goal}`}</small>
-            </span>
-            {isCurrent ? <Check size={18} /> : <ChevronLeft size={17} />}
-          </button>
-        );
-      })}
-    </Sheet>
-  );
-}
-
-export function UpgradeModal() {
-  const { upgradePlan } = useApp();
-  return (
-    <Sheet title="اشتراک مربی">
-      <div className="assign-program-preview">
-        <span className="summary-icon">
-          <Trophy />
-        </span>
-        <div>
-          <b>پلن رایگان: تا {faNum(FREE_ATHLETE_LIMIT)} شاگرد</b>
-          <small>برای شاگرد چهارم به بعد، اشتراک مربی لازم است.</small>
-        </div>
-      </div>
-      <p className="modal-description">
-        با اشتراک، تعداد شاگردان نامحدود می‌شود. پرداخت واقعی به درگاه و بک‌اند نیاز دارد؛ در این نسخه محلی، دکمه زیر فقط پلن را آزمایشی فعال می‌کند.
-      </p>
-      <button className="btn wide" onClick={upgradePlan}>
-        <Check size={17} /> فعال‌سازی اشتراک (نمایشی)
-      </button>
+      {notes.length > 0 && (
+        <button className="btn ghost wide" onClick={markNotificationsRead}>
+          {t('notif.markRead')}
+        </button>
+      )}
     </Sheet>
   );
 }

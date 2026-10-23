@@ -1,23 +1,28 @@
+// Page title (with today's date on home) and the trainer's "new program" shortcut.
 import { Plus } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
-import { formatToday } from '../../lib/format';
-import { getPageTitle } from './navItems';
+import { useApp } from '../../context/AppContext.jsx';
+import { formatToday } from '../../lib/format.js';
+import { ArrowBack } from '../ui/Arrow.jsx';
+import { getPageTitle } from './navItems.js';
 
-/** Page title (with today's date on the home page) and the coach's "new program" shortcut. */
 export default function PageHead() {
-  const { page, user, isCoach, openProgramForm } = useApp();
-  if (page === 'player') return null;
+  const { page, user, isTrainer, openGeneralEditor, go, t } = useApp();
+  if (page === 'player' || page === 'trainer') return null; // the trainer profile draws its own header
 
-  const canCreateProgram = isCoach && (page === 'home' || page === 'programs');
   return (
     <div className="page-head">
       <div>
-        <h1>{getPageTitle(page, user, isCoach)}</h1>
+        <h1>{getPageTitle(page, user, isTrainer, t)}</h1>
         {page === 'home' && <p className="page-date">{formatToday()}</p>}
       </div>
-      {canCreateProgram && (
-        <button className="btn" onClick={() => openProgramForm()}>
-          <Plus size={18} /> برنامه
+      {isTrainer && page === 'programs' && (
+        <button className="btn" onClick={() => openGeneralEditor()}>
+          <Plus size={18} /> {t('programs.newGeneral')}
+        </button>
+      )}
+      {page === 'settings' && (
+        <button className="btn ghost" onClick={() => go('home')}>
+          <ArrowBack size={16} /> {t('common.back')}
         </button>
       )}
     </div>

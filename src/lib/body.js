@@ -7,10 +7,10 @@ export function calcBmi(heightCm, weightKg) {
   return weightKg / (meters * meters);
 }
 
-/** WHO adult categories. `tone` maps to a colour class in the UI. */
+/** WHO adult categories. `labelKey` is an i18n key; `tone` maps to a colour class in the UI. */
 export function bmiCategory(bmi) {
-  if (bmi < 18.5) return { label: 'کم‌وزن', tone: 'low' };
-  if (bmi < 25) return { label: 'نرمال', tone: 'ok' };
-  if (bmi < 30) return { label: 'اضافه‌وزن', tone: 'warn' };
-  return { label: 'چاقی', tone: 'warn' };
+  if (bmi < 18.5) return { labelKey: 'bmi.low', tone: 'low' };
+  if (bmi < 25) return { labelKey: 'bmi.normal', tone: 'ok' };
+  if (bmi < 30) return { labelKey: 'bmi.over', tone: 'warn' };
+  return { labelKey: 'bmi.obese', tone: 'warn' };
 }

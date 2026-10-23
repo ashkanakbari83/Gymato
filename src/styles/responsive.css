@@ -28,7 +28,8 @@
 
   .dock {
     display: grid;
-    grid-template-columns: repeat(5,1fr);
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
     position: fixed;
     z-index: 35;
     inset-inline: 0;
@@ -70,7 +71,7 @@
   }
 
   .panel,
-  .card {
+.card {
     padding: 20px 18px;
   }
 
@@ -128,8 +129,7 @@
 
 @media (max-width: 380px) {
   .form-grid,
-  .log-fields,
-  .role-pick {
+.log-fields {
     grid-template-columns: 1fr;
   }
 
@@ -152,8 +152,8 @@
 
 @media (prefers-reduced-motion:reduce) {
   *,
-  *::before,
-  *::after {
+*::before,
+*::after {
     animation-duration: .01ms!important;
     transition-duration: .01ms!important;
   }

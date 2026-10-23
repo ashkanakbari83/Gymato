@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { ONBOARDING_KEY } from '../lib/constants';
+import { ONBOARDING_KEY } from '../lib/constants.js';
 
 const wasSeen = () => {
   try {
