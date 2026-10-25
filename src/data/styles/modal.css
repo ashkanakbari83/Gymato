@@ -1,0 +1,567 @@
+/* Modals, exercise planner, onboarding */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgba(8,9,11,.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-card {
+  width: min(100%,520px);
+  max-height: 88dvh;
+  overflow: auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  animation: sheetIn .22s ease-out;
+}
+
+.modal-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 8px;
+  padding-inline: 24px 12px;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+}
+
+.modal-head h2 {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--flow);
+}
+
+.modal-body>p,
+.modal-description {
+  color: var(--mu);
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.modal-body h3 {
+  font-size: 15px;
+}
+
+.modal-subtitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.modal-subtitle b {
+  font-size: 15px;
+}
+
+.modal-subtitle small,
+.modal-footnote {
+  font-size: 12px;
+  color: var(--mu);
+}
+
+.modal-footnote {
+  margin-top: 14px;
+  line-height: 1.8;
+}
+
+.select-user-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 0;
+  text-align: start;
+  border-bottom: 1px solid var(--line);
+}
+
+.select-user-row>span:nth-child(2) {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.select-user-row small {
+  font-size: 13px;
+  color: var(--mu);
+}
+
+.select-user-row.current-user {
+  color: var(--accent);
+}
+
+.assign-program-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--soft);
+}
+
+.assign-program-preview b,
+.assign-program-preview small {
+  display: block;
+}
+
+.assign-program-preview small {
+  font-size: 13px;
+  color: var(--mu);
+}
+
+.summary-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.finish-stats {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 8px;
+}
+
+.finish-stats>div {
+  background: var(--soft);
+  border-radius: 12px;
+  padding: 16px 6px;
+  text-align: center;
+}
+
+.finish-stats b {
+  display: block;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.finish-stats small {
+  font-size: 12px;
+  color: var(--mu);
+}
+
+.exercise-detail-art {
+  height: 190px;
+  border-radius: 14px;
+  background: var(--soft);
+  margin-bottom: 14px;
+  color: var(--ink);
+  display: grid;
+}
+
+.exercise-detail-art>* {
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+  object-fit: contain;
+}
+
+.exercise-detail-art>img[hidden] {
+  display: none;
+}
+
+.detail-title {
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.detail-title small {
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--mu);
+}
+
+.detail-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0;
+}
+
+.detail-chips span {
+  padding: 6px 12px;
+  border-radius: 99px;
+  background: var(--soft);
+  font-size: 13px;
+}
+
+.instruction-list {
+  padding-inline-start: 22px;
+  line-height: 2;
+  font-size: 14px;
+}
+
+.safety-note {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: color-mix(in srgb,var(--accent) 10%,transparent);
+  color: var(--accent);
+}
+
+.safety-note p {
+  margin: 0;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.notification-row {
+  display: flex;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.notification-row>div {
+  flex: 1;
+}
+
+.notification-row p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--mu);
+}
+
+.unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-top: 8px;
+}
+
+.exercise-picker {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: auto;
+  max-height: 340px;
+}
+
+.picker-item {
+  border-bottom: 1px solid var(--line);
+}
+
+.picker-item:last-child {
+  border: 0;
+}
+
+.picker-item.on {
+  background: color-mix(in srgb,var(--accent) 6%,transparent);
+}
+
+.picker-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  min-height: 48px;
+}
+
+.picker-row input {
+  accent-color: var(--accent);
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.picker-row>span {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.picker-row small {
+  font-size: 12px;
+  color: var(--mu);
+}
+
+.target-inputs {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px 16px;
+}
+
+.target-inputs label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--mu);
+}
+
+.target-inputs input {
+  width: 100%;
+  padding: 0 10px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  min-height: var(--control-h);
+  border-radius: var(--control-r);
+  font-size: var(--control-fs);
+}
+
+.deck-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.deck-chips small {
+  font-size: 13px;
+  color: var(--mu);
+}
+
+.deck-chips button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+}
+
+.modal-body.ob {
+  padding: 28px 24px 24px;
+}
+
+.ob-art {
+  height: 176px;
+  margin-bottom: 24px;
+  border-radius: 16px;
+  background: var(--soft);
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.ob-art>.stickman {
+  padding: 16px;
+}
+
+.ob-icon {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: grid;
+  place-items: center;
+}
+
+.ob h2 {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.ob-lead {
+  margin-top: 8px;
+  color: var(--mu);
+  line-height: 1.9;
+}
+
+.ob-points {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ob-points li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  line-height: 1.8;
+}
+
+.ob-points svg {
+  flex: none;
+  margin-top: 5px;
+  color: var(--accent);
+}
+
+.ob-roles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.ob-roles button {
+  padding: 20px 16px;
+  border-radius: 14px;
+  border: 1.5px solid var(--line);
+  text-align: start;
+}
+
+.ob-roles button:hover {
+  border-color: var(--accent);
+}
+
+.ob-roles b,
+.ob-roles small {
+  display: block;
+}
+
+.ob-roles b {
+  font-size: 17px;
+}
+
+.ob-roles small {
+  margin-top: 4px;
+  color: var(--mu);
+  font-size: 13px;
+}
+
+.ob-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.ob-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.ob-dots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 9px;
+  background: var(--line);
+}
+
+.ob-dots i.on {
+  width: 22px;
+  background: var(--accent);
+}
+
+.ob-skip {
+  min-height: 44px;
+  padding: 0 4px;
+  color: var(--mu);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Athlete body info (height / weight / BMI) */
+.body-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.body-info > div {
+  padding: 14px 8px;
+  border-radius: 12px;
+  background: var(--soft);
+  text-align: center;
+}
+
+.body-info small {
+  display: block;
+  font-size: 12px;
+  color: var(--mu);
+}
+
+.body-info b {
+  display: block;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.body-info i {
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  color: var(--mu);
+}
+
+.bmi-tag {
+  display: inline-block;
+  padding: 1px 10px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bmi-tag.ok {
+  background: color-mix(in srgb, var(--ok) 15%, transparent);
+  color: var(--ok);
+}
+
+.bmi-tag.warn {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+}
+
+.bmi-tag.low {
+  background: var(--line);
+  color: var(--ink);
+}
+
+/* Small form bits */
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.check-row input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+}
+
+/* The onboarding dialog lays itself out with its own margins. */
+.modal-body.ob {
+  gap: 0;
+}
+
+/* Rows with their own dividers must not be separated by the flow gap. */
+.modal-body > .list {
+  gap: 0;
+}
+
+/* Forms inside panels follow the same rhythm as sheets. */
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--flow);
+}

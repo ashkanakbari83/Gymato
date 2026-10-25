@@ -37,7 +37,6 @@
 }
 
 .btn {
-  min-height: 44px;
   padding: 0 18px;
   border-radius: 12px;
   display: inline-flex;
@@ -47,6 +46,7 @@
   font-weight: 700;
   font-size: 14px;
   white-space: nowrap;
+  min-height: var(--control-h);
 }
 
 .btn {
@@ -209,7 +209,6 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 18px;
   min-width: 0;
 }
 
@@ -223,13 +222,13 @@
 .field select,
 .field textarea {
   width: 100%;
-  min-height: 48px;
   padding: 0 14px;
-  border-radius: 12px;
   background: var(--card);
   border: 1.5px solid var(--line);
-  font-size: 16px;
   outline: 0;
+  min-height: var(--control-h);
+  border-radius: var(--control-r);
+  font-size: var(--control-fs);
 }
 
 .field input:focus,
@@ -241,7 +240,8 @@
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0 16px;
+  gap: var(--flow) 12px;
+  align-items: start;
 }
 
 .setting {
@@ -376,4 +376,28 @@
     opacity: 1;
     transform: none;
   }
+}
+
+/* Money input: the currency sits inside the field */
+.money {
+  position: relative;
+  display: block;
+}
+
+.money input {
+  padding-inline-end: 64px;
+  text-align: start;
+}
+
+.money em {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 14px;
+  display: flex;
+  align-items: center;
+  font-style: normal;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mu);
+  pointer-events: none;
 }

@@ -16,6 +16,7 @@ import { chatState, hasCustomAccess } from '../lib/access.js';
 import { PHASE } from '../lib/constants.js';
 import { formatDate, num } from '../lib/format.js';
 import { describeCoaching, daysLeft } from '../lib/marketplace.js';
+import { ReviewForm } from '../components/marketplace/ReviewSection.jsx';
 
 export default function CoachingModal({ requestId }) {
   const { db, user, isTrainer, t, openCheckout, openCustomEditor, withdrawRequest, startWorkout, closeModal } = useApp();
@@ -131,6 +132,12 @@ export default function CoachingModal({ requestId }) {
       {body()}
       <RequestSummary request={request} showBody={isTrainer} />
       <ChatPanel request={request} state={chatState(db, request)} />
+      {!isTrainer && ['active', 'expired'].includes(phase) && (
+        <section className="co-section">
+          <h3>{t('review.coachingTitle')}</h3>
+          <ReviewForm targetKind="coaching" targetId={request.id} />
+        </section>
+      )}
     </Sheet>
   );
 }

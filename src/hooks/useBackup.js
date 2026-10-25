@@ -1,6 +1,6 @@
 // JSON export / import and reset of the locally stored data.
 import { STATE_VERSION } from '../lib/constants.js';
-import { clearState } from '../lib/storage.js';
+import { clearState, withDefaults } from '../lib/storage.js';
 
 /** JSON export / import and reset of the locally stored data. */
 export function useBackup({ db, setDb, setWorkout, notify, t }) {
@@ -24,7 +24,7 @@ export function useBackup({ db, setDb, setWorkout, notify, t }) {
         const data = JSON.parse(reader.result);
         if (data.version !== STATE_VERSION || !data.users || !data.programs || !data.requests) throw new Error('invalid');
         if (!confirm(t('backup.confirmRestore'))) return;
-        setDb(data);
+        setDb(withDefaults(data));
         setWorkout(data.activeWorkout ?? null);
         notify(t('backup.restored'));
       } catch {

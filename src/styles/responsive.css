@@ -56,31 +56,153 @@
   }
 }
 
+/* Phones: a compact type and spacing scale (desktop sizes feel oversized on a small screen). */
 @media (max-width: 600px) {
+  :root {
+    --control-h: 42px;
+    --flow: 12px;
+    --flow-section: 8px;
+  }
+
+  body {
+    font-size: 14px;
+  }
+
+  .main {
+    padding-top: 18px;
+  }
+
+  .page-head {
+    margin-bottom: 16px;
+  }
+
   .page-head h1 {
-    font-size: 24px;
+    font-size: 21px;
   }
 
-  .metrics b {
-    font-size: 26px;
+  .page-date,
+  .muted,
+  .modal-footnote {
+    font-size: 12px;
   }
 
-  .today {
-    padding: 26px 22px;
-    border-radius: 18px;
-  }
-
-  .panel,
-.card {
-    padding: 20px 18px;
-  }
-
-  .modal-body {
-    padding: 20px;
+  .section-title h2 {
+    font-size: 15px;
   }
 
   .stack {
-    gap: 16px;
+    gap: 14px;
+  }
+
+  .panel,
+  .card {
+    padding: 16px;
+  }
+
+  .modal-body {
+    padding: 16px;
+  }
+
+  .modal-head {
+    padding-inline: 16px 8px;
+  }
+
+  .modal-head h2 {
+    font-size: 16px;
+  }
+
+  .today {
+    padding: 22px 18px;
+    border-radius: 18px;
+  }
+
+  .today h2 {
+    font-size: 22px;
+  }
+
+  .today p {
+    font-size: 13px;
+  }
+
+  .cta {
+    min-height: 50px;
+    font-size: 16px;
+  }
+
+  .metrics > div {
+    padding: 16px 6px;
+  }
+
+  .metrics b {
+    font-size: 22px;
+  }
+
+  .metrics small {
+    font-size: 12px;
+  }
+
+  .btn {
+    padding: 0 14px;
+    font-size: 13.5px;
+  }
+
+  .field > span {
+    font-size: 12px;
+  }
+
+  .row {
+    padding-block: 12px;
+  }
+
+  .row-main b {
+    font-size: 14px;
+  }
+
+  .row-main small {
+    font-size: 12px;
+  }
+
+  .listing h3,
+  .deck h3 {
+    font-size: 16px;
+  }
+
+  .listing-desc {
+    font-size: 13px;
+  }
+
+  .trainer-main b {
+    font-size: 15px;
+  }
+
+  .trainer-head h1 {
+    font-size: 20px;
+  }
+
+  .badge {
+    padding: 2px 8px;
+    font-size: 11px;
+  }
+
+  .ex-name b {
+    font-size: 14px;
+  }
+
+  .offer-card {
+    padding: 16px;
+  }
+
+  .offer-price b {
+    font-size: 22px;
+  }
+
+  .detail-list dt,
+  .detail-list dd,
+  .instruction-list,
+  .note-box,
+  .locked-note,
+  .demo-banner {
+    font-size: 13px;
   }
 
   .grid-cards {
@@ -94,6 +216,7 @@
 
   .setting {
     flex-wrap: wrap;
+    padding-block: 14px;
   }
 
   .setting .seg {

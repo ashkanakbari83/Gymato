@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import ExercisePlanner from '../components/exercise/ExercisePlanner.jsx';
 import { ChipSelect, Field, SelectField, Segmented, TextArea } from '../components/ui/Field.jsx';
+import MoneyField from '../components/ui/MoneyField.jsx';
 import Sheet from '../components/ui/Sheet.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import { getCustomProgram, getSubscription, subscriptionState } from '../lib/access.js';
@@ -54,7 +55,7 @@ export default function ProgramEditorModal({ kind, requestId, editing }) {
         <div className="field">
           <span>{t('editor.pricing')}</span>
           <Segmented value={pricing} onChange={changePricing} options={[{ value: 'free', label: t('common.free') }, { value: 'paid', label: t('editor.paid') }]} />
-          {pricing === 'paid' && <Field label={t('editor.price', { currency: t('common.currency') })} type="number" min="1" value={draft.price} onChange={set('price')} error={error('price')} />}
+          {pricing === 'paid' && <MoneyField label={t('editor.price')} value={draft.price} onChange={set('price')} error={error('price')} />}
           <small className="field-hint">{t('editor.noCoachingNote')}</small>
         </div>
       )}
@@ -64,8 +65,8 @@ export default function ProgramEditorModal({ kind, requestId, editing }) {
           <h3>{t('editor.offer')}</h3>
           <p className="muted">{t(termsLocked ? 'editor.offerLocked' : 'editor.offerHelp')}</p>
           <div className="form-grid">
-            <Field label={t('co.offerPrice')} type="number" min="1" disabled={termsLocked} value={draft.offer?.price} onChange={setOffer('price')} error={error('price')} />
-            <Field label={t('co.offerRenewal')} type="number" min="1" value={draft.offer?.renewalPrice} onChange={setOffer('renewalPrice')} error={error('renewalPrice')} hint={t('co.renewalHint')} />
+            <MoneyField label={t('co.offerPrice')} disabled={termsLocked} value={draft.offer?.price} onChange={setOffer('price')} error={error('price')} />
+            <MoneyField label={t('co.offerRenewal')} value={draft.offer?.renewalPrice} onChange={setOffer('renewalPrice')} error={error('renewalPrice')} hint={t('co.renewalHint')} />
             <Field label={t('co.offerDays')} type="number" min="7" max="365" disabled={termsLocked} value={draft.offer?.durationDays} onChange={setOffer('durationDays')} error={error('durationDays')} />
           </div>
         </section>

@@ -107,12 +107,12 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  height: 48px;
   padding: 0 14px;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 12px;
   color: var(--mu);
+  height: var(--control-h);
+  border-radius: var(--control-r);
 }
 
 .search-box:focus-within {
@@ -125,8 +125,8 @@
   border: 0;
   background: none;
   outline: 0;
-  font-size: 16px;
   color: var(--ink);
+  font-size: var(--control-fs);
 }
 
 .chips {

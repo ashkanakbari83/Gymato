@@ -1,5 +1,8 @@
 // A trainer's public profile: info, their published general programs, and the "Request Custom Coaching" action.
 import { MapPin } from 'lucide-react';
+import { useEffect } from 'react';
+import { ReviewList } from '../components/marketplace/ReviewSection.jsx';
+import { Stars } from '../components/marketplace/Stars.jsx';
 import { PhaseBadge } from '../components/marketplace/Badges.jsx';
 import ProgramListing from '../components/marketplace/ProgramListing.jsx';
 import Badge from '../components/ui/Badge.jsx';
@@ -10,11 +13,13 @@ import { useApp } from '../context/AppContext.jsx';
 import { hasGeneralAccess, isFreeProgram, requestPhase } from '../lib/access.js';
 import { REQUEST_STATUS } from '../lib/constants.js';
 import { formatPrice, num } from '../lib/format.js';
+import { getTrainerReviews, ratingOf } from '../lib/analytics.js';
 import { getPublishedPrograms } from '../lib/marketplace.js';
 
 export default function TrainerProfilePage() {
-  const { db, user, pageParams, go, openModal, lang, t } = useApp();
+  const { db, user, pageParams, go, openModal, lang, t, trackView } = useApp();
   const trainer = db.users.find((u) => u.id === pageParams.trainerId && u.role === 'coach');
+  useEffect(() => { if (trainer) trackView('trainer', trainer.id); }, [trainer?.id, user.id]); // eslint-disable-line react-hooks/exhaustive-deps
   if (!trainer) return <Empty icon={MapPin} title={t('trainer.notFound')} text="" actionLabel={t('common.back')} onAction={() => go('trainers')} />;
 
   const programs = getPublishedPrograms(db, trainer.id);
@@ -37,6 +42,7 @@ export default function TrainerProfilePage() {
             <MapPin size={14} /> {locationLabel(trainer.province, trainer.city, lang) || t('trainer.noLocation')}
             {trainer.experienceYears > 0 && ` · ${t('trainer.experience', { n: num(trainer.experienceYears) })}`}
           </p>
+          <Stars {...ratingOf(getTrainerReviews(db, trainer.id))} value={ratingOf(getTrainerReviews(db, trainer.id)).avg} />
           {trainer.bio && <p>{trainer.bio}</p>}
           <div className="listing-tags">
             {(trainer.specialties ?? []).map((id) => (
@@ -88,6 +94,11 @@ export default function TrainerProfilePage() {
         })}
       </div>
       {!programs.length && <Empty icon={MapPin} title={t('trainer.noProgramsTitle')} text={t('trainer.noProgramsText')} />}
+
+      <section className="panel">
+        <div className="section-title"><h2>{t('review.title')}</h2></div>
+        <ReviewList reviews={getTrainerReviews(db, trainer.id)} />
+      </section>
     </div>
   );
 }

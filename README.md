@@ -1,155 +1,134 @@
-# Gymato
+# جیماتو (Jimato / Gymato)
 
-**Gymato** is a workout planning and progress-tracking application designed for both personal trainers and athletes. Trainers can create workout programs, manage athletes, and monitor their progress, while athletes can follow assigned routines, track their workouts, and review their fitness progress.
+بازار مربی‌ها برای تمرین: ورزشکار می‌تواند **برنامه آماده** (رایگان یا پولی) بگیرد، یا با یک مربی **به‌صورت شخصی** کار کند. این دو، دو سرویس جدا هستند.
 
-> **Current Status:** Gymato is a local-first demo application. All application data is stored in the browser's `localStorage`. Real authentication, server-side user accounts, and cross-device synchronization have not yet been implemented.
+> وضعیت فعلی: نمونه **local-first**. همه داده‌ها در `localStorage` مرورگر ذخیره می‌شوند. ورود واقعی، سرور، پرداخت واقعی و گفتگوی زنده وجود ندارد؛ پرداخت، گفتگو و اعلان‌ها شبیه‌سازی محلی هستند.
 
-## Features
+---
 
-### 🏋️ Trainer Dashboard
+## دو سرویس
 
-- **Athlete Management:** Add athletes using unique IDs (e.g., `JM-4F2A91`), view their BMI, track program completion, and access individual athlete details.
-- **Workout Program Builder:** Create custom workout programs from the exercise library, configuring sets, reps or duration, and rest periods for each exercise.
-- **Program Assignment:** Assign reusable program templates to athletes, with each athlete receiving an independent copy, or create a custom program directly for an individual athlete.
-- **Exercise Decks:** Quickly add predefined collections of exercises to a workout program, making it easier to get beginners started.
-- **Subscription Model:** Supports up to three athletes on the free tier. Additional athletes require a subscription, which is currently a demo feature without real payment processing.
+| | برنامه عمومی (General Program) | مربی‌گری اختصاصی (Custom Coaching) |
+|---|---|---|
+| ساخته‌شده توسط | مربی، برای همه | مربی، برای **یک** ورزشکار |
+| قیمت | تعیین‌شده توسط مربی؛ رایگان یا پولی | پیشنهاد مربی بعد از بررسی درخواست؛ قیمت تمدید جدا |
+| شامل | حرکات و راهنمای اجرا | برنامه شخصی، گفتگو با مربی، بررسی پیشرفت، اصلاح برنامه تا پایان دوره |
+| دسترسی | رایگان: بلافاصله. پولی: بعد از **تأیید پرداخت** | فقط بعد از تأیید پرداخت و تا پایان اشتراک |
+| مربی‌گری شخصی | ندارد | دارد |
 
-### 💪 Athlete Experience
+خرید یا برداشتن یک برنامه عمومی هرگز رابطه مربی‌گری نمی‌سازد.
 
-- **Trainer Connection:** Select a trainer or share a unique athlete ID with a trainer to enable assignment workflows.
-- **Interactive Workout Player:** Follow guided workout sessions featuring exercise animations, descriptions, step-by-step instructions, timed exercises, rest timers, and previous/next exercise navigation.
-- **Progress Tracking:** Monitor completed sessions, active days, cumulative repetitions per exercise, personalized milestones (e.g., 1,000 push-ups), and estimated calorie expenditure.
-- **Exercise Library:** Browse and search exercises by category, with support for favorites.
+---
 
-### ⚙️ General Features
+## امکانات
 
-- **Persian Calendar:** Displays the current date using the Solar Hijri calendar.
-- **Onboarding:** Provides a first-time setup guide that can be reopened from Settings.
-- **Theme Support:** Choose Light, Dark, or System theme preferences.
-- **Bilingual Interface:** Switch between Persian and English, with automatic layout direction changes (RTL/LTR).
-- **Data Backup and Restore:** Export and restore application data using JSON files.
-- **Responsive Design:** Uses a top tab navigation on desktop and a bottom navigation bar on mobile devices.
+### ورزشکار
+- **مربی‌ها:** جست‌وجو و فیلتر بر اساس استان، شهر، تخصص و «ارائه مربی‌گری اختصاصی».
+- **پروفایل مربی:** اطلاعات مربی، برنامه‌های عمومی منتشرشده (قیمت و جزئیات قبل از دسترسی)، و دکمه «درخواست مربی‌گری اختصاصی».
+- **فرم درخواست:** از پروفایل پر می‌شود و قابل ویرایش است؛ فقط نام، هدف، سطح و روزهای تمرین الزامی است؛ عکس تمام‌قد اختیاری است.
+- **برنامه‌های من:** مربی‌گری فعال، منتظر پرداخت، درخواست‌های در حال بررسی، برنامه‌های خریداری‌شده و رایگان، و اشتراک‌های منقضی‌شده. هر مورد نوع (General Program / Custom Coaching) و وضعیتش را نشان می‌دهد؛ مورد قفل هرگز قابل اجرا نشان داده نمی‌شود.
+- **لایک و نظر:** برنامه‌های عمومی را لایک می‌کند و بعد از استفاده واقعی (خرید، افزودن برنامه رایگان یا مربی‌گری پرداخت‌شده) امتیاز و نظر می‌دهد.
+- **تمرین:** انیمیشن حرکت، توضیح، تایمر، ست‌ها و استراحت؛ کل صفحه روی گوشی بدون اسکرول جا می‌شود. کالری تخمینی و آمار پیشرفت.
 
-## Calculations
+### مربی
+- **برنامه‌های عمومی:** ساخت، پیش‌نویس، انتشار / لغو انتشار، ویرایش، حذف (فقط اگر کسی از آن استفاده نمی‌کند)، قیمت یا رایگان، و فهرست خریداران (که مشتری مربی‌گری نیستند).
+- **مشتریان:** درخواست‌ها، پذیرفته‌شده‌ها، منتظر پرداخت، اشتراک‌های فعال، فرصت‌های تمدید و منقضی‌ها.
+- **جزئیات هر مشتری:** اطلاعات درخواست و BMI، پذیرش (با قیمت، قیمت تمدید و مدت) یا رد، گفتگو، ساخت و ویرایش برنامه اختصاصی، بازبینی تمرین‌های انجام‌شده.
+- **آمار و درآمد:** بازدید پروفایل و برنامه‌ها، لایک‌ها، امتیاز و نظرات، درآمد کل / ۳۰ روز اخیر / به تفکیک منبع، نمودار هفتگی، عملکرد هر برنامه و آخرین تراکنش‌ها (درآمد ناخالص و پرداخت‌ها آزمایشی‌اند).
+- **دک‌ها:** مجموعه حرکات آماده برای ساخت سریع‌تر برنامه.
 
-### Calorie Estimation
+### عمومی
+- فارسی و انگلیسی (جهت RTL/LTR)، پوسته روشن/تیره/سیستم، ریسپانسیو (نوار پایین در موبایل).
+- راهنمای شروع در اولین ورود؛ پشتیبان‌گیری JSON؛ تاریخ روز در صفحه اصلی.
 
-Each exercise in `src/data/exercises.js` defines one of two calorie estimation values:
+جزئیات مدل داده، چرخه‌های وضعیت و قوانین دسترسی: [`docs/marketplace.md`](docs/marketplace.md).
 
-- `kcalPerRep` — Estimated calories burned per repetition (e.g., push-ups: `0.45`).
-- `kcalPerMin` — Estimated calories burned per minute for timed exercises (e.g., planks: `4`).
+---
 
-Calories are estimated per set using the following formulas:
+## پیش‌نیازها
 
-- **Repetition-based exercises:** `repetitions × kcalPerRep`
-- **Timed exercises:** `(duration in seconds ÷ 60) × kcalPerMin`
+- **Node.js** `20.19` یا جدیدتر، یا `22.12` به بالا (Vite 8)
+- **npm**
 
-These values are approximate averages and do not account for individual differences in body weight, exercise intensity, or technique. The interface therefore displays calorie estimates with an approximation symbol (`≈`).
+## نصب و اجرا
 
-### Body Mass Index (BMI)
+```bash
+git clone https://github.com/<username>/jimato.git
+cd jimato
+npm install
+npm run dev
+```
 
-BMI is calculated using the standard formula:
-
-`BMI = weight (kg) ÷ height (m)²`
-
-The application uses commonly recognized WHO BMI categories:
-
-| BMI | Category |
+| دستور | کار |
 |---|---|
-| Below 18.5 | Underweight |
-| 18.5–24.9 | Normal weight |
-| 25.0–29.9 | Overweight |
-| 30.0 and above | Obesity |
+| `npm run dev` | سرور توسعه (روی همه رابط‌های شبکه) |
+| `npm run build` | ساخت نسخه نهایی در `dist/` |
+| `npm run preview` | اجرای نسخه ساخته‌شده |
+| `npm test` | تست‌های منطق دامنه، آمار/درآمد و ترجمه‌ها (`node --test`، بدون وابستگی اضافه) |
 
-BMI is a general screening indicator and does not directly measure body fat or body composition. Gymato uses it for general informational purposes.
+---
 
-## Exercise Library and Animations
+## حساب‌های نمونه
 
-Gymato includes **16 predefined exercises**:
+با منوی حساب (دایره بالا-گوشه) بین حساب‌ها جابه‌جا شو؛ برای دیدن هر دو طرفِ یک جریان لازم است.
 
-- Push-ups
-- Squats
-- Plank
-- Lunges
-- Pull-ups
-- Dumbbell Bench Press
-- Biceps Curls
-- Deadlifts
-- Burpees
-- Jumping Jacks
-- Treadmill
-- Hamstring Stretch
-- Crunches
-- Leg Raises
-- Russian Twists
-- Mountain Climbers
+| نقش | نام | شهر | توضیح |
+|---|---|---|---|
+| مربی | عادل | تهران | برنامه «سیکس پک در ۳۰ روز» (پولی)، مربی‌گری اختصاصی |
+| مربی | کیان | اصفهان | «تمرین تمام بدن مبتدی» (رایگان)، مربی‌گری اختصاصی |
+| مربی | مریم | شیراز | «تقویت عضلات ران» (پولی)، فقط برنامه آماده |
+| ورزشکار | اشکان، بردیا، محمد | تهران، کرج، مشهد | پیش‌فرض: اشکان |
 
-Each exercise includes Persian and English names, targeted muscle groups, equipment requirements, difficulty level, a description, step-by-step instructions, safety tips, and default sets, repetitions or duration, and rest periods.
+### یک مسیر کامل برای امتحان
+1. اشکان → **مربی‌ها** → عادل → «درخواست مربی‌گری اختصاصی» → ارسال.
+2. حساب عادل → **مشتریان** → درخواست → قیمت (مثلاً ۸۰۰٬۰۰۰)، قیمت تمدید (۵۰۰٬۰۰۰)، ۳۰ روز → **پذیرش**.
+3. گفتگو باز می‌شود؛ بعد «ساخت برنامه اختصاصی» → حرکات را انتخاب کن → **ارسال پیشنهاد**.
+4. حساب اشکان → **برنامه‌های من** → «منتظر پرداخت» → پرداخت آزمایشی → تأیید.
+5. اشکان تمرین می‌کند؛ حساب عادل پیشرفت را می‌بیند و برنامه را تغییر می‌دهد. پایان دوره → «تمدید» با قیمت تمدید.
 
-### Exercise Animations
+---
 
-Each exercise has two key poses defined in `src/data/poses.js`. An animated SVG stick figure transitions between these poses to demonstrate the movement.
+## ساختار پروژه
 
-If a GIF animation is available for an exercise, it automatically replaces the stick-figure animation.
-
-To add a GIF, place it in the following location:
-
-```text
-public/exercises/<exercise-id>.gif
+```
+src/
+  main.jsx, App.jsx        ورود و شِل برنامه
+  context/AppContext.jsx   وضعیت، ناوبری، مودال و کنش‌ها (useApp())
+  hooks/                   کنش‌های هر حوزه: use{Catalog,Coaching,Payment,Workout,Account}Actions، useBackup، ...
+  lib/
+    constants.js           واژگان وضعیت‌ها و گزینه‌ها
+    transitions.js         جدول انتقال وضعیت‌ها
+    access.js              قوانین دسترسی، فاز، سیاست گفتگو
+    domain/                توابع خالص: catalog, coaching, payments, engagement (بدون React)
+    marketplace.js         selectorهای بازار؛ analytics.js: آمار و درآمد مربی؛ selectors.js: آمار تمرین
+    storage.js             تنها جای کار با localStorage (+ مهاجرت v4 → v5)
+    __tests__/             تست‌های جریان‌ها و ترجمه
+  data/                    حرکات، کاربران نمونه، مکان‌ها، مختصات استیکمن، داده اولیه
+  i18n/                    messages.js (هر کلید: [فارسی، انگلیسی]) و translate()
+  components/              layout, ui, exercise, marketplace, coaching, athlete
+  pages/                   صفحه‌ها (نقش‌محور: Athlete*/Trainer*)
+  modals/                  registry.js (نوع مودال ← کامپوننت)
+  player/                  صفحه تمرین
+  styles/                  tokens, layout, ui, pages, marketplace, modal, stickman, player, responsive
+docs/marketplace.md        طراحی بازار مربی‌ها
 ```
 
-For example:
+### الگوهای کار
+- **داده تغییر نمی‌کند مگر از توابع دامنه:** `dispatch(fn, ...args)` تابع خالص را اجرا و نتیجه را ذخیره می‌کند.
+- **مودال:** `openModal({ type: 'coaching', requestId })`؛ مودال جدید را در `modals/registry.js` ثبت کن.
+- **متن:** کلید جدید را با هر دو زبان در `i18n/messages.js` اضافه کن؛ `npm test` اگر کلیدی ناقص باشد خطا می‌دهد.
+- **ذخیره‌سازی:** کلید `jimato:state:v5` در `lib/constants.js`؛ با هر تغییر ناسازگار ساختار بالا ببر و مهاجرت بنویس.
 
-```text
-public/exercises/pushup.gif
-```
+---
 
-Create the `public/exercises/` directory if it does not exist. The filename must exactly match the exercise's ID.
+## محاسبات و داده
 
-## Roadmap
+- **کالری:** هر حرکت `kcalPerRep` یا `kcalPerMin` دارد (`data/exercises.js`)؛ تخمینی است و با «≈» نشان داده می‌شود.
+- **BMI:** وزن ÷ قد² (متر)، دسته‌بندی WHO؛ فقط برای نمای کلی.
+- **GIF حرکات:** فایل `public/exercises/<exercise-id>.gif` در صورت وجود جای استیکمن متحرک را می‌گیرد.
 
-Potential future improvements include:
+## محدودیت‌ها
+`localStorage` مرز امنیتی نیست و پرداخت/گفتگو/اعلان واقعی نیستند؛ برای نسخه واقعی بک‌اند لازم است. فهرست کامل در [`docs/marketplace.md`](docs/marketplace.md#۷-محدودیت‌ها-چون-برنامه-local-first-است).
 
-- Real user registration and authentication backed by a server.
-- Cloud database integration and cross-device data synchronization.
-- Real subscription billing for trainers.
-- Multi-session weekly workout plans. Currently, all exercises in a program belong to a single workout session.
-- Calendar-based workout history, including date viewing and editing.
-- Unit tests for calculation logic and data selectors in `src/lib/`.
-- Real GIF animations for all exercises.
-
-## Contributing
-
-Contributions are welcome.
-
-1. Create a feature branch from `main`:
-
-   ```bash
-   git checkout main
-   git pull origin main
-   git checkout -b feature/your-feature-name
-   ```
-
-2. Implement your changes and verify that the production build completes successfully:
-
-   ```bash
-   npm run build
-   ```
-
-3. Commit your changes and push the branch:
-
-   ```bash
-   git add .
-   git commit -m "Add your feature description"
-   git push -u origin feature/your-feature-name
-   ```
-
-4. Open a Pull Request against `main`, including a brief description of the changes and instructions for testing them.
-
-**Code guidelines:**
-
-- Keep components small and focused on a single responsibility.
-- Place data-related logic in `src/lib/` or `src/hooks/` rather than embedding it directly in JSX.
-- Follow the existing project structure and coding conventions.
-
-
+## مجوز
+TBD

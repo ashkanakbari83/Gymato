@@ -38,6 +38,7 @@ export default function TrainerProgramsPage() {
             <ProgramListing
               key={program.id}
               program={program}
+              owner
               status={<Badge tone={published ? 'ok' : 'warn'}>{t(`programStatus.${program.status}`)}</Badge>}
               onOpen={() => openGeneralEditor(program)}
             >

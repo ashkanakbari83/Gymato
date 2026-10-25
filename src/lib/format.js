@@ -19,6 +19,15 @@ export const decimal = (value, digits = 1) => {
   return language === 'fa' ? num(text.replace('.', '٫')) : text;
 };
 
+const ARABIC_DIGITS = '٠١٢٣٤٥٦٧٨٩';
+
+/** "۱٬۲۳۴ تومان" / "1,234" -> "1234". Accepts Persian, Arabic and Latin digits and drops everything else. */
+export const parseMoney = (text) =>
+  String(text)
+    .replace(/[۰-۹]/g, (d) => PERSIAN_DIGITS.indexOf(d))
+    .replace(/[٠-٩]/g, (d) => ARABIC_DIGITS.indexOf(d))
+    .replace(/\D/g, '');
+
 /** Price in the app currency; 0 is shown as "free". `t` is the translate function. */
 export const formatPrice = (amount, t) =>
   amount === 0 ? t('common.free') : `${Number(amount).toLocaleString(locale())} ${t('common.currency')}`;

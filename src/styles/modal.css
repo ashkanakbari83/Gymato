@@ -41,6 +41,9 @@
 
 .modal-body {
   padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--flow);
 }
 
 .modal-body>p,
@@ -48,23 +51,16 @@
   color: var(--mu);
   font-size: 14px;
   line-height: 1.9;
-  margin-bottom: 18px;
-}
-
-.modal-body .wide {
-  margin-top: 8px;
 }
 
 .modal-body h3 {
   font-size: 15px;
-  margin: 14px 0 6px;
 }
 
 .modal-subtitle {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin: 12px 0 12px;
 }
 
 .modal-subtitle b {
@@ -114,7 +110,6 @@
   padding: 16px;
   border-radius: 12px;
   background: var(--soft);
-  margin-bottom: 20px;
 }
 
 .assign-program-preview b,
@@ -142,7 +137,6 @@
   display: grid;
   grid-template-columns: repeat(3,1fr);
   gap: 8px;
-  margin: 20px 0;
 }
 
 .finish-stats>div {
@@ -219,7 +213,6 @@
   display: flex;
   gap: 10px;
   align-items: flex-start;
-  margin: 20px 0;
   padding: 14px 16px;
   border-radius: 12px;
   background: color-mix(in srgb,var(--accent) 10%,transparent);
@@ -263,7 +256,6 @@
   border-radius: 12px;
   overflow: auto;
   max-height: 340px;
-  margin-bottom: 20px;
 }
 
 .picker-item {
@@ -322,12 +314,12 @@
 
 .target-inputs input {
   width: 100%;
-  min-height: 40px;
   padding: 0 10px;
-  border-radius: 10px;
   background: var(--card);
   border: 1.5px solid var(--line);
-  font-size: 16px;
+  min-height: var(--control-h);
+  border-radius: var(--control-r);
+  font-size: var(--control-fs);
 }
 
 .deck-chips {
@@ -335,7 +327,6 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  margin: 0 0 20px;
 }
 
 .deck-chips small {
@@ -490,7 +481,6 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  margin-bottom: 20px;
 }
 
 .body-info > div {
@@ -549,7 +539,6 @@
   align-items: center;
   gap: 12px;
   min-height: 44px;
-  margin-bottom: 12px;
   font-size: 14px;
   cursor: pointer;
 }
@@ -560,6 +549,19 @@
   accent-color: var(--accent);
 }
 
-.modal-description.sep {
-  margin: 20px 0 8px;
+/* The onboarding dialog lays itself out with its own margins. */
+.modal-body.ob {
+  gap: 0;
+}
+
+/* Rows with their own dividers must not be separated by the flow gap. */
+.modal-body > .list {
+  gap: 0;
+}
+
+/* Forms inside panels follow the same rhythm as sheets. */
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--flow);
 }

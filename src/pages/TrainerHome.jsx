@@ -5,7 +5,9 @@ import Empty from '../components/ui/Empty.jsx';
 import Metrics from '../components/ui/Metrics.jsx';
 import { ArrowForward } from '../components/ui/Arrow.jsx';
 import { useApp } from '../context/AppContext.jsx';
+import { getIncome } from '../lib/analytics.js';
 import { PROGRAM_STATUS } from '../lib/constants.js';
+import { formatPrice } from '../lib/format.js';
 import { getOwnPrograms, getTrainerClients } from '../lib/marketplace.js';
 
 export default function TrainerHome() {
@@ -13,6 +15,7 @@ export default function TrainerHome() {
   const clients = getTrainerClients(db, user.id);
   const published = getOwnPrograms(db, user.id).filter((p) => p.status === PROGRAM_STATUS.PUBLISHED).length;
 
+  const income = getIncome(db, user.id);
   const sections = [
     ['home.sec.pending', clients.pending],
     ['home.sec.awaitingPayment', clients.awaitingPayment],
@@ -29,6 +32,11 @@ export default function TrainerHome() {
           { value: published, label: t('home.m.programs') },
         ]}
       />
+
+      <button className="attention" onClick={() => setPage('insights')}>
+        <span>{t('insights.home', { amount: formatPrice(income.last30, t) })}</span>
+        <ArrowForward size={16} />
+      </button>
 
       {sections.map(([title, items]) => (
         <section className="panel" key={title}>

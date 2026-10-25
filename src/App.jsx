@@ -9,6 +9,7 @@ import ModalHost from './modals/ModalHost.jsx';
 import ClientsPage from './pages/ClientsPage.jsx';
 import ExercisesPage from './pages/ExercisesPage.jsx';
 import HomePage from './pages/HomePage.jsx';
+import InsightsPage from './pages/InsightsPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import ProgramsPage from './pages/ProgramsPage.jsx';
 import ProgressPage from './pages/ProgressPage.jsx';
@@ -23,6 +24,7 @@ const PAGES = {
   programs: ProgramsPage,
   progress: ProgressPage,
   clients: ClientsPage,
+  insights: InsightsPage,
   trainers: TrainersPage,
   trainer: TrainerProfilePage,
   profile: ProfilePage,

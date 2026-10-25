@@ -1,5 +1,5 @@
 // Navigation: the trainer and the athlete see different tabs. Labels come from `nav.<id>` in the dictionaries.
-import { CalendarDays, ChartNoAxesCombined, Dumbbell, LayoutDashboard, Search, Users } from 'lucide-react';
+import { CalendarDays, ChartNoAxesCombined, Dumbbell, LayoutDashboard, Search, TrendingUp, Users } from 'lucide-react';
 
 const ITEMS = {
   home: LayoutDashboard,
@@ -8,9 +8,10 @@ const ITEMS = {
   programs: CalendarDays,
   exercises: Dumbbell,
   progress: ChartNoAxesCombined,
+  insights: TrendingUp,
 };
 
-const TRAINER_TABS = ['home', 'clients', 'programs', 'exercises'];
+const TRAINER_TABS = ['home', 'clients', 'programs', 'insights', 'exercises'];
 const ATHLETE_TABS = ['home', 'exercises', 'trainers', 'programs', 'progress'];
 
 export const getNavItems = (isTrainer) => (isTrainer ? TRAINER_TABS : ATHLETE_TABS).map((id) => ({ id, icon: ITEMS[id] }));

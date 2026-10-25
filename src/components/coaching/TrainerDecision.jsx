@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext.jsx';
 import { Field } from '../ui/Field.jsx';
+import MoneyField from '../ui/MoneyField.jsx';
 
 export default function TrainerDecision({ request }) {
   const { accept, reject, t } = useApp();
@@ -25,8 +26,8 @@ export default function TrainerDecision({ request }) {
       <h3>{t('co.decision')}</h3>
       <p className="muted">{t('co.decisionHelp')}</p>
       <div className="form-grid">
-        <Field label={t('co.offerPrice')} type="number" min="1" value={offer.price} onChange={set('price')} error={error('price')} />
-        <Field label={t('co.offerRenewal')} type="number" min="1" value={offer.renewalPrice} onChange={set('renewalPrice')} error={error('renewalPrice')} hint={t('co.renewalHint')} />
+        <MoneyField label={t('co.offerPrice')} value={offer.price} onChange={set('price')} error={error('price')} />
+        <MoneyField label={t('co.offerRenewal')} value={offer.renewalPrice} onChange={set('renewalPrice')} error={error('renewalPrice')} hint={t('co.renewalHint')} />
         <Field label={t('co.offerDays')} type="number" min="7" max="365" value={offer.durationDays} onChange={set('durationDays')} error={error('durationDays')} />
       </div>
       <button className="btn wide" onClick={submitAccept}>

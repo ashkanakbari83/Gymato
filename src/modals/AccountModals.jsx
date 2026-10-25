@@ -29,6 +29,7 @@ export function AccountMenuModal() {
       </button>
 
       <p className="modal-description sep">{t('acct.switchDemo')}</p>
+      <div className="list">
       {db.users.map((u) => (
         <button key={u.id} className={`select-user-row ${u.id === user.id ? 'current-user' : ''}`} onClick={() => { changeUser(u.id); closeModal(); }}>
           <span className="avatar">{u.name[0]}</span>
@@ -39,6 +40,7 @@ export function AccountMenuModal() {
           {u.id === user.id ? <Check size={18} /> : <ArrowForward size={17} />}
         </button>
       ))}
+      </div>
       <button className="btn ghost wide" onClick={() => openModal({ type: 'signup' })}>
         <Plus size={16} /> {t('acct.newAccount')}
       </button>
@@ -85,7 +87,8 @@ export function NotificationsModal() {
   return (
     <Sheet title={t('nav.notifications')}>
       {notes.length ? (
-        notes.map((n) => (
+        <div className="list">
+        {notes.map((n) => (
           <button className="notification-row" key={n.id} onClick={() => openTarget(n.target)}>
             <span className="summary-icon">
               <Bell size={17} />
@@ -97,7 +100,8 @@ export function NotificationsModal() {
             </div>
             {!n.read && <span className="unread-dot" />}
           </button>
-        ))
+        ))}
+        </div>
       ) : (
         <Empty icon={Bell} title={t('notif.emptyTitle')} text={t('notif.emptyText')} />
       )}

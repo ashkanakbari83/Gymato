@@ -56,7 +56,7 @@ export default function ProfilePage() {
         </div>
       </section>
 
-      <section className="panel">
+      <section className="panel form-stack">
         <Field label={t('cr.name')} value={form.name} onChange={set('name')} />
         <div className="form-grid">
           <LocationFields province={form.province} city={form.city} emptyLabel={t('common.notSet')} onChange={(loc) => setForm((f) => ({ ...f, ...loc }))} />

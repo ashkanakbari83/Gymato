@@ -112,6 +112,9 @@ export const createSeedState = () => ({
   messages: [],
   payments: [], // simulated payments (demo: true)
   subscriptions: [], // coaching subscriptions
+  events: [], // views of trainer profiles and programs (one per athlete per day)
+  likes: [], // { athleteId, programId, trainerId }
+  reviews: [], // ratings + comments on programs and on coaching
   sessions: [], // finished workouts
   notifications: [],
   favorites: [],

@@ -5,6 +5,7 @@ import { useAccountActions } from '../hooks/useAccountActions.js';
 import { useBackup } from '../hooks/useBackup.js';
 import { useCatalogActions } from '../hooks/useCatalogActions.js';
 import { useCoachingActions } from '../hooks/useCoachingActions.js';
+import { useEngagementActions } from '../hooks/useEngagementActions.js';
 import { useOnboarding } from '../hooks/useOnboarding.js';
 import { usePaymentActions } from '../hooks/usePaymentActions.js';
 import { useTheme } from '../hooks/useTheme.js';
@@ -76,13 +77,14 @@ export function AppProvider({ children, initial = {} }) {
   const base = { db, setDb, update, user, isTrainer: user.role === 'coach', isCoach: user.role === 'coach', page, setPage: go, go, pageParams, modal, openModal, closeModal, draft, setDraft, workout, setWorkout, toast, notify, onboarding, changeUser, t, lang, dispatch };
   const catalog = useCatalogActions(base);
   const coaching = useCoachingActions(base);
+  const engagement = useEngagementActions(base);
   const payments = usePaymentActions(base);
   const workouts = useWorkoutActions(base);
   const accounts = useAccountActions(base);
   const backup = useBackup(base);
 
   const value = useMemo(
-    () => ({ ...base, ...catalog, ...coaching, ...payments, ...workouts, ...accounts, ...backup }),
+    () => ({ ...base, ...catalog, ...coaching, ...engagement, ...payments, ...workouts, ...accounts, ...backup }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [db, page, pageParams, modal, draft, workout, toast, onboarding.open, lang],
   );

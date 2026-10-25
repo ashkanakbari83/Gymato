@@ -1,5 +1,9 @@
 // A general program: details and price up front; instructions only after access (free or confirmed purchase).
 import { Check, Lock, X } from 'lucide-react';
+import { useEffect } from 'react';
+import LikeButton from '../components/marketplace/LikeButton.jsx';
+import { ReviewForm, ReviewList } from '../components/marketplace/ReviewSection.jsx';
+import { Stars } from '../components/marketplace/Stars.jsx';
 import { PriceBadge, TypeBadge } from '../components/marketplace/Badges.jsx';
 import ProgramFacts from '../components/marketplace/ProgramFacts.jsx';
 import SessionList from '../components/marketplace/SessionList.jsx';
@@ -7,11 +11,13 @@ import Badge from '../components/ui/Badge.jsx';
 import Sheet from '../components/ui/Sheet.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import { hasGeneralAccess, isFreeProgram } from '../lib/access.js';
+import { getProgramReviews, ratingOf } from '../lib/analytics.js';
 import { formatPrice, num } from '../lib/format.js';
 
 export default function GeneralProgramModal({ programId }) {
-  const { db, user, t, openCheckout, claimFree, startWorkout, closeModal } = useApp();
+  const { db, user, t, openCheckout, claimFree, startWorkout, closeModal, trackView } = useApp();
   const program = db.programs.find((p) => p.id === programId);
+  useEffect(() => { if (program) trackView('program', programId); }, [programId, user.id]); // eslint-disable-line react-hooks/exhaustive-deps
   if (!program) return null;
 
   const trainer = db.users.find((u) => u.id === program.ownerId);
@@ -28,6 +34,10 @@ export default function GeneralProgramModal({ programId }) {
         {program.status !== 'published' && <Badge tone="warn">{t('programStatus.draft')}</Badge>}
       </div>
       <p className="muted">{t('gp.by', { name: trainer.name })}</p>
+      <div className="stats-line">
+        <LikeButton programId={program.id} />
+        <Stars {...ratingOf(getProgramReviews(db, program.id))} value={ratingOf(getProgramReviews(db, program.id)).avg} />
+      </div>
       <ProgramFacts program={program} />
       <p>{program.description}</p>
       <div className="listing-tags">{program.goals.map((goal) => <Badge key={goal}>{t(`focus.${goal}`)}</Badge>)}</div>
@@ -62,6 +72,11 @@ export default function GeneralProgramModal({ programId }) {
           )}
         </section>
       )}
+      <section className="co-section">
+        <h3>{t('review.title')}</h3>
+        <ReviewList reviews={getProgramReviews(db, program.id)} />
+        {isAthlete && <ReviewForm targetKind="program" targetId={program.id} />}
+      </section>
     </Sheet>
   );
 }

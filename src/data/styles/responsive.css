@@ -1,0 +1,283 @@
+/* Breakpoints */
+
+@media (min-width: 700px) {
+  .cta {
+    width: auto;
+    padding-inline: 48px;
+  }
+}
+
+@media (max-width: 900px) {
+  .tabs {
+    display: none;
+  }
+
+  .topbar-in {
+    height: 56px;
+    padding-inline: 16px;
+  }
+
+  .main {
+    padding: 24px 16px calc(100px + env(safe-area-inset-bottom));
+  }
+
+  .chips {
+    margin-inline: -16px;
+    padding-inline: 16px;
+  }
+
+  .dock {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    position: fixed;
+    z-index: 35;
+    inset-inline: 0;
+    bottom: 0;
+    background: var(--card);
+    border-top: 1px solid var(--line);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+  }
+
+  .dock button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: 52px;
+    color: var(--mu);
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .dock .active {
+    color: var(--accent);
+  }
+}
+
+/* Phones: a compact type and spacing scale (desktop sizes feel oversized on a small screen). */
+@media (max-width: 600px) {
+  :root {
+    --control-h: 42px;
+    --flow: 12px;
+    --flow-section: 8px;
+  }
+
+  body {
+    font-size: 14px;
+  }
+
+  .main {
+    padding-top: 18px;
+  }
+
+  .page-head {
+    margin-bottom: 16px;
+  }
+
+  .page-head h1 {
+    font-size: 21px;
+  }
+
+  .page-date,
+  .muted,
+  .modal-footnote {
+    font-size: 12px;
+  }
+
+  .section-title h2 {
+    font-size: 15px;
+  }
+
+  .stack {
+    gap: 14px;
+  }
+
+  .panel,
+  .card {
+    padding: 16px;
+  }
+
+  .modal-body {
+    padding: 16px;
+  }
+
+  .modal-head {
+    padding-inline: 16px 8px;
+  }
+
+  .modal-head h2 {
+    font-size: 16px;
+  }
+
+  .today {
+    padding: 22px 18px;
+    border-radius: 18px;
+  }
+
+  .today h2 {
+    font-size: 22px;
+  }
+
+  .today p {
+    font-size: 13px;
+  }
+
+  .cta {
+    min-height: 50px;
+    font-size: 16px;
+  }
+
+  .metrics > div {
+    padding: 16px 6px;
+  }
+
+  .metrics b {
+    font-size: 22px;
+  }
+
+  .metrics small {
+    font-size: 12px;
+  }
+
+  .btn {
+    padding: 0 14px;
+    font-size: 13.5px;
+  }
+
+  .field > span {
+    font-size: 12px;
+  }
+
+  .row {
+    padding-block: 12px;
+  }
+
+  .row-main b {
+    font-size: 14px;
+  }
+
+  .row-main small {
+    font-size: 12px;
+  }
+
+  .listing h3,
+  .deck h3 {
+    font-size: 16px;
+  }
+
+  .listing-desc {
+    font-size: 13px;
+  }
+
+  .trainer-main b {
+    font-size: 15px;
+  }
+
+  .trainer-head h1 {
+    font-size: 20px;
+  }
+
+  .badge {
+    padding: 2px 8px;
+    font-size: 11px;
+  }
+
+  .ex-name b {
+    font-size: 14px;
+  }
+
+  .offer-card {
+    padding: 16px;
+  }
+
+  .offer-price b {
+    font-size: 22px;
+  }
+
+  .detail-list dt,
+  .detail-list dd,
+  .instruction-list,
+  .note-box,
+  .locked-note,
+  .demo-banner {
+    font-size: 13px;
+  }
+
+  .grid-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .ex-grid {
+    grid-template-columns: repeat(2,1fr);
+    gap: 10px;
+  }
+
+  .setting {
+    flex-wrap: wrap;
+    padding-block: 14px;
+  }
+
+  .setting .seg {
+    width: 100%;
+  }
+
+  .setting .seg button {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .toast {
+    top: calc(64px + env(safe-area-inset-top));
+  }
+
+  .modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal-card {
+    width: 100%;
+    max-height: 92dvh;
+    border-radius: 20px 20px 0 0;
+    border-bottom: 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .pid {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 380px) {
+  .form-grid,
+.log-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .metrics b {
+    font-size: 22px;
+  }
+
+  .row-end {
+    min-width: 52px;
+  }
+
+  .row-end .bar {
+    width: 52px;
+  }
+
+  .player-title-row h1 {
+    font-size: 23px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  *,
+*::before,
+*::after {
+    animation-duration: .01ms!important;
+    transition-duration: .01ms!important;
+  }
+}

@@ -26,9 +26,13 @@ function migrateLegacy(legacy) {
   };
 }
 
+/** Collections added after v5 shipped; older saves simply start them empty (additive, no data lost). */
+const ADDED_COLLECTIONS = ['events', 'likes', 'reviews'];
+export const withDefaults = (state) => ({ ...Object.fromEntries(ADDED_COLLECTIONS.map((key) => [key, []])), ...state });
+
 export function loadState() {
   const saved = readJson(STORAGE_KEY);
-  if (saved?.version === STATE_VERSION && saved.users && saved.requests) return saved;
+  if (saved?.version === STATE_VERSION && saved.users && saved.requests) return withDefaults(saved);
   const legacy = readJson(LEGACY_STORAGE_KEY);
   if (legacy?.users) return migrateLegacy(legacy);
   return createSeedState();
