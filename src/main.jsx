@@ -10,6 +10,7 @@ import './styles/marketplace.css';
 import './styles/modal.css';
 import './styles/stickman.css';
 import './styles/player.css';
+import './styles/auth.css';
 import './styles/responsive.css';
 
 createRoot(document.getElementById('root')).render(

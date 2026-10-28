@@ -1,4 +1,7 @@
 // Form controls. Every control can show a field error (already translated) under itself.
+import { Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
+import { useApp } from '../../context/AppContext.jsx';
 
 const ErrorText = ({ error }) => (error ? <small className="field-error">{error}</small> : null);
 
@@ -7,6 +10,25 @@ export function Field({ label, value, onChange, type = 'text', error, hint, ...i
     <label className={`field ${error ? 'invalid' : ''}`}>
       <span>{label}</span>
       <input type={type} value={value ?? ''} onChange={(e) => onChange(e.target.value)} {...inputProps} />
+      {hint && !error && <small className="field-hint">{hint}</small>}
+      <ErrorText error={error} />
+    </label>
+  );
+}
+
+/** Password input with a show / hide button. Direction follows the page, like every other field. */
+export function PasswordField({ label, value, onChange, error, hint, ...inputProps }) {
+  const { t } = useApp();
+  const [shown, setShown] = useState(false);
+  return (
+    <label className={`field ${error ? 'invalid' : ''}`}>
+      <span>{label}</span>
+      <span className="pw">
+        <input type={shown ? 'text' : 'password'} value={value ?? ''} onChange={(e) => onChange(e.target.value)} {...inputProps} />
+        <button type="button" className="pw-toggle" aria-label={t(shown ? 'auth.hidePassword' : 'auth.showPassword')} onClick={() => setShown((v) => !v)}>
+          {shown ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+      </span>
       {hint && !error && <small className="field-hint">{hint}</small>}
       <ErrorText error={error} />
     </label>

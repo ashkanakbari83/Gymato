@@ -1,5 +1,5 @@
 // modal.type -> component. Open one with openModal({ type, ...props }); the props are passed to the component.
-import { AccountMenuModal, NotificationsModal, SignupModal } from './AccountModals.jsx';
+import { AccountMenuModal, NotificationsModal } from './AccountModals.jsx';
 import CheckoutModal from './CheckoutModal.jsx';
 import CoachingModal from './CoachingModal.jsx';
 import DeckModal from './DeckModal.jsx';
@@ -10,7 +10,6 @@ import RequestFormModal from './RequestFormModal.jsx';
 
 export const MODALS = {
   account: AccountMenuModal,
-  signup: SignupModal,
   notifications: NotificationsModal,
   exercise: ExerciseModal,
   deck: DeckModal,

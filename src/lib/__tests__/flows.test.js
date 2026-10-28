@@ -40,11 +40,14 @@ function activate(state) {
 
 test('1. athletes can browse trainers and filter by location and specialty', () => {
   const db = createSeedState();
-  assert.equal(filterTrainers(db).length, 3);
-  assert.deepEqual(filterTrainers(db, { province: 'isfahan' }).map((t) => t.id), ['kian']);
-  assert.deepEqual(filterTrainers(db, { province: 'tehran', city: 'tehran-c' }).map((t) => t.id), ['adel']);
-  assert.deepEqual(filterTrainers(db, { focus: 'thighs' }).map((t) => t.id), ['maryam']);
-  assert.deepEqual(filterTrainers(db, { coachingOnly: true }).map((t) => t.id).sort(), ['adel', 'kian']);
+  const ids = (filters) => filterTrainers(db, filters).map((t) => t.id).sort();
+  assert.equal(filterTrainers(db).length, 8, 'adel plus the seven sample trainers');
+  assert.deepEqual(ids({ province: 'isfahan' }), ['kian']);
+  assert.deepEqual(ids({ province: 'tehran', city: 'tehran-c' }), ['adel']);
+  assert.deepEqual(ids({ focus: 'thighs' }), ['maryam']);
+  assert.deepEqual(ids({ coachingOnly: true }), ['adel', 'kian', 'neda', 'reza', 'sara']);
+  assert.deepEqual(ids({ province: 'razavi', focus: 'strength' }), ['reza']);
+  assert.deepEqual(ids({ query: 'الهام' }), ['elham']);
 });
 
 test('2. a free general program is accessible without payment', () => {
@@ -126,7 +129,7 @@ test('8. the trainer builds a private program for that athlete only', () => {
   const { db, program } = untilProposal();
   assert.equal(program.athleteId, ATHLETE);
   assert.equal(program.kind, 'custom');
-  assert.equal(db.programs.length, 3, 'a custom program never joins the public catalog');
+  assert.equal(db.programs.length, createSeedState().programs.length, 'a custom program never joins the public catalog');
   assert.equal(db.subscriptions[0].status, 'pending_payment');
   assert.equal(hasCustomAccess(db, 'bardia', program, NOW), false, 'another athlete has no access');
   assert.equal(saveCustomProgram(db, 'kian', program.requestId, draft, { publish: true }, NOW).error, 'forbidden', 'another trainer cannot edit it');

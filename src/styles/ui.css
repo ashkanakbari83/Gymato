@@ -226,9 +226,14 @@
   background: var(--card);
   border: 1.5px solid var(--line);
   outline: 0;
-  min-height: var(--control-h);
+  min-height: var(--field-h);
   border-radius: var(--control-r);
   font-size: var(--control-fs);
+}
+
+.field select {
+  padding-block: 10px;
+  line-height: 1.5;
 }
 
 .field input:focus,
@@ -385,7 +390,9 @@
 }
 
 .money input {
-  padding-inline-end: 64px;
+  /* Direction comes from the page (rtl in Persian): the number starts on the reading side and the
+     currency sits on the opposite edge, so they can never overlap. */
+  padding-inline-end: 72px;
   text-align: start;
 }
 

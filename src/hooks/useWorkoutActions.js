@@ -2,6 +2,7 @@
 import { canStartProgram } from '../lib/access.js';
 import { DEFAULT_FREE_WORKOUT } from '../lib/constants.js';
 import { uid } from '../lib/format.js';
+import { activeSeconds } from '../lib/workoutTime.js';
 
 /** Starting, finishing and leaving a workout. */
 export function useWorkoutActions({ db, user, update, notify, t, workout, setWorkout, setPage }) {
@@ -24,6 +25,9 @@ export function useWorkoutActions({ db, user, update, notify, t, workout, setWor
       logs: [],
       state: 'active',
       startedAt: Date.now(),
+      pausedMs: 0, // total time spent paused; not training time
+      pausedAt: null,
+      finishedAt: null,
       restUntil: null,
     });
     setPage('player');
@@ -40,7 +44,7 @@ export function useWorkoutActions({ db, user, update, notify, t, workout, setWor
       name: workout.name,
       date: new Date().toISOString(),
       status: 'completed',
-      duration: Math.max(0, Math.round((Date.now() - workout.startedAt) / 1000)),
+      duration: activeSeconds(workout),
       sets: workout.logs.filter((log) => log.status === 'completed'),
       exerciseIds: workout.exerciseIds,
     };

@@ -1,4 +1,5 @@
 // App shell: top bar, current page, bottom nav, workout player, toast, modals and onboarding.
+import AuthScreen from './components/auth/AuthScreen.jsx';
 import BottomNav from './components/layout/BottomNav.jsx';
 import PageHead from './components/layout/PageHead.jsx';
 import TopBar from './components/layout/TopBar.jsx';
@@ -32,8 +33,18 @@ const PAGES = {
 };
 
 function Shell() {
-  const { page } = useApp();
+  const { db, page } = useApp();
   const Page = PAGES[page];
+
+  // Nothing of the app is shown until someone signs in.
+  if (!db.signedIn) {
+    return (
+      <div className="app">
+        <AuthScreen />
+        <Toast />
+      </div>
+    );
+  }
 
   return (
     <div className="app">

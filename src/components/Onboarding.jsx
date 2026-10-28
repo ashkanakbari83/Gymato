@@ -16,11 +16,12 @@ const STEPS = [
 ];
 
 export default function Onboarding() {
-  const { onboarding, update, setPage, t } = useApp();
+  const { onboarding, update, setPage, user, t } = useApp();
   const [index, setIndex] = useState(0);
   if (!onboarding.open) return null;
 
   const step = STEPS[index];
+  const showRoles = step.roles && user.isAdmin; // only admins can open the starter accounts
   const isLast = index === STEPS.length - 1;
   const Icon = step.icon;
 
@@ -35,7 +36,7 @@ export default function Onboarding() {
       <div className="ob-art">{step.art ?? <span className="ob-icon"><Icon size={34} /></span>}</div>
 
       <h2>{t(`onb.${step.id}.title`)}</h2>
-      {step.id !== 'athlete' && step.id !== 'trainer' && <p className="ob-lead">{t(`onb.${step.id}.lead`)}</p>}
+      {step.id !== 'athlete' && step.id !== 'trainer' && <p className="ob-lead">{t(step.roles && !user.isAdmin ? 'onb.start.leadUser' : `onb.${step.id}.lead`)}</p>}
       {step.points > 0 && (
         <ul className="ob-points">
           {Array.from({ length: step.points }, (_, i) => (
@@ -47,7 +48,7 @@ export default function Onboarding() {
         </ul>
       )}
 
-      {step.roles && (
+      {showRoles && (
         <div className="ob-roles">
           {['athlete', 'trainer'].map((role) => (
             <button key={role} onClick={() => startAs(role)}>
@@ -66,6 +67,7 @@ export default function Onboarding() {
         <div className="btns">
           {index > 0 && <button className="btn ghost" onClick={() => setIndex(index - 1)}>{t('common.prev')}</button>}
           {!isLast && <button className="btn" onClick={() => setIndex(index + 1)}>{t('common.next')}</button>}
+          {isLast && !showRoles && <button className="btn" onClick={onboarding.finish}>{t('onb.begin')}</button>}
         </div>
       </div>
     </Sheet>

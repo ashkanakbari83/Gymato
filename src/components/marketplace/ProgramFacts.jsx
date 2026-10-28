@@ -9,5 +9,11 @@ export default function ProgramFacts({ program }) {
     t('gp.weeks', { n: num(program.durationWeeks) }),
     t('gp.daysPerWeek', { n: num(program.daysPerWeek) }),
   ].filter(Boolean);
-  return <p className="muted">{parts.join(' · ')}</p>;
+  return (
+    <p className="muted trainer-meta">
+      {parts.map((part) => (
+        <span key={part}>{part}</span>
+      ))}
+    </p>
+  );
 }

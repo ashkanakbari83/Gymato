@@ -29,7 +29,7 @@ function GeneralSection({ title, programs, badgeKey }) {
         {programs.map((program) => {
           const canStart = canStartProgram(db, user, program);
           return (
-            <ProgramListing key={program.id} program={program} locked={!canStart} status={<Badge tone="ok">{t(badgeKey)}</Badge>} onOpen={() => openModal({ type: 'general-program', programId: program.id })}>
+            <ProgramListing key={program.id} program={program} locked={!canStart} status={badgeKey && <Badge tone="ok">{t(badgeKey)}</Badge>} onOpen={() => openModal({ type: 'general-program', programId: program.id })}>
               <button className="btn ghost" onClick={() => openModal({ type: 'general-program', programId: program.id })}>{t('gp.viewDetails')}</button>
               {canStart && <button className="btn" onClick={() => startWorkout(program)}>{t('common.start')}</button>}
             </ProgramListing>
@@ -55,7 +55,7 @@ export default function AthleteProgramsPage() {
       <CoachingSection title={t('programs.sec.awaitingPayment')} items={lib.awaitingPayment} />
       <CoachingSection title={t('programs.sec.pending')} items={lib.pending} />
       <GeneralSection title={t('programs.sec.purchased')} programs={lib.purchased} badgeKey="gp.purchased" />
-      <GeneralSection title={t('programs.sec.free')} programs={lib.free} badgeKey="common.free" />
+      <GeneralSection title={t('programs.sec.free')} programs={lib.free} />
       <CoachingSection title={t('programs.sec.expired')} items={lib.expired} />
       <CoachingSection title={t('programs.sec.closed')} items={lib.closed} />
     </div>
