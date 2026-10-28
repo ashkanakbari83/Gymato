@@ -1,29 +1,37 @@
-// Account actions: sign-up, profile edits and notification handling.
-import { makePublicId, uid } from '../lib/format.js';
+// Account actions: sign-up, sign-in / sign-out, profile edits and notification handling.
+import { findAccounts, registerAccount, signInAs, signOut } from '../lib/domain/accounts.js';
 
-export function useAccountActions({ user, update, notify, t, closeModal, changeUser, go, openModal }) {
-  const signUp = (form) => {
-    const id = uid();
-    const isTrainer = form.role === 'coach';
-    update((d) => ({
-      users: [
-        ...d.users,
-        {
-          id,
-          name: form.name.trim(),
-          role: form.role,
-          roles: [form.role],
-          publicId: makePublicId(d.users),
-          province: form.province || '',
-          city: form.city || '',
-          ...(isTrainer
-            ? { specialties: [], bio: '', experienceYears: 0, offersCoaching: true }
-            : { age: Number(form.age) || '', height: Number(form.height) || '', weight: Number(form.weight) || '', goal: form.goal, level: form.level }),
-        },
-      ],
-    }));
+export function useAccountActions({ db, user, update, notify, t, closeModal, go, openModal, dispatch, setWorkout }) {
+  /** A running workout belongs to its athlete; another account never inherits it. */
+  const keepOwnWorkout = (userId) => setWorkout((w) => (w && w.userId !== userId ? null : w));
+
+  /** Accounts matching a mobile number / username and password (more than one for the shared admin login). */
+  const findLogin = (identifier, password) => findAccounts(db, identifier, password);
+
+  const signInTo = (userId) => {
+    const result = dispatch(signInAs, userId);
+    if (result.ok) {
+      keepOwnWorkout(userId);
+      go('home');
+    }
+    return result;
+  };
+
+  const logout = () => {
+    dispatch(signOut);
     closeModal();
-    changeUser(id);
+    go('home');
+  };
+
+  /** Creates the account and signs it in. Returns the domain result so the form can show field errors. */
+  const signUp = (form) => {
+    const result = dispatch(registerAccount, form);
+    if (result.ok) {
+      keepOwnWorkout(result.user.id);
+      go('home');
+      notify(t('auth.welcome', { name: result.user.name }));
+    }
+    return result;
   };
 
   const updateProfile = (changes) => {
@@ -42,5 +50,5 @@ export function useAccountActions({ user, update, notify, t, closeModal, changeU
     else if (target.kind === 'page') go(target.page);
   };
 
-  return { signUp, updateProfile, markNotificationsRead, openTarget };
+  return { signUp, signInTo, findLogin, logout, updateProfile, markNotificationsRead, openTarget };
 }

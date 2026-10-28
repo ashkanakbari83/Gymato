@@ -1,27 +1,11 @@
-// Initial app state: three trainers, three athletes and three published general programs.
+// Initial app state: four starter accounts (all admins), a sample community of trainers with programs,
+// reviews and likes so the marketplace looks lived-in, and three programs from the original demo.
 // Coaching requests, payments, subscriptions and chats all start empty.
+import { communityAthletes, communityLikes, communityPrograms, communityReviews, communityTrainers, generalProgram } from './community.js';
 import { decks } from './decks.js';
 import { exercises } from './exercises.js';
-import { users } from './users.js';
-import { PROGRAM_KIND, PROGRAM_STATUS, STATE_VERSION } from '../lib/constants.js';
-import { buildSessions } from '../lib/programs.js';
-
-const createdAt = () => new Date().toISOString();
-
-/** Builds a published general program; `plan` is [{ id, sets, reps, rest }]. */
-const generalProgram = (fields, plan) => {
-  const exerciseIds = plan.map((item) => item.id);
-  return {
-    kind: PROGRAM_KIND.GENERAL,
-    status: PROGRAM_STATUS.PUBLISHED,
-    exercises: exerciseIds,
-    targets: Object.fromEntries(plan.map(({ id, sets, reps, rest }) => [id, { sets, reps, rest }])),
-    sessions: buildSessions(fields.sessions, exerciseIds),
-    createdAt: createdAt(),
-    updatedAt: createdAt(),
-    ...fields,
-  };
-};
+import { users as accounts } from './users.js';
+import { STATE_VERSION } from '../lib/constants.js';
 
 const programs = [
   generalProgram(
@@ -97,7 +81,11 @@ const programs = [
       { id: 'hamstring', sets: 2, reps: 30, rest: 15 },
     ],
   ),
+  ...communityPrograms,
 ];
+
+/** Accounts first, then the sample trainers and the athletes who reviewed them (neither can sign in). */
+const users = [...accounts, ...communityTrainers, ...communityAthletes];
 
 export const createSeedState = () => ({
   version: STATE_VERSION,
@@ -113,11 +101,12 @@ export const createSeedState = () => ({
   payments: [], // simulated payments (demo: true)
   subscriptions: [], // coaching subscriptions
   events: [], // views of trainer profiles and programs (one per athlete per day)
-  likes: [], // { athleteId, programId, trainerId }
-  reviews: [], // ratings + comments on programs and on coaching
+  likes: communityLikes, // { athleteId, programId, trainerId }
+  reviews: communityReviews, // ratings + comments on programs and on coaching
   sessions: [], // finished workouts
   notifications: [],
   favorites: [],
+  signedIn: false, // the sign-in screen shows until someone signs in
   activeUser: 'ashkan',
   activeWorkout: null,
   theme: 'light',

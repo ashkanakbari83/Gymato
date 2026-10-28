@@ -1,0 +1,116 @@
+/* Sign-in / sign-up screen and the password field */
+
+.auth {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: calc(24px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
+}
+
+.auth-langs {
+  align-self: stretch;
+  max-width: 440px;
+  width: 100%;
+  margin-inline: auto;
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.auth-langs button {
+  padding: 6px 12px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mu);
+}
+
+.auth-langs .on {
+  background: var(--soft);
+  color: var(--ink);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px 24px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+}
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+}
+
+.auth-brand .brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+}
+
+.auth-card h1 {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.auth-card .seg button {
+  flex: 1;
+  justify-content: center;
+  min-height: 40px;
+}
+
+.auth-hint {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--soft);
+  color: var(--mu);
+  font-size: 12.5px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.auth-note {
+  max-width: 440px;
+  text-align: center;
+  line-height: 1.9;
+}
+
+.pw {
+  position: relative;
+  display: block;
+}
+
+.pw input {
+  padding-inline-end: 48px;
+}
+
+.pw-toggle {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 4px;
+  width: 42px;
+  display: grid;
+  place-items: center;
+  color: var(--mu);
+}
+
+@media (max-width: 600px) {
+  .auth-card {
+    padding: 22px 18px;
+  }
+
+  .auth-card h1 {
+    font-size: 21px;
+  }
+}

@@ -1,14 +1,15 @@
 // Shared constants: storage keys, status vocabularies, option lists.
 
-export const STORAGE_KEY = 'jimato:state:v5';
+export const STORAGE_KEY = 'jimato:state:v6';
+export const PREVIOUS_STORAGE_KEY = 'jimato:state:v5'; // marketplace without sign-in
 export const LEGACY_STORAGE_KEY = 'jimato:state:v4';
 export const ONBOARDING_KEY = 'jimato:onboarding:v2';
-export const STATE_VERSION = 5;
+export const STATE_VERSION = 6;
 
 export const DEFAULT_FREE_WORKOUT = ['pushup', 'squat'];
 export const DAY_MS = 86400000;
 
-// Demo accounts the onboarding screen jumps into.
+// Starter accounts the onboarding screen can jump into (admins only; see Onboarding).
 export const DEMO_ACCOUNTS = { trainer: 'adel', athlete: 'ashkan' };
 
 export const MILESTONES = [50, 100, 250, 500, 1000, 2500, 5000, 10000];

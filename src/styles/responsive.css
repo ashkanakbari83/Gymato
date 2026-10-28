@@ -60,6 +60,7 @@
 @media (max-width: 600px) {
   :root {
     --control-h: 42px;
+    --field-h: 50px;
     --flow: 12px;
     --flow-section: 8px;
   }

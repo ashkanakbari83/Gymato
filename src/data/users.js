@@ -1,50 +1,17 @@
-// Starter accounts: three trainers (different cities) and three athletes.
+// Starter accounts. Only these four exist by default, and all of them are admins with the username
+// "admin" and the password "admin" (the sign-in screen lets the person pick which of the four to open).
 // publicId is a short shareable ID. Trainers carry a public profile; athletes carry body info.
+import { createCredentials } from '../lib/auth.js';
+
+const admin = (id) => ({ username: 'admin', isAdmin: true, ...createCredentials('admin', `jimato-seed-${id}`) });
+
 export const users = [
-  {
-    id: 'adel',
-    name: 'عادل',
-    role: 'coach',
-    roles: ['coach'],
-    publicId: 'JM-A1D3L0',
-    province: 'tehran',
-    city: 'tehran-c',
-    specialties: ['abs', 'fatloss', 'strength'],
-    bio: 'مربی قدرتی با ۱۲ سال سابقه؛ تمرکز روی تقویت شکم و چربی‌سوزی.',
-    experienceYears: 12,
-    offersCoaching: true,
-  },
-  {
-    id: 'kian',
-    name: 'کیان',
-    role: 'coach',
-    roles: ['coach'],
-    publicId: 'JM-KN5C82',
-    province: 'isfahan',
-    city: 'isfahan-c',
-    specialties: ['muscle', 'chest', 'back'],
-    bio: 'مربی بدنسازی؛ برنامه‌های عضله‌سازی برای مبتدی تا متوسط.',
-    experienceYears: 7,
-    offersCoaching: true,
-  },
-  {
-    id: 'maryam',
-    name: 'مریم',
-    role: 'coach',
-    roles: ['coach'],
-    publicId: 'JM-MR9T40',
-    province: 'fars',
-    city: 'shiraz-c',
-    specialties: ['thighs', 'glutes', 'fitness'],
-    bio: 'مربی تناسب اندام؛ فقط برنامه‌های آماده منتشر می‌کند.',
-    experienceYears: 5,
-    offersCoaching: false,
-  },
   {
     id: 'ashkan',
     name: 'اشکان',
     role: 'athlete',
     roles: ['athlete'],
+    ...admin('ashkan'),
     publicId: 'JM-AS4K71',
     age: 27,
     height: 182,
@@ -55,10 +22,25 @@ export const users = [
     city: 'tehran-c',
   },
   {
+    id: 'adel',
+    name: 'عادل',
+    role: 'coach',
+    roles: ['coach'],
+    ...admin('adel'),
+    publicId: 'JM-A1D3L0',
+    province: 'tehran',
+    city: 'tehran-c',
+    specialties: ['abs', 'fatloss', 'strength'],
+    bio: 'مربی قدرتی با ۱۲ سال سابقه؛ تمرکز روی تقویت شکم و چربی‌سوزی.',
+    experienceYears: 12,
+    offersCoaching: true,
+  },
+  {
     id: 'bardia',
     name: 'بردیا',
     role: 'athlete',
     roles: ['athlete'],
+    ...admin('bardia'),
     publicId: 'JM-BR7D29',
     age: 24,
     height: 175,
@@ -73,6 +55,7 @@ export const users = [
     name: 'محمد',
     role: 'athlete',
     roles: ['athlete'],
+    ...admin('mohammad'),
     publicId: 'JM-MH2M85',
     age: 31,
     height: 170,

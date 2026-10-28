@@ -38,9 +38,11 @@ export default function TrainerProfilePage() {
         <span className="avatar xl">{trainer.name[0]}</span>
         <div>
           <h1>{trainer.name}</h1>
-          <p className="muted">
-            <MapPin size={14} /> {locationLabel(trainer.province, trainer.city, lang) || t('trainer.noLocation')}
-            {trainer.experienceYears > 0 && ` · ${t('trainer.experience', { n: num(trainer.experienceYears) })}`}
+          <p className="muted trainer-meta">
+            <span>
+              <MapPin size={14} /> {locationLabel(trainer.province, trainer.city, lang) || t('trainer.noLocation')}
+            </span>
+            {trainer.experienceYears > 0 && <span>{t('trainer.experience', { n: num(trainer.experienceYears) })}</span>}
           </p>
           <Stars {...ratingOf(getTrainerReviews(db, trainer.id))} value={ratingOf(getTrainerReviews(db, trainer.id)).avg} />
           {trainer.bio && <p>{trainer.bio}</p>}

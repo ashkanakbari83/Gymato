@@ -139,6 +139,11 @@
   gap: 8px;
 }
 
+/* Finish screen: space the recap away from the text above it and the save button below it */
+.finish-card .finish-stats {
+  margin: 24px 0 28px;
+}
+
 .finish-stats>div {
   background: var(--soft);
   border-radius: 12px;

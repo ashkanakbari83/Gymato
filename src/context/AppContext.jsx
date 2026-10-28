@@ -68,8 +68,11 @@ export function AppProvider({ children, initial = {} }) {
   }, []);
 
   const user = db.users.find((u) => u.id === db.activeUser) ?? db.users[0];
+  /** Admins can hop between the starter accounts; everyone else stays in their own account. */
   const changeUser = (id) => {
+    if (!user.isAdmin || !db.users.some((u) => u.id === id && u.passwordHash)) return;
     update({ activeUser: id });
+    setWorkout((w) => (w && w.userId !== id ? null : w));
     go('home');
     notify(t('acct.switched'));
   };

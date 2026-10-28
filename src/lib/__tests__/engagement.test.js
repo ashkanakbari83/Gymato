@@ -54,7 +54,7 @@ test('reviews need real use: free = saved it, paid = confirmed purchase, coachin
   const first = must(submitReview(db, 'ashkan', { targetKind: 'program', targetId: 'gp-six-pack', rating: 4, text: 'good' }, NOW));
   assert.equal(first.db.notifications[0].type, 'review_new');
   const edited = must(submitReview(first.db, 'ashkan', { targetKind: 'program', targetId: 'gp-six-pack', rating: 5, text: 'great' }, NOW + 1000));
-  assert.equal(edited.db.reviews.length, 1, 'one review per athlete per target; sending again edits it');
+  assert.equal(edited.db.reviews.filter((r) => r.athleteId === 'ashkan').length, 1, 'one review per athlete per target; sending again edits it');
   assert.equal(getProgramStats(edited.db, 'gp-six-pack').avg, 5);
   assert.equal(getTrainerStats(edited.db, 'adel').count, 1);
 

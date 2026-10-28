@@ -14,7 +14,8 @@
   --ok: #16a34a;
   --red: #dc2626;
   --r: 14px;
-  --control-h: 44px; /* inputs, selects, buttons share one height */
+  --control-h: 44px; /* buttons and bare inputs */
+  --field-h: 52px; /* labelled form fields (inputs and selects) are a little taller so they are easy to hit */
   --control-fs: 16px; /* 16px keeps iOS from zooming on focus */
   --control-r: 12px;
   --flow: 14px; /* vertical rhythm between stacked fields / blocks */

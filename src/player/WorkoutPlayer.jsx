@@ -8,6 +8,7 @@ import { useApp } from '../context/AppContext.jsx';
 import { useNow } from '../hooks/useNow.js';
 import { estimateCalories } from '../lib/calories.js';
 import { formatClock, num, uid } from '../lib/format.js';
+import { activeSeconds, finishPatch, pausePatch, reopenPatch, resumePatch } from '../lib/workoutTime.js';
 import { resolveTargets } from '../lib/programs.js';
 import { exerciseName } from '../lib/selectors.js';
 import { ArrowBack, ArrowForward } from '../components/ui/Arrow.jsx';
@@ -56,7 +57,7 @@ export default function WorkoutPlayer() {
   const target = resolveTargets(workout.targets, exercise);
   const setsDone = workout.logs.filter((l) => l.exerciseId === exercise.id).length;
   const progress = Math.min(100, ((workout.index + setsDone / target.sets) / Math.max(1, ids.length)) * 100);
-  const elapsed = Math.max(0, Math.floor((now - workout.startedAt) / 1000));
+  const elapsed = activeSeconds(workout, now);
   const restLeft = workout.restUntil ? Math.max(0, Math.ceil((workout.restUntil - now) / 1000)) : 0;
   const isPaused = workout.state === 'paused';
   const isResting = workout.state === 'resting' && restLeft > 0;
@@ -81,7 +82,7 @@ export default function WorkoutPlayer() {
     } else if (workout.index + 1 < ids.length) {
       patch({ logs, index: workout.index + 1, setIndex: 0, state: 'active', restUntil: null });
     } else {
-      patch({ logs, state: 'ready-to-finish' });
+      patch({ logs, ...finishPatch() });
     }
   };
 
@@ -118,7 +119,7 @@ export default function WorkoutPlayer() {
           calories={estimateCalories(workout.logs, db.exercises)}
           elapsed={elapsed}
           onSave={finishWorkout}
-          onBack={() => patch({ state: 'active' })}
+          onBack={() => patch(reopenPatch(workout))}
         />
       ) : (
         <div className="player-content">
@@ -163,7 +164,7 @@ export default function WorkoutPlayer() {
             <button className="btn ghost" disabled={workout.index === 0} onClick={() => goTo(workout.index - 1)}>
               <ArrowBack size={17} /> {t('player.prev')}
             </button>
-            <button className="pause-btn" onClick={() => patch({ state: isPaused ? 'active' : 'paused' })}>
+            <button className="pause-btn" onClick={() => patch(isPaused ? resumePatch(workout) : pausePatch(workout))}>
               {isPaused ? <Play size={17} /> : <Pause size={17} />} {isPaused ? t('player.resume') : t('player.pause')}
             </button>
             <button className="btn ghost" disabled={workout.index >= ids.length - 1} onClick={() => goTo(workout.index + 1)}>
@@ -178,7 +179,7 @@ export default function WorkoutPlayer() {
               </span>
               <h2>{t('player.pausedTitle')}</h2>
               <p>{t('player.pausedText')}</p>
-              <button className="btn" onClick={() => patch({ state: 'active' })}>
+              <button className="btn" onClick={() => patch(resumePatch(workout))}>
                 <Play size={17} /> {t('player.resumeWorkout')}
               </button>
             </div>

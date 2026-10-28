@@ -1,13 +1,13 @@
 import { Check, Trophy } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
-import { formatClock, num } from '../lib/format.js';
+import { formatDuration, num } from '../lib/format.js';
 
 /** Shown after the last set: quick recap with estimated calories, then save. */
 export default function FinishCard({ setsCount, calories, elapsed, onSave, onBack }) {
   const { t } = useApp();
   const stats = [
     { value: num(setsCount), label: t('player.setsLogged') },
-    { value: formatClock(elapsed), label: t('player.time') },
+    { value: formatDuration(elapsed, t), label: t('player.time') },
     { value: `≈ ${num(calories)}`, label: t('stat.kcal') },
   ];
 
