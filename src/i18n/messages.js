@@ -598,7 +598,9 @@ const engagement = {
   'notif.review_new.text': ['{athlete} امتیاز {rating} از ۵ ثبت کرد.', '{athlete} left a {rating}/5 review.'],
 };
 
+import { features } from './messagesFeatures.js';
+
 export const messages = {
   ...common, ...options, ...statuses, ...home, ...trainers, ...programs, ...coaching, ...payments,
-  ...notifications, ...engagement, ...account, ...exercisesAndPlayer, ...settings,
+  ...notifications, ...engagement, ...account, ...exercisesAndPlayer, ...settings, ...features,
 };

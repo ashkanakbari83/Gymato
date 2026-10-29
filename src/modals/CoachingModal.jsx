@@ -1,6 +1,7 @@
 // One coaching relationship, seen by the athlete or the trainer. What is shown depends on the viewer and
 // on the phase (see requestPhase): decision, proposal, payment, active program, renewal, history.
 import { Lock, Pencil, RefreshCw } from 'lucide-react';
+import MealPlanView from '../components/nutrition/MealPlanView.jsx';
 import ChatPanel from '../components/coaching/ChatPanel.jsx';
 import ClientProgress from '../components/coaching/ClientProgress.jsx';
 import OfferCard from '../components/coaching/OfferCard.jsx';
@@ -113,6 +114,7 @@ export default function CoachingModal({ requestId }) {
               {t('co.version', { n: num(program.version), date: formatDate(program.updatedAt, { month: 'short', day: 'numeric' }) })} · {t('co.daysLeft', { n: num(daysLeft(subscription)) })}
             </p>
             {program.notes && <p className="note-box">{program.notes}</p>}
+            <MealPlanView plan={program.mealPlan} canLog />
             <SessionList program={program} canStart={canTrain} onStart={(session) => { startWorkout(program, session); closeModal(); }} />
           </section>
           {offerCard(renewButton)}

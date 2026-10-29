@@ -2,6 +2,7 @@
 import { FOCUS_AREAS, GOALS, LEVELS, PROGRAM_KIND, PROGRAM_STATUS, REQUEST_STATUS, SUBSCRIPTION_STATUS } from '../constants.js';
 import { chatState, getCustomProgram, getSubscription, subscriptionState } from '../access.js';
 import { uid } from '../format.js';
+import { sanitizeMealPlan } from '../mealPlan.js';
 import { buildSessions } from '../programs.js';
 import { canTransition } from '../transitions.js';
 import { byId, fail, nowIso, ok, replaceById, withNotification } from './shared.js';
@@ -175,6 +176,7 @@ export function saveCustomProgram(db, trainerId, requestId, draft, { publish = f
     title: draft.title.trim(),
     notes: (draft.notes ?? '').trim(),
     safety: (draft.safety ?? '').trim(),
+    mealPlan: sanitizeMealPlan(draft.mealPlan),
     daysPerWeek: Number(draft.daysPerWeek),
     durationWeeks: Number(draft.durationWeeks),
     exercises,

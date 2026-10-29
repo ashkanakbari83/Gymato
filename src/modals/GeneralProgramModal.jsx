@@ -1,6 +1,7 @@
 // A general program: details and price up front; instructions only after access (free or confirmed purchase).
-import { Check, Lock, X } from 'lucide-react';
+import { Check, Lock, Share2, Utensils, X } from 'lucide-react';
 import { useEffect } from 'react';
+import MealPlanView from '../components/nutrition/MealPlanView.jsx';
 import LikeButton from '../components/marketplace/LikeButton.jsx';
 import { ReviewForm, ReviewList } from '../components/marketplace/ReviewSection.jsx';
 import { Stars } from '../components/marketplace/Stars.jsx';
@@ -15,7 +16,7 @@ import { getProgramReviews, ratingOf } from '../lib/analytics.js';
 import { formatPrice, num } from '../lib/format.js';
 
 export default function GeneralProgramModal({ programId }) {
-  const { db, user, t, openCheckout, claimFree, startWorkout, closeModal, trackView } = useApp();
+  const { db, user, t, openModal, openCheckout, claimFree, startWorkout, closeModal, trackView } = useApp();
   const program = db.programs.find((p) => p.id === programId);
   useEffect(() => { if (program) trackView('program', programId); }, [programId, user.id]); // eslint-disable-line react-hooks/exhaustive-deps
   if (!program) return null;
@@ -32,6 +33,11 @@ export default function GeneralProgramModal({ programId }) {
         <TypeBadge kind={program.kind} />
         <PriceBadge amount={program.price} />
         {program.status !== 'published' && <Badge tone="warn">{t('programStatus.draft')}</Badge>}
+        {program.status === 'published' && (
+          <button className="icon-btn sm listing-share" onClick={() => openModal({ type: 'share', kind: 'program', id: program.id })} aria-label={t('share.title')}>
+            <Share2 size={16} />
+          </button>
+        )}
       </div>
       <p className="muted">{t('gp.by', { name: trainer.name })}</p>
       <div className="stats-line">
@@ -57,6 +63,7 @@ export default function GeneralProgramModal({ programId }) {
         <>
           {program.notes && <p className="note-box">{program.notes}</p>}
           {program.safety && <p className="note-box warn">{program.safety}</p>}
+          <MealPlanView plan={program.mealPlan} canLog={isAthlete} />
           <SessionList program={program} canStart={isAthlete} onStart={(session) => { startWorkout(program, session); closeModal(); }} />
           {isAthlete && isFree && !inLibrary && (
             <button className="btn ghost wide" onClick={() => claimFree(program.id)}>{t('gp.addFree')}</button>
@@ -65,6 +72,7 @@ export default function GeneralProgramModal({ programId }) {
       ) : (
         <section className="co-section locked">
           <p className="locked-note"><Lock size={16} /> {t('gp.locked')}</p>
+          {program.mealPlan && <p className="muted"><Utensils size={14} /> {t('meal.includedLocked')}</p>}
           {isAthlete && program.status === 'published' && (
             <button className="btn wide" onClick={() => openCheckout('general_purchase', program.id)}>
               {t('gp.buy', { price: formatPrice(program.price, t) })}

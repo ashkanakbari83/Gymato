@@ -1,13 +1,14 @@
 // Athlete dashboard: today's workout (from a program the athlete may actually use), headline numbers,
 // week streak, items needing attention (payment / pending request) and the last workout.
-import { Play } from 'lucide-react';
+import { Droplets, Play, UtensilsCrossed } from 'lucide-react';
 import SessionRow from '../components/SessionRow.jsx';
 import Metrics from '../components/ui/Metrics.jsx';
 import { ArrowForward } from '../components/ui/Arrow.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import { canStartProgram } from '../lib/access.js';
 import { sessionsCalories } from '../lib/calories.js';
-import { num } from '../lib/format.js';
+import { dailyTarget, dayKey, totalsFor, waterFor, waterGoal } from '../lib/domain/nutrition.js';
+import { groupNumber, num } from '../lib/format.js';
 import { getAthleteLibrary } from '../lib/marketplace.js';
 import { nextSession } from '../lib/programs.js';
 import { countActiveDays, exerciseName, getCompletedSessions, lastSevenDays } from '../lib/selectors.js';
@@ -23,6 +24,9 @@ export default function AthleteHome() {
   const session = program ? nextSession(program, finished) : null;
   const moves = (session?.items ?? []).map((id) => db.exercises.find((e) => e.id === id)).filter(Boolean);
   const week = lastSevenDays(sessions);
+  const today = dayKey();
+  const eaten = totalsFor(db, user.id, today);
+  const target = dailyTarget(user);
 
   const goToWorkout = () => (workout ? setPage('player') : startWorkout(program, session));
   const attention = [
@@ -56,6 +60,18 @@ export default function AthleteHome() {
           <ArrowForward size={16} />
         </button>
       ))}
+
+      <button className="nutri-card" onClick={() => setPage('nutrition')}>
+        <span className="nutri-card-icon"><UtensilsCrossed size={20} /></span>
+        <span className="nutri-card-text">
+          <b>{t('nutrition.homeTitle')}</b>
+          <small>
+            {eaten.count || target ? t(target ? 'nutrition.homeLine' : 'nutrition.homeLineNoTarget', { kcal: groupNumber(eaten.kcal), target: target ? groupNumber(target.kcal) : '' }) : t('nutrition.homeEmpty')}
+          </small>
+          <small><Droplets size={13} /> {t('nutrition.homeWater', { n: num(waterFor(db, user.id, today)), goal: num(waterGoal(user)) })}</small>
+        </span>
+        <ArrowForward size={16} />
+      </button>
 
       <Metrics
         items={[

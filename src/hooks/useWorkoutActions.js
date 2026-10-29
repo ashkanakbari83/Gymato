@@ -1,6 +1,7 @@
 // Starting, finishing and leaving a workout.
 import { canStartProgram } from '../lib/access.js';
 import { DEFAULT_FREE_WORKOUT } from '../lib/constants.js';
+import { unlockAudio } from '../lib/feedback.js';
 import { uid } from '../lib/format.js';
 import { activeSeconds } from '../lib/workoutTime.js';
 
@@ -12,6 +13,7 @@ export function useWorkoutActions({ db, user, update, notify, t, workout, setWor
    */
   const startWorkout = (program = null, session = program?.sessions?.[0]) => {
     if (program && !canStartProgram(db, user, program)) return notify(t('error.locked'));
+    unlockAudio();
     setWorkout({
       id: uid(),
       userId: user.id,

@@ -19,7 +19,7 @@ test('all statically referenced keys exist in fa and en', () => {
     if (file.includes('/i18n/')) continue;
     const text = readFileSync(file, 'utf8');
     const keys = [...text.matchAll(/\bt\(\s*'([\w.-]+)'/g)].map((m) => m[1]);
-    keys.push(...[...text.matchAll(/'((?:co|gp|cr|pay|home|programs|trainers?|clients|editor|deck|player|progress|settings|profile|acct|auth|duration|notif|ex|stat|common|plan|chat|body|nav|loc|session|backup|error|cal|field|onb|bmi)\.[\w.-]+)'/g)].map((m) => m[1]));
+    keys.push(...[...text.matchAll(/'((?:co|gp|cr|pay|home|programs|trainers?|clients|editor|deck|player|progress|settings|profile|acct|auth|duration|notif|ex|stat|common|plan|chat|body|nav|loc|session|backup|error|cal|field|onb|bmi|nutrition|food|meal|share|pwa)\.[\w.-]+)'/g)].map((m) => m[1]));
     for (const key of keys) for (const lang of ['fa', 'en']) if (!hasKey(lang, key)) missing.push(`${lang}:${key} (${file.replace(SRC, '')})`);
   }
   assert.deepEqual([...new Set(missing)], []);

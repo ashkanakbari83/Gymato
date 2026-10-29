@@ -6,6 +6,7 @@ import { useBackup } from '../hooks/useBackup.js';
 import { useCatalogActions } from '../hooks/useCatalogActions.js';
 import { useCoachingActions } from '../hooks/useCoachingActions.js';
 import { useEngagementActions } from '../hooks/useEngagementActions.js';
+import { useNutritionActions } from '../hooks/useNutritionActions.js';
 import { useOnboarding } from '../hooks/useOnboarding.js';
 import { usePaymentActions } from '../hooks/usePaymentActions.js';
 import { useTheme } from '../hooks/useTheme.js';
@@ -81,13 +82,14 @@ export function AppProvider({ children, initial = {} }) {
   const catalog = useCatalogActions(base);
   const coaching = useCoachingActions(base);
   const engagement = useEngagementActions(base);
+  const nutrition = useNutritionActions(base);
   const payments = usePaymentActions(base);
   const workouts = useWorkoutActions(base);
   const accounts = useAccountActions(base);
   const backup = useBackup(base);
 
   const value = useMemo(
-    () => ({ ...base, ...catalog, ...coaching, ...engagement, ...payments, ...workouts, ...accounts, ...backup }),
+    () => ({ ...base, ...catalog, ...coaching, ...engagement, ...nutrition, ...payments, ...workouts, ...accounts, ...backup }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [db, page, pageParams, modal, draft, workout, toast, onboarding.open, lang],
   );
