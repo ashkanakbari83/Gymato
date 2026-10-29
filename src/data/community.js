@@ -166,6 +166,14 @@ export const communityPrograms = [
       price: 150000,
       notes: '',
       safety: '',
+      mealPlan: {
+        meals: [
+          { id: 'cm-b', slot: 'breakfast', title: '', text: 'جو دوسر با شیر و یک قاشق کره بادام‌زمینی، یک موز.', kcal: 420 },
+          { id: 'cm-l', slot: 'lunch', title: '', text: 'برنج و خورشت قیمه یا قرمه‌سبزی (یک ملاقه)، سالاد و ماست.', kcal: 700 },
+          { id: 'cm-s', slot: 'custom', title: 'قبل از خواب', text: 'یک کاسه ماست و چند عدد گردو.', kcal: 230 },
+        ],
+        note: '',
+      },
       sessions: [{ name: 'باسن', items: ['squat', 'lunge'] }],
     },
     [

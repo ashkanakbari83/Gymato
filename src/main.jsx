@@ -2,6 +2,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
+import { initPwa } from './lib/pwa.js';
 import './styles/tokens.css';
 import './styles/layout.css';
 import './styles/ui.css';
@@ -11,7 +12,10 @@ import './styles/modal.css';
 import './styles/stickman.css';
 import './styles/player.css';
 import './styles/auth.css';
+import './styles/features.css';
 import './styles/responsive.css';
+
+initPwa();
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

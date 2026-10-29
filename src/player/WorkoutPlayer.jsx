@@ -6,7 +6,9 @@ import MoveMedia from '../components/exercise/MoveMedia.jsx';
 import Empty from '../components/ui/Empty.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import { useNow } from '../hooks/useNow.js';
+import { useWakeLock } from '../hooks/useWakeLock.js';
 import { estimateCalories } from '../lib/calories.js';
+import { countdownCue, feedbackPrefs, playCue, unlockAudio } from '../lib/feedback.js';
 import { formatClock, num, uid } from '../lib/format.js';
 import { activeSeconds, finishPatch, pausePatch, reopenPatch, resumePatch } from '../lib/workoutTime.js';
 import { resolveTargets } from '../lib/programs.js';
@@ -26,20 +28,37 @@ export default function WorkoutPlayer() {
 
   const patch = useCallback((changes) => setWorkout((w) => (w ? { ...w, ...changes } : w)), [setWorkout]);
 
-  // Rest ends by itself.
+  const prefs = feedbackPrefs(db);
+  useWakeLock(prefs.keepAwake && Boolean(workout)); // the screen stays on for the whole workout
+
+  // Rest ends by itself (with a cue so you can look away from the phone).
   useEffect(() => {
     if (workout?.state === 'resting' && workout.restUntil && now >= workout.restUntil) {
       patch({ state: 'active', restUntil: null });
+      playCue('restEnd', prefs);
     }
-  }, [now, workout?.state, workout?.restUntil, patch]);
+  }, [now, workout?.state, workout?.restUntil, patch]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Ticks in the last three seconds of a rest.
+  const restSeconds = workout?.state === 'resting' && workout.restUntil ? Math.ceil((workout.restUntil - now) / 1000) : null;
+  useEffect(() => {
+    if (restSeconds !== null && countdownCue(restSeconds) === 'tick') playCue('tick', prefs);
+  }, [restSeconds]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // A timed hold records its full duration when the countdown reaches zero.
   useEffect(() => {
     if (countdown && now - countdown.start >= countdown.seconds * 1000) {
       setInputs((i) => ({ ...i, duration: String(countdown.seconds) }));
       setCountdown(null);
+      playCue('timerEnd', prefs);
     }
-  }, [now, countdown]);
+  }, [now, countdown]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Ticks in the last three seconds of a timed hold.
+  const holdSeconds = countdown ? countdown.seconds - Math.floor((now - countdown.start) / 1000) : null;
+  useEffect(() => {
+    if (holdSeconds !== null && countdownCue(holdSeconds) === 'tick') playCue('tick', prefs);
+  }, [holdSeconds]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Moving to another set/exercise cancels a running countdown.
   useEffect(() => setCountdown(null), [workout?.index, workout?.setIndex]);
@@ -71,6 +90,7 @@ export default function WorkoutPlayer() {
 
   /** Logs the set, then moves on: rest -> next set, next exercise, or finish. */
   const completeSet = () => {
+    unlockAudio(); // a tap is what lets the browser play the cues later
     const reps = Number((exercise.type === 'duration' ? inputs.duration : inputs.reps) || target.reps);
     const weight = exercise.type === 'weight' ? Number(inputs.weight || 0) : 0;
     const log = { id: uid(), exerciseId: exercise.id, setIndex: workout.setIndex, reps, weight, status: 'completed', completedAt: new Date().toISOString() };
@@ -83,11 +103,13 @@ export default function WorkoutPlayer() {
       patch({ logs, index: workout.index + 1, setIndex: 0, state: 'active', restUntil: null });
     } else {
       patch({ logs, ...finishPatch() });
+      playCue('finish', prefs);
     }
   };
 
   /** Start the countdown, or stop it and keep the seconds already held. */
   const toggleCountdown = () => {
+    unlockAudio();
     if (!countdown) return setCountdown({ start: Date.now(), seconds: target.reps });
     const held = Math.floor((now - countdown.start) / 1000);
     if (held > 0) setInputs((i) => ({ ...i, duration: String(held) }));

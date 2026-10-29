@@ -3,6 +3,7 @@
 //  - custom : a private program for one athlete, plus the coaching offer (price, renewal price, duration)
 import { useState } from 'react';
 import ExercisePlanner from '../components/exercise/ExercisePlanner.jsx';
+import MealPlanEditor from '../components/nutrition/MealPlanEditor.jsx';
 import { ChipSelect, Field, SelectField, Segmented, TextArea } from '../components/ui/Field.jsx';
 import MoneyField from '../components/ui/MoneyField.jsx';
 import Sheet from '../components/ui/Sheet.jsx';
@@ -76,6 +77,8 @@ export default function ProgramEditorModal({ kind, requestId, editing }) {
       <TextArea label={t('editor.safety')} value={draft.safety} onChange={set('safety')} />
 
       <ExercisePlanner exercises={db.exercises} draft={draft} setDraft={setDraft} decks={db.decks.filter((d) => d.owner === user.id)} error={error('exercises')} />
+
+      <MealPlanEditor value={draft.mealPlan ?? null} onChange={set('mealPlan')} />
 
       {isCustom ? (
         <div className="btns stack-btns">

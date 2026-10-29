@@ -1,12 +1,21 @@
 // Settings: theme, language, onboarding replay and data backup.
-import { CircleHelp, Download, Moon, RotateCcw, Settings, Sun, Upload } from 'lucide-react';
+import { CircleHelp, Download, Moon, RotateCcw, Settings, Sun, Upload, Volume2 } from 'lucide-react';
+import InstallCard from '../components/pwa/InstallCard.jsx';
+import Switch from '../components/ui/Switch.jsx';
 import { useApp } from '../context/AppContext.jsx';
+import { canKeepAwake, canVibrate, feedbackPrefs, playCue, unlockAudio } from '../lib/feedback.js';
 
 const THEMES = [['light', Sun], ['dark', Moon], ['system', Settings]];
 const LANGUAGES = [['fa', 'فارسی'], ['en', 'English']];
 
 export default function SettingsPage() {
   const { db, update, exportData, importData, resetData, onboarding, t } = useApp();
+  const prefs = feedbackPrefs(db);
+  const setPref = (key) => (value) => update({ feedback: { ...prefs, [key]: value } });
+  const testCue = () => {
+    unlockAudio();
+    playCue('restEnd', prefs);
+  };
 
   return (
     <div className="stack narrow">
@@ -34,6 +43,31 @@ export default function SettingsPage() {
           <button className="btn ghost" onClick={onboarding.reopen}><CircleHelp size={16} /> {t('settings.showAgain')}</button>
         </div>
       </section>
+
+      <section className="panel">
+        <h2 className="panel-title">{t('settings.workoutTitle')}</h2>
+        <Switch label={t('settings.sound')} hint={t('settings.soundHint')} checked={prefs.sound} onChange={setPref('sound')} />
+        <Switch
+          label={t('settings.vibrate')}
+          hint={t(canVibrate() ? 'settings.vibrateHint' : 'settings.vibrateUnsupported')}
+          checked={prefs.vibrate}
+          disabled={!canVibrate()}
+          onChange={setPref('vibrate')}
+        />
+        <Switch
+          label={t('settings.keepAwake')}
+          hint={t(canKeepAwake() ? 'settings.keepAwakeHint' : 'settings.keepAwakeUnsupported')}
+          checked={prefs.keepAwake}
+          disabled={!canKeepAwake()}
+          onChange={setPref('keepAwake')}
+        />
+        <div className="setting">
+          <b>{t('settings.testCue')}</b>
+          <button className="btn ghost" onClick={testCue}><Volume2 size={16} /> {t('settings.testCueBtn')}</button>
+        </div>
+      </section>
+
+      <InstallCard />
 
       <section className="panel">
         <div className="setting">

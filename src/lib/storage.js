@@ -1,5 +1,6 @@
 // localStorage persistence. All reads/writes of the app state go through here.
 import { createSeedState } from '../data/seed.js';
+import { DEFAULT_FEEDBACK } from './feedback.js';
 import { LEGACY_STORAGE_KEY, PREVIOUS_STORAGE_KEY, STATE_VERSION, STORAGE_KEY } from './constants.js';
 
 const readJson = (key) => {
@@ -44,8 +45,12 @@ function migratePrevious(previous) {
 }
 
 /** Collections added after v5 shipped; older saves simply start them empty (additive, no data lost). */
-const ADDED_COLLECTIONS = ['events', 'likes', 'reviews'];
-export const withDefaults = (state) => ({ ...Object.fromEntries(ADDED_COLLECTIONS.map((key) => [key, []])), ...state });
+const ADDED_COLLECTIONS = ['events', 'likes', 'reviews', 'foodLog', 'waterLog'];
+export const withDefaults = (state) => ({
+  ...Object.fromEntries(ADDED_COLLECTIONS.map((key) => [key, []])),
+  ...state,
+  feedback: { ...DEFAULT_FEEDBACK, ...(state.feedback ?? {}) }, // sound / vibration / keep-awake preferences
+});
 
 export function loadState() {
   const saved = readJson(STORAGE_KEY);

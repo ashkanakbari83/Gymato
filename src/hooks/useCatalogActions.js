@@ -17,6 +17,7 @@ export function useCatalogActions({ user, update, notify, t, dispatch, openModal
     price: 0,
     notes: '',
     safety: '',
+    mealPlan: null,
     exercises: [],
     targets: {},
     sessions: [],

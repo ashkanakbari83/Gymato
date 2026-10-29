@@ -4,12 +4,15 @@ import BottomNav from './components/layout/BottomNav.jsx';
 import PageHead from './components/layout/PageHead.jsx';
 import TopBar from './components/layout/TopBar.jsx';
 import Onboarding from './components/Onboarding.jsx';
+import PwaNotices from './components/pwa/PwaNotices.jsx';
 import Toast from './components/ui/Toast.jsx';
 import { AppProvider, useApp } from './context/AppContext.jsx';
+import { useDeepLink } from './hooks/useDeepLink.js';
 import ModalHost from './modals/ModalHost.jsx';
 import ClientsPage from './pages/ClientsPage.jsx';
 import ExercisesPage from './pages/ExercisesPage.jsx';
 import HomePage from './pages/HomePage.jsx';
+import NutritionPage from './pages/NutritionPage.jsx';
 import InsightsPage from './pages/InsightsPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import ProgramsPage from './pages/ProgramsPage.jsx';
@@ -30,11 +33,13 @@ const PAGES = {
   trainer: TrainerProfilePage,
   profile: ProfilePage,
   settings: SettingsPage,
+  nutrition: NutritionPage,
 };
 
 function Shell() {
   const { db, page } = useApp();
   const Page = PAGES[page];
+  useDeepLink();
 
   // Nothing of the app is shown until someone signs in.
   if (!db.signedIn) {
@@ -42,6 +47,7 @@ function Shell() {
       <div className="app">
         <AuthScreen />
         <Toast />
+        <PwaNotices />
       </div>
     );
   }
@@ -56,6 +62,7 @@ function Shell() {
       <BottomNav />
       {page === 'player' && <WorkoutPlayer />}
       <Toast />
+      <PwaNotices />
       <ModalHost />
       <Onboarding />
     </div>

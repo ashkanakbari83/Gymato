@@ -6,6 +6,7 @@ import { decks } from './decks.js';
 import { exercises } from './exercises.js';
 import { users as accounts } from './users.js';
 import { STATE_VERSION } from '../lib/constants.js';
+import { DEFAULT_FEEDBACK } from '../lib/feedback.js';
 
 const programs = [
   generalProgram(
@@ -21,6 +22,15 @@ const programs = [
       price: 490000,
       notes: 'بین ست‌ها آب بنوش و هر هفته یک روز کامل استراحت کن.',
       safety: 'اگر کمرت درد گرفت حرکت را متوقف کن. این برنامه جایگزین نظر پزشک نیست.',
+      mealPlan: {
+        meals: [
+          { id: 'six-b', slot: 'breakfast', title: '', text: 'دو تخم‌مرغ آب‌پز یا نیمرو، یک تکه نان سنگک، خیار و گوجه، یک لیوان چای بدون شکر.', kcal: 380 },
+          { id: 'six-l', slot: 'lunch', title: '', text: 'یک کف دست مرغ یا ماهی گریل، یک بشقاب کوچک برنج، سالاد شیرازی و ماست.', kcal: 650 },
+          { id: 'six-p', slot: 'post', title: '', text: 'یک موز و یک لیوان شیر یا ماست، بعد از تمرین.', kcal: 230 },
+          { id: 'six-d', slot: 'dinner', title: '', text: 'املت یا کوکو سبزی با سالاد و نان کم.', kcal: 450 },
+        ],
+        note: 'بین وعده‌ها آب بنوش و از نوشابه و شیرینی پرهیز کن؛ مقدار غذا را با گرسنگی خودت تنظیم کن.',
+      },
       sessions: [
         { name: 'روز A · شکم و میان‌تنه', items: ['crunch', 'legraise', 'plank', 'twist'] },
         { name: 'روز B · قلبی و شکم', items: ['jacks', 'climber', 'burpee', 'plank'] },
@@ -106,6 +116,9 @@ export const createSeedState = () => ({
   sessions: [], // finished workouts
   notifications: [],
   favorites: [],
+  foodLog: [], // meals an athlete logged: { userId, date, meal, name, servings, kcal, ... }
+  waterLog: [], // { userId, date, glasses } (one row per person per day)
+  feedback: { ...DEFAULT_FEEDBACK }, // workout sound / vibration / keep-screen-on preferences
   signedIn: false, // the sign-in screen shows until someone signs in
   activeUser: 'ashkan',
   activeWorkout: null,

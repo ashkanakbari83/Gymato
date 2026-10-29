@@ -1,5 +1,5 @@
 // A trainer's public profile: info, their published general programs, and the "Request Custom Coaching" action.
-import { MapPin } from 'lucide-react';
+import { MapPin, Share2 } from 'lucide-react';
 import { useEffect } from 'react';
 import { ReviewList } from '../components/marketplace/ReviewSection.jsx';
 import { Stars } from '../components/marketplace/Stars.jsx';
@@ -37,7 +37,12 @@ export default function TrainerProfilePage() {
       <section className="panel trainer-head">
         <span className="avatar xl">{trainer.name[0]}</span>
         <div>
-          <h1>{trainer.name}</h1>
+          <div className="trainer-title-row">
+            <h1>{trainer.name}</h1>
+            <button className="icon-btn sm" onClick={() => openModal({ type: 'share', kind: 'trainer', id: trainer.id })} aria-label={t('share.title')}>
+              <Share2 size={17} />
+            </button>
+          </div>
           <p className="muted trainer-meta">
             <span>
               <MapPin size={14} /> {locationLabel(trainer.province, trainer.city, lang) || t('trainer.noLocation')}

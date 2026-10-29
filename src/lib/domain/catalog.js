@@ -3,6 +3,7 @@
 import { PROGRAM_KIND, PROGRAM_STATUS } from '../constants.js';
 import { hasGeneralAccess, isFreeProgram } from '../access.js';
 import { uid } from '../format.js';
+import { sanitizeMealPlan } from '../mealPlan.js';
 import { buildSessions } from '../programs.js';
 import { canTransition } from '../transitions.js';
 import { byId, fail, nowIso, ok, replaceById } from './shared.js';
@@ -46,6 +47,7 @@ export function saveGeneralProgram(db, trainerId, draft, status = PROGRAM_STATUS
     price: Number(draft.price),
     notes: (draft.notes ?? '').trim(),
     safety: (draft.safety ?? '').trim(),
+    mealPlan: sanitizeMealPlan(draft.mealPlan),
     exercises,
     targets: { ...(draft.targets ?? {}) },
     sessions: buildSessions(draft.sessions ?? existing?.sessions, exercises),
