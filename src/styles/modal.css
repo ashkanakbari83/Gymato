@@ -4,7 +4,7 @@
   position: fixed;
   inset: 0;
   z-index: 70;
-  background: rgba(8,9,11,.55);
+  background: var(--scrim);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -100,7 +100,7 @@
 }
 
 .select-user-row.current-user {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .assign-program-preview {
@@ -127,7 +127,7 @@
   height: 40px;
   border-radius: 50%;
   background: var(--card);
-  color: var(--accent);
+  color: var(--accent-ink);
   display: grid;
   place-items: center;
   flex: none;
@@ -220,8 +220,8 @@
   align-items: flex-start;
   padding: 14px 16px;
   border-radius: 12px;
-  background: color-mix(in srgb,var(--accent) 10%,transparent);
-  color: var(--accent);
+  background: color-mix(in srgb,var(--accent-glow) 10%,transparent);
+  color: var(--accent-ink);
 }
 
 .safety-note p {
@@ -252,7 +252,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--accent-fill);
   margin-top: 8px;
 }
 
@@ -272,7 +272,7 @@
 }
 
 .picker-item.on {
-  background: color-mix(in srgb,var(--accent) 6%,transparent);
+  background: color-mix(in srgb,var(--accent-glow) 6%,transparent);
 }
 
 .picker-row {
@@ -285,7 +285,7 @@
 }
 
 .picker-row input {
-  accent-color: var(--accent);
+  accent-color: var(--accent-fill);
   width: 20px;
   height: 20px;
   flex: none;
@@ -321,7 +321,7 @@
   width: 100%;
   padding: 0 10px;
   background: var(--card);
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--line-strong);
   min-height: var(--control-h);
   border-radius: var(--control-r);
   font-size: var(--control-fs);
@@ -348,8 +348,8 @@
   border-radius: 99px;
   font-size: 13px;
   font-weight: 600;
-  border: 1.5px solid var(--accent);
-  color: var(--accent);
+  border: 1.5px solid var(--accent-fill);
+  color: var(--accent-ink);
 }
 
 .modal-body.ob {
@@ -375,8 +375,8 @@
   width: 76px;
   height: 76px;
   border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-fill);
+  color: var(--on-accent);
   display: grid;
   place-items: center;
 }
@@ -412,7 +412,7 @@
 .ob-points svg {
   flex: none;
   margin-top: 5px;
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .ob-roles {
@@ -425,12 +425,12 @@
 .ob-roles button {
   padding: 20px 16px;
   border-radius: 14px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--line-strong);
   text-align: start;
 }
 
 .ob-roles button:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-fill);
 }
 
 .ob-roles b,
@@ -470,7 +470,7 @@
 
 .ob-dots i.on {
   width: 22px;
-  background: var(--accent);
+  background: var(--accent-fill);
 }
 
 .ob-skip {
@@ -525,12 +525,12 @@
 
 .bmi-tag.ok {
   background: color-mix(in srgb, var(--ok) 15%, transparent);
-  color: var(--ok);
+  color: var(--ok-ink);
 }
 
 .bmi-tag.warn {
-  background: color-mix(in srgb, var(--accent) 15%, transparent);
-  color: var(--accent);
+  background: color-mix(in srgb, var(--accent-glow) 15%, transparent);
+  color: var(--accent-ink);
 }
 
 .bmi-tag.low {
@@ -551,7 +551,7 @@
 .check-row input {
   width: 20px;
   height: 20px;
-  accent-color: var(--accent);
+  accent-color: var(--accent-fill);
 }
 
 /* The onboarding dialog lays itself out with its own margins. */

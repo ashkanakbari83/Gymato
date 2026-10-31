@@ -48,7 +48,7 @@ export default function Stickman({ id }) {
           <Motion attr="y2" from={a[to][1]} to={b[to][1]} />
         </line>
       ))}
-      <circle fill="var(--accent)" r="8.5" cx={a[0][0]} cy={a[0][1]}>
+      <circle fill="var(--accent-fill)" r="8.5" cx={a[0][0]} cy={a[0][1]}>
         <Motion attr="cx" from={a[0][0]} to={b[0][0]} />
         <Motion attr="cy" from={a[0][1]} to={b[0][1]} />
       </circle>

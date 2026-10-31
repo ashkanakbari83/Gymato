@@ -7,12 +7,29 @@
   --bg: #f3f4f6;
   --card: #fff;
   --ink: #0e1013;
-  --mu: #6b7078;
-  --line: #e3e5e9;
+  --mu: #5f646d; /* secondary text: >=5.1:1 on bg, card and soft */
+  --line: #e3e5e9; /* decorative dividers and card edges only */
+  --line-strong: #80858d; /* borders of interactive controls: >=3.2:1 on bg, card and soft (WCAG 1.4.11) */
   --soft: #eceef1;
-  --accent: #ff4d00;
+
+  /* Brand orange, split by job so each part can meet contrast on its own */
+  --accent-glow: #ff4d00; /* the pure brand colour: tints, glows, art and big graphic accents (never small text) */
+  --accent-fill: #d23c00; /* solid surfaces that carry --on-accent text: buttons, bubbles, switches, bars (4.8:1 with white) */
+  --accent-ink: #b02e00; /* orange used as text or a thin icon on page surfaces (>=4.7:1, also on tinted badges) */
+  --accent-on-inverse: #ff4d00; /* orange text on the inverted hero card (.today), which is dark in the light theme */
+  --on-accent: #fff;
+
+  /* Status colours: a base for tints and icons, and an ink for text */
   --ok: #16a34a;
+  --ok-ink: #146c36;
   --red: #dc2626;
+  --red-ink: #b91c1c;
+  --info: #2563eb;
+  --info-ink: #1d4ed8;
+  --water: #0ea5e9;
+  --water-ink: #02628f;
+  --star: #d97706;
+  --scrim: rgba(8, 9, 11, 0.55);
   --r: 14px;
   --control-h: 44px; /* buttons and bare inputs */
   --field-h: 52px; /* labelled form fields (inputs and selects) are a little taller so they are easy to hit */
@@ -29,9 +46,21 @@
   --ink: #f4f5f6;
   --mu: #8b9098;
   --line: #25282d;
+  --line-strong: #6b7078;
   --soft: #1d2024;
-  --accent: #ff5a1f;
+  --accent-glow: #ff5a1f;
+  --accent-fill: #d23c00; /* same burnt orange as light: white text stays 4.8:1 and it reads 3.7:1 against the dark card */
+  --accent-ink: #ff6a33;
+  --accent-on-inverse: #b02e00; /* the hero card is light in the dark theme */
+  --ok: #22c55e;
+  --ok-ink: #4ade80;
   --red: #f87171;
+  --red-ink: #f87171;
+  --info: #6ea0ff;
+  --info-ink: #6ea0ff;
+  --water: #0ea5e9;
+  --water-ink: #38bdf8;
+  --star: #f59e0b;
 }
 
 * {
@@ -82,7 +111,7 @@ button:disabled {
 }
 
 :is(button,input,select,summary):focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-ink);
   outline-offset: 2px;
 }
 
