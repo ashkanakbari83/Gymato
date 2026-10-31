@@ -64,7 +64,7 @@
   width: 46px;
   height: 28px;
   border-radius: 99px;
-  background: var(--line);
+  background: var(--line-strong);
   transition: background 0.15s;
 }
 
@@ -76,13 +76,13 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--on-accent);
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.3);
   transition: inset-inline-start 0.15s;
 }
 
 .switch-row input:checked ~ .switch-track {
-  background: var(--accent);
+  background: var(--accent-fill);
 }
 
 .switch-row input:checked ~ .switch-track::after {
@@ -90,7 +90,7 @@
 }
 
 .switch-row input:focus-visible ~ .switch-track {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-ink);
   outline-offset: 2px;
 }
 
@@ -125,8 +125,8 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: color-mix(in srgb, var(--accent) 14%, transparent);
-  color: var(--accent);
+  background: color-mix(in srgb, var(--accent-glow) 14%, transparent);
+  color: var(--accent-ink);
 }
 
 .install-body {
@@ -214,7 +214,7 @@
 }
 
 .danger-link {
-  color: var(--red);
+  color: var(--red-ink);
 }
 
 .meal-card {
@@ -328,7 +328,7 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: var(--accent);
+  background: var(--accent-fill);
   transition: width 0.3s;
 }
 
@@ -396,8 +396,8 @@
 }
 
 .glasses button.on {
-  background: color-mix(in srgb, #0ea5e9 18%, transparent);
-  color: #0ea5e9;
+  background: color-mix(in srgb, var(--water) 18%, transparent);
+  color: var(--water-ink);
 }
 
 .water .btns {
@@ -490,11 +490,11 @@
   display: block;
   width: 100%;
   border-radius: 10px 10px 0 0;
-  background: color-mix(in srgb, var(--accent) 55%, var(--soft));
+  background: color-mix(in srgb, var(--accent-glow) 55%, var(--soft));
 }
 
 .week-bars .is-today .bar i {
-  background: var(--accent);
+  background: var(--accent-fill);
 }
 
 .week-bars small {
@@ -523,8 +523,8 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: color-mix(in srgb, var(--accent) 14%, transparent);
-  color: var(--accent);
+  background: color-mix(in srgb, var(--accent-glow) 14%, transparent);
+  color: var(--accent-ink);
 }
 
 .nutri-card-text {
@@ -605,7 +605,7 @@
 .stepper .icon-btn {
   width: 46px;
   height: 46px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--line-strong);
   border-radius: 50%;
 }
 
@@ -625,7 +625,7 @@
   align-items: center;
   gap: 6px;
   margin: 10px 0 0;
-  color: var(--ok);
+  color: var(--ok-ink);
   font-size: 13px;
   font-weight: 600;
 }

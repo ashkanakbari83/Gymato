@@ -31,7 +31,7 @@
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  color: var(--accent);
+  color: var(--accent-ink);
   font-weight: 700;
   font-size: 14px;
 }
@@ -50,17 +50,17 @@
 }
 
 .btn {
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-fill);
+  color: var(--on-accent);
 }
 
 .btn:hover {
-  filter: brightness(1.07);
+  filter: brightness(.92);
 }
 
 .btn.ghost {
   background: transparent;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--line-strong);
   color: var(--ink);
 }
 
@@ -72,7 +72,7 @@
 .btn.danger {
   background: transparent;
   border: 1.5px solid color-mix(in srgb,var(--red) 45%,transparent);
-  color: var(--red);
+  color: var(--red-ink);
 }
 
 .wide {
@@ -193,7 +193,7 @@
 .bar>span {
   display: block;
   height: 100%;
-  background: var(--accent);
+  background: var(--accent-fill);
   border-radius: 9px;
 }
 
@@ -224,7 +224,7 @@
   width: 100%;
   padding: 0 14px;
   background: var(--card);
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--line-strong);
   outline: 0;
   min-height: var(--field-h);
   border-radius: var(--control-r);
@@ -239,7 +239,7 @@
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
-  border-color: var(--accent);
+  border-color: var(--accent-fill);
 }
 
 .form-grid {

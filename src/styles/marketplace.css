@@ -15,27 +15,24 @@
 
 .badge.ok {
   background: color-mix(in srgb, var(--ok) 15%, transparent);
-  color: var(--ok);
+  color: var(--ok-ink);
 }
 
 .badge.warn {
-  background: color-mix(in srgb, var(--accent) 15%, transparent);
-  color: var(--accent);
+  background: color-mix(in srgb, var(--accent-glow) 15%, transparent);
+  color: var(--accent-ink);
 }
 
 .badge.info {
-  background: color-mix(in srgb, #2563eb 14%, transparent);
-  color: #2563eb;
+  background: color-mix(in srgb, var(--info) 14%, transparent);
+  color: var(--info-ink);
 }
 
 .badge.danger {
   background: color-mix(in srgb, var(--red) 14%, transparent);
-  color: var(--red);
+  color: var(--red-ink);
 }
 
-:root[data-theme="dark"] .badge.info {
-  color: #6ea0ff;
-}
 
 /* Avatars in larger sizes */
 .avatar.lg {
@@ -67,7 +64,7 @@
 }
 
 .trainer-card:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-fill);
 }
 
 .trainer-main {
@@ -184,9 +181,9 @@
   gap: 12px;
   padding: 16px 20px;
   border-radius: var(--r);
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
-  color: var(--accent);
+  background: color-mix(in srgb, var(--accent-glow) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-glow) 35%, transparent);
+  color: var(--accent-ink);
   font-weight: 700;
   text-align: start;
 }
@@ -291,7 +288,7 @@
 /* Offer card */
 .offer-card {
   border-radius: var(--r);
-  border: 1.5px solid var(--accent);
+  border: 1.5px solid var(--accent-fill);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -394,8 +391,8 @@
 }
 
 .demo-banner {
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  color: var(--accent);
+  background: color-mix(in srgb, var(--accent-glow) 12%, transparent);
+  color: var(--accent-ink);
   font-weight: 700;
 }
 
@@ -408,7 +405,7 @@
 }
 
 .note-box.warn {
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  background: color-mix(in srgb, var(--accent-glow) 10%, transparent);
 }
 
 .notice-text {
@@ -488,8 +485,8 @@
 
 .bubble.mine {
   align-self: flex-end;
-  background: var(--accent);
-  color: #fff;
+  background: var(--accent-fill);
+  color: var(--on-accent);
 }
 
 .bubble.theirs {
@@ -515,7 +512,7 @@
   min-width: 0;
   padding: 0 14px;
   background: var(--card);
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--line-strong);
   min-height: var(--control-h);
   border-radius: var(--control-r);
   font-size: var(--control-fs);
@@ -527,7 +524,7 @@
   min-height: 88px;
   padding: 12px 14px;
   background: var(--card);
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--line-strong);
   line-height: 1.7;
   resize: vertical;
   outline: 0;
@@ -542,7 +539,7 @@
 }
 
 .field-error {
-  color: var(--red);
+  color: var(--red-ink);
   font-size: 13px;
 }
 
@@ -560,7 +557,7 @@
 .chip-select button {
   padding: 0 14px;
   border-radius: 99px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--line-strong);
   font-size: 14px;
   font-weight: 600;
   color: var(--mu);
@@ -568,9 +565,9 @@
 }
 
 .chip-select button.on {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  color: var(--accent);
+  border-color: var(--accent-fill);
+  background: color-mix(in srgb, var(--accent-glow) 12%, transparent);
+  color: var(--accent-ink);
 }
 
 .stack-btns {
@@ -615,7 +612,7 @@
 }
 
 .star-on {
-  color: #f59e0b;
+  color: var(--star);
 }
 
 .stats-line {
@@ -641,14 +638,14 @@
   min-height: 36px;
   padding: 0 14px;
   border-radius: 99px;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--line-strong);
   font-size: 14px;
   font-weight: 700;
 }
 
 .like-btn.on {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--accent-fill);
+  color: var(--accent-ink);
 }
 
 .like-btn:disabled {
@@ -668,7 +665,7 @@
 }
 
 .rating-input button.on {
-  color: #f59e0b;
+  color: var(--star);
 }
 
 .review {
