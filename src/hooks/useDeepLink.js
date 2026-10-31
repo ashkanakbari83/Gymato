@@ -17,7 +17,7 @@ export function useDeepLink() {
     const programId = params.get('program');
     if (!publicId && !programId) return;
     handled.current = true;
-    history.replaceState(null, '', location.pathname); // keep the address bar clean
+    history.replaceState(history.state, '', location.pathname); // keep the address bar clean
 
     const trainer = publicId ? db.users.find((u) => u.publicId === publicId && u.role === 'coach') : null;
     const program = programId ? db.programs.find((p) => p.id === programId && p.status === 'published') : null;

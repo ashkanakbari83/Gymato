@@ -54,12 +54,16 @@
   .dock .active {
     color: var(--accent-ink);
   }
+
+  .dock .active svg {
+    color: var(--accent-glow); /* the bright brand orange on the icon; the label keeps the readable ink */
+  }
 }
 
 /* Phones: a compact type and spacing scale (desktop sizes feel oversized on a small screen). */
 @media (max-width: 600px) {
   :root {
-    --control-h: 42px;
+    --control-h: 44px;
     --field-h: 50px;
     --flow: 12px;
     --flow-section: 8px;
@@ -280,5 +284,34 @@
 *::after {
     animation-duration: .01ms!important;
     transition-duration: .01ms!important;
+  }
+}
+
+/* Touch targets: controls that are drawn smaller than 44px keep their look but get an invisible hit area of
+   at least 44x44 (WCAG 2.5.8 asks for 24px; 44px is what a thumb needs). */
+@media (max-width: 900px), (pointer: coarse) {
+  .btn.sm,
+  .like-btn,
+  .how-btn,
+  .deck-chips button,
+  .avatar-btn,
+  .icon-btn.sm,
+  .seg button,
+  .stepper .icon-btn {
+    position: relative;
+  }
+
+  .btn.sm::after,
+  .like-btn::after,
+  .how-btn::after,
+  .deck-chips button::after,
+  .avatar-btn::after,
+  .icon-btn.sm::after,
+  .seg button::after,
+  .stepper .icon-btn::after {
+    content: '';
+    position: absolute;
+    inset-block: min(0px, calc((100% - 44px) / 2));
+    inset-inline: min(0px, calc((100% - 44px) / 2));
   }
 }

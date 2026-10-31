@@ -21,7 +21,7 @@ export function usePaymentActions({ user, notify, t, dispatch, openModal, closeM
     const result = dispatch(failPayment, user.id, paymentId);
     if (result.ok) {
       closeModal();
-      notify(t('pay.failedDemo'));
+      notify(t('pay.failedDemo'), 'alert');
     }
   };
 

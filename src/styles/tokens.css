@@ -14,10 +14,11 @@
 
   /* Brand orange, split by job so each part can meet contrast on its own */
   --accent-glow: #ff4d00; /* the pure brand colour: tints, glows, art and big graphic accents (never small text) */
-  --accent-fill: #d23c00; /* solid surfaces that carry --on-accent text: buttons, bubbles, switches, bars (4.8:1 with white) */
+  --accent-fill: #ff4d00; /* the bright brand orange as a solid surface: buttons, bubbles, switches, bars. Text on it is --on-accent (5.7:1) */
   --accent-ink: #b02e00; /* orange used as text or a thin icon on page surfaces (>=4.7:1, also on tinted badges) */
   --accent-on-inverse: #ff4d00; /* orange text on the inverted hero card (.today), which is dark in the light theme */
-  --on-accent: #fff;
+  --on-accent: #0e1013; /* text on --accent-fill: near-black, 5.7:1 (white would only reach 3.3:1) */
+  --on-accent-icon: #fff; /* glyphs and switch thumbs on --accent-fill: graphics only need 3:1 (white gives 3.3:1) */
 
   /* Status colours: a base for tints and icons, and an ink for text */
   --ok: #16a34a;
@@ -49,7 +50,8 @@
   --line-strong: #6b7078;
   --soft: #1d2024;
   --accent-glow: #ff5a1f;
-  --accent-fill: #d23c00; /* same burnt orange as light: white text stays 4.8:1 and it reads 3.7:1 against the dark card */
+  --accent-fill: #ff5a1f;
+  --on-accent: #0b0c0e; /* 6.1:1 on --accent-fill */
   --accent-ink: #ff6a33;
   --accent-on-inverse: #b02e00; /* the hero card is light in the dark theme */
   --ok: #22c55e;
@@ -113,6 +115,19 @@ button:disabled {
 :is(button,input,select,summary):focus-visible {
   outline: 2px solid var(--accent-ink);
   outline-offset: 2px;
+}
+
+/* Text for screen readers only (live regions) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 code {

@@ -7,6 +7,10 @@
   padding: 32px 28px;
 }
 
+.today :focus-visible {
+  outline-color: var(--accent-on-inverse); /* the card is dark in the light theme and light in the dark one */
+}
+
 .today small {
   color: var(--accent-on-inverse);
   font-weight: 700;
@@ -120,6 +124,7 @@
 }
 
 .search-box input {
+  align-self: stretch; /* the whole box is the tap target, not just the text line */
   flex: 1;
   min-width: 0;
   border: 0;
@@ -140,6 +145,7 @@
 
 .chips button {
   flex: none;
+  min-height: 44px;
   padding: 8px 16px;
   border-radius: 99px;
   border: 1.5px solid var(--line-strong);
@@ -186,6 +192,7 @@
 .ex-name {
   flex: 1;
   min-width: 0;
+  min-height: 44px;
   text-align: start;
 }
 
@@ -207,8 +214,8 @@
 }
 
 .fav {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
   color: var(--mu);

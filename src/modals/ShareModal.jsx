@@ -67,7 +67,7 @@ export default function ShareModal({ kind, id }) {
       await navigator.clipboard.writeText(text);
       notify(t('common.copied'));
     } catch {
-      notify(t('share.copyFailed'));
+      notify(t('share.copyFailed'), 'alert');
     }
   };
 

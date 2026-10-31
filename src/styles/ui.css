@@ -55,7 +55,7 @@
 }
 
 .btn:hover {
-  filter: brightness(.92);
+  filter: brightness(1.07);
 }
 
 .btn.ghost {

@@ -20,18 +20,18 @@ export default function TopBar() {
 
         <nav className="tabs" aria-label={t('nav.pages')}>
           {getNavItems(isTrainer).map(({ id }) => (
-            <button key={id} className={navTabFor(page) === id ? 'active' : ''} onClick={() => setPage(id)}>
+            <button key={id} className={navTabFor(page) === id ? 'active' : ''} aria-current={navTabFor(page) === id ? 'page' : undefined} onClick={() => setPage(id)}>
               {t(`nav.${id}`)}
             </button>
           ))}
         </nav>
 
         <div className="top-actions">
-          <button className="icon-btn" aria-label={t('nav.notifications')} onClick={() => openModal({ type: 'notifications' })}>
+          <button className="icon-btn" aria-label={t(hasUnread ? 'nav.notificationsUnread' : 'nav.notifications')} onClick={() => openModal({ type: 'notifications' })}>
             <Bell size={20} />
-            {hasUnread && <i className="dot" />}
+            {hasUnread && <i className="dot" aria-hidden="true" />}
           </button>
-          <button className="icon-btn" aria-label={t('nav.settings')} onClick={() => setPage('settings')}>
+          <button className="icon-btn" aria-label={t('nav.settings')} aria-current={page === 'settings' ? 'page' : undefined} onClick={() => setPage('settings')}>
             <Settings size={20} />
           </button>
           <button className="avatar-btn" aria-label={t('nav.account')} onClick={() => openModal({ type: 'account' })}>
