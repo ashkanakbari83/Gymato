@@ -1,19 +1,19 @@
-// Toast message state with auto-dismiss.
+// Toast message state with auto-dismiss. `tone` is 'status' (polite) or 'alert' (an error the person must hear now).
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export function useToast(duration = 2600) {
-  const [message, setMessage] = useState('');
+  const [toast, setToast] = useState({ text: '', tone: 'status' });
   const timer = useRef();
 
   const notify = useCallback(
-    (text) => {
+    (text, tone = 'status') => {
       clearTimeout(timer.current);
-      setMessage(text);
-      timer.current = setTimeout(() => setMessage(''), duration);
+      setToast({ text, tone });
+      timer.current = setTimeout(() => setToast({ text: '', tone: 'status' }), duration);
     },
     [duration],
   );
 
   useEffect(() => () => clearTimeout(timer.current), []);
-  return [message, notify];
+  return [toast.text, notify, toast.tone];
 }

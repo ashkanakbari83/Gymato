@@ -12,7 +12,7 @@ export function useWorkoutActions({ db, user, update, notify, t, workout, setWor
    * active coaching subscription); with no program it is a free workout.
    */
   const startWorkout = (program = null, session = program?.sessions?.[0]) => {
-    if (program && !canStartProgram(db, user, program)) return notify(t('error.locked'));
+    if (program && !canStartProgram(db, user, program)) return notify(t('error.locked'), 'alert');
     unlockAudio();
     setWorkout({
       id: uid(),

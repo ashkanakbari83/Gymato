@@ -9,6 +9,8 @@ import GeneralProgramModal from './GeneralProgramModal.jsx';
 import ProgramEditorModal from './ProgramEditorModal.jsx';
 import RequestFormModal from './RequestFormModal.jsx';
 import ShareModal from './ShareModal.jsx';
+import Onboarding from '../components/Onboarding.jsx';
+import { HowToModal } from '../player/HowTo.jsx';
 
 export const MODALS = {
   account: AccountMenuModal,
@@ -22,4 +24,6 @@ export const MODALS = {
   'coaching-request': RequestFormModal,
   coaching: CoachingModal,
   checkout: CheckoutModal,
+  onboarding: Onboarding,
+  'how-to': HowToModal,
 };

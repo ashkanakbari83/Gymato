@@ -1,13 +1,13 @@
-// App shell: top bar, current page, bottom nav, workout player, toast, modals and onboarding.
+// App shell: top bar, current page, bottom nav, workout player, toast and modals (the first-run guide is a modal too).
 import AuthScreen from './components/auth/AuthScreen.jsx';
 import BottomNav from './components/layout/BottomNav.jsx';
 import PageHead from './components/layout/PageHead.jsx';
 import TopBar from './components/layout/TopBar.jsx';
-import Onboarding from './components/Onboarding.jsx';
 import PwaNotices from './components/pwa/PwaNotices.jsx';
 import Toast from './components/ui/Toast.jsx';
 import { AppProvider, useApp } from './context/AppContext.jsx';
 import { useDeepLink } from './hooks/useDeepLink.js';
+import { useOnboardingDialog } from './hooks/useOnboardingDialog.js';
 import ModalHost from './modals/ModalHost.jsx';
 import ClientsPage from './pages/ClientsPage.jsx';
 import ExercisesPage from './pages/ExercisesPage.jsx';
@@ -40,6 +40,7 @@ function Shell() {
   const { db, page } = useApp();
   const Page = PAGES[page];
   useDeepLink();
+  useOnboardingDialog();
 
   // Nothing of the app is shown until someone signs in.
   if (!db.signedIn) {
@@ -64,7 +65,6 @@ function Shell() {
       <Toast />
       <PwaNotices />
       <ModalHost />
-      <Onboarding />
     </div>
   );
 }

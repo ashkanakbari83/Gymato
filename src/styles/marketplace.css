@@ -561,7 +561,7 @@
   font-size: 14px;
   font-weight: 600;
   color: var(--mu);
-  min-height: 38px;
+  min-height: 44px;
 }
 
 .chip-select button.on {

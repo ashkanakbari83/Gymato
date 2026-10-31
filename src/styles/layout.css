@@ -21,6 +21,7 @@
 }
 
 .brand {
+  min-height: 44px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -33,7 +34,7 @@
   height: 30px;
   border-radius: 9px;
   background: var(--accent-fill);
-  color: var(--on-accent);
+  color: var(--on-accent-icon);
   display: grid;
   place-items: center;
 }

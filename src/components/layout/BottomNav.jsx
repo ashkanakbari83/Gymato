@@ -9,7 +9,7 @@ export default function BottomNav() {
   return (
     <nav className="dock" aria-label={t('nav.pages')}>
       {getNavItems(isTrainer).map(({ id, icon: Icon }) => (
-        <button key={id} className={navTabFor(page) === id ? 'active' : ''} onClick={() => setPage(id)}>
+        <button key={id} className={navTabFor(page) === id ? 'active' : ''} aria-current={navTabFor(page) === id ? 'page' : undefined} onClick={() => setPage(id)}>
           <Icon size={22} />
           <span>{t(`nav.${id}`)}</span>
         </button>

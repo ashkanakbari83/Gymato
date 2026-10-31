@@ -3,6 +3,7 @@
 
 export const features = {
   'nav.nutrition': ['تغذیه', 'Nutrition'],
+  'nav.notificationsUnread': ['اعلان‌ها (خوانده‌نشده دارد)', 'Notifications (unread)'],
   'error.invalid': ['مقدار واردشده معتبر نیست.', 'That value is not valid.'],
 
   // ---- settings: workout cues ----

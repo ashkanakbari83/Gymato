@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useAccountActions } from '../hooks/useAccountActions.js';
 import { useBackup } from '../hooks/useBackup.js';
+import { useHistorySync } from '../hooks/useHistorySync.js';
 import { useCatalogActions } from '../hooks/useCatalogActions.js';
 import { useCoachingActions } from '../hooks/useCoachingActions.js';
 import { useEngagementActions } from '../hooks/useEngagementActions.js';
@@ -32,7 +33,7 @@ export function AppProvider({ children, initial = {} }) {
   const [modal, openModal] = useState(initial.modal ?? null);
   const [draft, setDraft] = useState({});
   const [workout, setWorkout] = useState(db.activeWorkout ?? null);
-  const [toast, notify] = useToast();
+  const [toast, notify, toastTone] = useToast();
   const onboarding = useOnboarding();
 
   const lang = db.language;
@@ -53,7 +54,7 @@ export function AppProvider({ children, initial = {} }) {
         dbRef.current = result.db;
         setDb(result.db);
       } else if (result.error !== 'validation') {
-        notify(translate(lang, `error.${result.error}`));
+        notify(translate(lang, `error.${result.error}`), 'alert');
       }
       return result;
     },
@@ -62,6 +63,19 @@ export function AppProvider({ children, initial = {} }) {
 
   const update = useCallback((patch) => setDb((d) => ({ ...d, ...(typeof patch === 'function' ? patch(d) : patch) })), []);
   const closeModal = useCallback(() => openModal(null), []);
+  const user0 = db.users.find((u) => u.id === db.activeUser) ?? db.users[0];
+  useHistorySync({
+    page,
+    params: pageParams,
+    modal,
+    signedIn: db.signedIn,
+    resetKey: user0.id,
+    apply: ({ page: p, params, modal: m }) => {
+      setPage(p);
+      setPageParams(params);
+      openModal(m);
+    },
+  });
   const go = useCallback((next, params = {}) => {
     setPage(next);
     setPageParams(params);
@@ -78,7 +92,7 @@ export function AppProvider({ children, initial = {} }) {
     notify(t('acct.switched'));
   };
 
-  const base = { db, setDb, update, user, isTrainer: user.role === 'coach', isCoach: user.role === 'coach', page, setPage: go, go, pageParams, modal, openModal, closeModal, draft, setDraft, workout, setWorkout, toast, notify, onboarding, changeUser, t, lang, dispatch };
+  const base = { db, setDb, update, user, isTrainer: user.role === 'coach', isCoach: user.role === 'coach', page, setPage: go, go, pageParams, modal, openModal, closeModal, draft, setDraft, workout, setWorkout, toast, toastTone, notify, onboarding, changeUser, t, lang, dispatch };
   const catalog = useCatalogActions(base);
   const coaching = useCoachingActions(base);
   const engagement = useEngagementActions(base);
@@ -91,7 +105,7 @@ export function AppProvider({ children, initial = {} }) {
   const value = useMemo(
     () => ({ ...base, ...catalog, ...coaching, ...engagement, ...nutrition, ...payments, ...workouts, ...accounts, ...backup }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [db, page, pageParams, modal, draft, workout, toast, onboarding.open, lang],
+    [db, page, pageParams, modal, draft, workout, toast, toastTone, onboarding.open, lang],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

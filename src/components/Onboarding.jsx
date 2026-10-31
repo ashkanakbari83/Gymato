@@ -16,9 +16,12 @@ const STEPS = [
 ];
 
 export default function Onboarding() {
-  const { onboarding, update, setPage, user, t } = useApp();
+  const { onboarding, update, setPage, closeModal, user, t } = useApp();
   const [index, setIndex] = useState(0);
-  if (!onboarding.open) return null;
+  const done = () => {
+    onboarding.finish();
+    closeModal();
+  };
 
   const step = STEPS[index];
   const showRoles = step.roles && user.isAdmin; // only admins can open the starter accounts
@@ -28,11 +31,11 @@ export default function Onboarding() {
   const startAs = (role) => {
     update({ activeUser: DEMO_ACCOUNTS[role] });
     setPage('home');
-    onboarding.finish();
+    done();
   };
 
   return (
-    <Sheet onClose={onboarding.finish} bodyClassName="ob">
+    <Sheet label={t('onb.welcome.title')} onClose={done} bodyClassName="ob">
       <div className="ob-art">{step.art ?? <span className="ob-icon"><Icon size={34} /></span>}</div>
 
       <h2>{t(`onb.${step.id}.title`)}</h2>
@@ -60,14 +63,14 @@ export default function Onboarding() {
       )}
 
       <div className="ob-foot">
-        {isLast ? <span /> : <button className="ob-skip" onClick={onboarding.finish}>{t('onb.skip')}</button>}
+        {isLast ? <span /> : <button className="ob-skip" onClick={done}>{t('onb.skip')}</button>}
         <div className="ob-dots" aria-hidden="true">
           {STEPS.map((s, i) => <i key={s.id} className={i === index ? 'on' : ''} />)}
         </div>
         <div className="btns">
           {index > 0 && <button className="btn ghost" onClick={() => setIndex(index - 1)}>{t('common.prev')}</button>}
           {!isLast && <button className="btn" onClick={() => setIndex(index + 1)}>{t('common.next')}</button>}
-          {isLast && !showRoles && <button className="btn" onClick={onboarding.finish}>{t('onb.begin')}</button>}
+          {isLast && !showRoles && <button className="btn" onClick={done}>{t('onb.begin')}</button>}
         </div>
       </div>
     </Sheet>

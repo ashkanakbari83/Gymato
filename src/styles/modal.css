@@ -376,7 +376,7 @@
   height: 76px;
   border-radius: 50%;
   background: var(--accent-fill);
-  color: var(--on-accent);
+  color: var(--on-accent-icon);
   display: grid;
   place-items: center;
 }
