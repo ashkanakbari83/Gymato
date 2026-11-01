@@ -272,6 +272,40 @@
   border: 1px solid var(--line);
 }
 
+/* A picture that opens the full-screen viewer */
+.viewable {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+  border-radius: 14px;
+  max-width: max-content;
+}
+
+.viewable img {
+  display: block;
+}
+
+.viewable::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 0 transparent;
+  transition: box-shadow .15s;
+}
+
+.viewable:hover::after {
+  box-shadow: inset 0 0 0 3px var(--accent-glow);
+}
+
+.viewable:focus-visible {
+  outline: 3px solid var(--accent-glow);
+  outline-offset: 3px;
+}
+
 .photo-preview {
   display: flex;
   align-items: center;
@@ -485,8 +519,8 @@
 
 .bubble.mine {
   align-self: flex-end;
-  background: var(--accent-fill);
-  color: var(--on-accent);
+  background: var(--btn-fill);
+  color: var(--on-btn);
 }
 
 .bubble.theirs {
@@ -541,6 +575,102 @@
 .field-error {
   color: var(--red-ink);
   font-size: 13px;
+}
+
+/* One box at the top of a form after a failed save: what is missing, each item jumps to its field. */
+.error-summary {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--red);
+  border-radius: var(--control-r);
+  background: color-mix(in srgb, var(--red) 8%, var(--card));
+  color: var(--tx);
+  font-size: 14px;
+}
+
+.error-summary b {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--red-ink);
+}
+
+.error-summary ul {
+  margin: 0;
+  padding-inline-start: 22px;
+  display: grid;
+  gap: 2px;
+}
+
+.error-summary .link {
+  text-align: start;
+  min-height: 32px;
+  color: var(--red-ink);
+  text-decoration: underline;
+}
+
+.exercise-picker.invalid {
+  outline: 1.5px solid var(--red);
+  outline-offset: 2px;
+  border-radius: var(--control-r);
+}
+
+.picker-item.invalid {
+  box-shadow: inset 0 0 0 1.5px var(--red);
+}
+
+.target-inputs label.invalid input {
+  border-color: var(--red);
+}
+
+.target-error {
+  grid-column: 1 / -1;
+}
+
+/* Pick exactly one of a few options (radio buttons drawn as big tappable rows) */
+.radio-cards {
+  display: grid;
+  gap: 8px;
+}
+
+.radio-cards label {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 4px 12px;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--control-r);
+  background: var(--card);
+  cursor: pointer;
+}
+
+.radio-cards label.on {
+  border-color: var(--accent-fill);
+  background: color-mix(in srgb, var(--accent-fill) 8%, var(--card));
+}
+
+.radio-cards label:focus-within {
+  outline: 2px solid var(--accent-glow);
+  outline-offset: 2px;
+}
+
+.radio-cards input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--btn-fill);
+  margin: 0;
+}
+
+.radio-cards small {
+  grid-column: 2;
+  color: var(--mu);
+}
+
+.field.invalid .radio-cards label {
+  border-color: var(--red);
 }
 
 .field-hint {

@@ -6,7 +6,7 @@ import { createSeedState } from '../../data/seed.js';
 import { canStartProgram, chatState, hasCustomAccess, hasGeneralAccess, requestPhase, subscriptionState } from '../access.js';
 import { DAY_MS, PHASE } from '../constants.js';
 import { claimFreeProgram, deleteGeneralProgram, saveGeneralProgram, setProgramStatus } from '../domain/catalog.js';
-import { acceptRequest, cancelRequest, rejectRequest, saveCustomProgram, sendMessage, submitRequest } from '../domain/coaching.js';
+import { CUSTOM_MODE, acceptRequest, cancelRequest, rejectRequest, saveCustomProgram, sendMessage, submitRequest, validateCustomProgram, validateRequestForm } from '../domain/coaching.js';
 import { confirmPayment, failPayment, startCheckout } from '../domain/payments.js';
 import { filterTrainers, getAthleteLibrary, getTrainerClients } from '../marketplace.js';
 import { canTransition } from '../transitions.js';
@@ -14,7 +14,7 @@ import { canTransition } from '../transitions.js';
 const NOW = Date.UTC(2026, 9, 21, 9, 0, 0);
 const ATHLETE = 'ashkan';
 const TRAINER = 'adel';
-const form = { name: 'اشکان', age: 27, height: 182, weight: 84, goal: 'muscle', muscles: ['abs'], level: 'intermediate', daysPerWeek: 4, schedule: '', notes: '', photo: '' };
+const form = { name: 'اشکان', age: 27, height: 182, weight: 84, goal: 'muscle', muscles: ['abs'], level: 'intermediate', daysPerWeek: 4, schedule: '', notes: '', photo: '', wantsMealPlan: true };
 const offer = { price: 800000, renewalPrice: 500000, durationDays: 30 };
 const draft = { title: 'برنامه اشکان', exercises: ['squat', 'pushup'], daysPerWeek: 4, durationWeeks: 4, offer };
 
@@ -91,8 +91,10 @@ test('5. a coaching request validates, keeps optional fields optional, and start
   const bad = submitRequest(db, ATHLETE, TRAINER, { ...form, goal: '', daysPerWeek: 9, height: 10 }, NOW);
   assert.equal(bad.error, 'validation');
   assert.deepEqual(Object.keys(bad.fields).sort(), ['daysPerWeek', 'goal', 'height']);
+  assert.equal(validateRequestForm({ ...form, wantsMealPlan: null }).wantsMealPlan, 'required', 'the meal-plan question must be answered');
+  assert.equal(validateRequestForm({ ...form, wantsMealPlan: 'yes' }).wantsMealPlan, 'required', 'only a real yes/no is accepted');
 
-  const minimal = { name: 'اشکان', goal: 'muscle', level: 'beginner', daysPerWeek: 3 }; // no age/height/weight/photo
+  const minimal = { name: 'اشکان', goal: 'muscle', level: 'beginner', daysPerWeek: 3, wantsMealPlan: false }; // no age/height/weight/photo
   const { request, db: next } = must(submitRequest(db, ATHLETE, TRAINER, minimal, NOW));
   assert.equal(request.status, 'pending');
   assert.equal(next.notifications[0].userId, TRAINER);
@@ -211,4 +213,41 @@ test('trainers manage only their own general programs; buyers keep access when u
   const program = unpublished.programs.find((p) => p.id === own.id);
   assert.equal(hasGeneralAccess(unpublished, ATHLETE, program), false, 'unpublished programs are not served');
   assert.equal(deleteGeneralProgram(unpublished, TRAINER, own.id).error, 'has_customers');
+});
+
+test('request: the meal-plan choice is stored on the request and kept as asked', () => {
+  const db = createSeedState();
+  const yes = must(submitRequest(db, ATHLETE, TRAINER, { ...form, wantsMealPlan: true }, NOW));
+  assert.equal(yes.request.form.wantsMealPlan, true);
+  const no = must(submitRequest(db, ATHLETE, TRAINER, { ...form, wantsMealPlan: false }, NOW));
+  assert.equal(no.request.form.wantsMealPlan, false);
+});
+
+test('custom program validation: a draft needs the basics, sending needs everything, and errors name the field', () => {
+  const empty = { title: '  ', exercises: [], daysPerWeek: 4, durationWeeks: 4, offer: {} };
+  const asDraft = validateCustomProgram(empty, { mode: CUSTOM_MODE.DRAFT });
+  assert.deepEqual(Object.keys(asDraft), ['title'], 'a draft only needs a title (no exercises, no offer)');
+  assert.deepEqual(Object.keys(validateCustomProgram({ ...empty, title: 'x' }, { mode: CUSTOM_MODE.DRAFT })), [], 'a draft without exercises is allowed');
+
+  const toSend = validateCustomProgram({ ...empty, title: 'x' }, { mode: CUSTOM_MODE.PUBLISH });
+  assert.equal(toSend.exercises, 'no_exercises');
+  assert.ok(toSend.price && toSend.durationDays, 'the offer must be complete before sending');
+
+  const badTarget = validateCustomProgram({ ...draft, targets: { squat: { sets: '', reps: 10 } } }, { mode: CUSTOM_MODE.PUBLISH });
+  assert.equal(badTarget['target.squat.sets'], 'invalid');
+  assert.deepEqual(Object.keys(validateCustomProgram(draft, { mode: CUSTOM_MODE.PUBLISH })), [], 'a complete program passes');
+});
+
+test('custom program: saving without exercises works as a draft but is refused when sending', () => {
+  const db0 = createSeedState();
+  const { request, db: submitted } = must(submitRequest(db0, ATHLETE, TRAINER, form, NOW));
+  const db = must(acceptRequest(submitted, TRAINER, request.id, offer, NOW)).db;
+  const bare = { ...draft, exercises: [] };
+  const sent = saveCustomProgram(db, TRAINER, request.id, bare, { publish: true }, NOW);
+  assert.equal(sent.error, 'validation');
+  assert.equal(sent.fields.exercises, 'no_exercises');
+  assert.equal(db.customPrograms.length, 0, 'a refused proposal stores nothing');
+  const saved = must(saveCustomProgram(db, TRAINER, request.id, bare, {}, NOW));
+  assert.equal(saved.db.customPrograms[0].status, 'draft');
+  assert.equal(saved.db.subscriptions.length, 0, 'a draft does not create a subscription');
 });

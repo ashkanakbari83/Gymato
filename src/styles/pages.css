@@ -50,14 +50,22 @@
   width: 100%;
   min-height: 56px;
   border-radius: 14px;
-  background: var(--accent-fill);
-  color: var(--on-accent);
+  background: var(--btn-fill);
+  color: var(--on-btn);
   font-size: 17px;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
+}
+
+.cta:hover:not(:disabled) {
+  background: var(--btn-fill-hover);
+}
+
+.cta:active:not(:disabled) {
+  background: var(--btn-fill-active);
 }
 
 .week {

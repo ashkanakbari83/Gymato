@@ -60,7 +60,7 @@ test('reviews need real use: free = saved it, paid = confirmed purchase, coachin
 
   // coaching: not before a payment
   const offer = { price: 800000, renewalPrice: 500000, durationDays: 30 };
-  const req = must(submitRequest(db, 'bardia', 'adel', { name: 'b', goal: 'fatloss', level: 'beginner', daysPerWeek: 3 }, NOW));
+  const req = must(submitRequest(db, 'bardia', 'adel', { name: 'b', goal: 'fatloss', level: 'beginner', daysPerWeek: 3, wantsMealPlan: false }, NOW));
   let c = must(acceptRequest(req.db, 'adel', req.request.id, offer, NOW)).db;
   assert.equal(reviewBlocker(c, 'bardia', 'coaching', req.request.id), 'review_not_allowed');
   c = must(saveCustomProgram(c, 'adel', req.request.id, { title: 't', exercises: ['squat'], daysPerWeek: 3, durationWeeks: 4, offer }, { publish: true }, NOW)).db;
@@ -75,7 +75,7 @@ test('income: gross payments by source, last 30 days and weekly buckets', () => 
   db = buy(db, 'ashkan', 'general_purchase', 'gp-six-pack', NOW - 40 * DAY_MS);
   db = buy(db, 'bardia', 'general_purchase', 'gp-six-pack', NOW - 2 * DAY_MS);
   const offer = { price: 800000, renewalPrice: 500000, durationDays: 30 };
-  const req = must(submitRequest(db, 'mohammad', 'adel', { name: 'm', goal: 'endurance', level: 'beginner', daysPerWeek: 3 }, NOW - 10 * DAY_MS));
+  const req = must(submitRequest(db, 'mohammad', 'adel', { name: 'm', goal: 'endurance', level: 'beginner', daysPerWeek: 3, wantsMealPlan: false }, NOW - 10 * DAY_MS));
   db = must(acceptRequest(req.db, 'adel', req.request.id, offer, NOW - 10 * DAY_MS)).db;
   db = must(saveCustomProgram(db, 'adel', req.request.id, { title: 't', exercises: ['squat'], daysPerWeek: 3, durationWeeks: 4, offer }, { publish: true }, NOW - 10 * DAY_MS)).db;
   db = buy(db, 'mohammad', 'coaching_initial', db.subscriptions[0].id, NOW - 9 * DAY_MS);

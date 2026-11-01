@@ -6,6 +6,7 @@ import DeckModal from './DeckModal.jsx';
 import ExerciseModal from './ExerciseModal.jsx';
 import FoodModal from './FoodModal.jsx';
 import GeneralProgramModal from './GeneralProgramModal.jsx';
+import ImageViewerModal from './ImageViewerModal.jsx';
 import ProgramEditorModal from './ProgramEditorModal.jsx';
 import RequestFormModal from './RequestFormModal.jsx';
 import ShareModal from './ShareModal.jsx';
@@ -26,4 +27,5 @@ export const MODALS = {
   checkout: CheckoutModal,
   onboarding: Onboarding,
   'how-to': HowToModal,
+  'image-viewer': ImageViewerModal,
 };

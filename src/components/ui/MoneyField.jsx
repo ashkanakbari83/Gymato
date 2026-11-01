@@ -1,15 +1,17 @@
 // Price input: digits are grouped with thousands separators as you type and the currency ("Toman") is
 // always visible. The value passed to onChange is a plain number (or '' when empty).
 import { useApp } from '../../context/AppContext.jsx';
+import { useFieldA11y } from './Field.jsx';
 import { groupNumber, parseMoney } from '../../lib/format.js';
 
-export default function MoneyField({ label, value, onChange, error, hint, ...inputProps }) {
+export default function MoneyField({ label, value, onChange, error, hint, name, ...inputProps }) {
   const { t } = useApp();
+  const { errorId, control } = useFieldA11y(error);
   const digits = value === '' || value == null ? '' : String(value);
   const shown = digits ? groupNumber(digits) : '';
 
   return (
-    <label className={`field ${error ? 'invalid' : ''}`}>
+    <label className={`field ${error ? 'invalid' : ''}`} data-field={name}>
       <span>{label}</span>
       <span className="money">
         <input
@@ -21,12 +23,13 @@ export default function MoneyField({ label, value, onChange, error, hint, ...inp
             const clean = parseMoney(e.target.value);
             onChange(clean === '' ? '' : Number(clean));
           }}
+          {...control}
           {...inputProps}
         />
         <em>{t('common.currency')}</em>
       </span>
       {hint && !error && <small className="field-hint">{hint}</small>}
-      {error && <small className="field-error">{error}</small>}
+      {error && <small id={errorId} className="field-error">{error}</small>}
     </label>
   );
 }

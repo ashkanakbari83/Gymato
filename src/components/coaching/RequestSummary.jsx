@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext.jsx';
 import { num } from '../../lib/format.js';
 import AthleteBodyInfo from '../athlete/AthleteBodyInfo.jsx';
 import Badge from '../ui/Badge.jsx';
+import ViewableImage from '../ui/ViewableImage.jsx';
 
 export default function RequestSummary({ request, showBody }) {
   const { t } = useApp();
@@ -12,6 +13,7 @@ export default function RequestSummary({ request, showBody }) {
     ['cr.level', t(`level.${form.level}`)],
     ['cr.daysPerWeek', num(form.daysPerWeek)],
     form.age !== '' && ['cr.age', num(form.age)],
+    typeof form.wantsMealPlan === 'boolean' && ['cr.mealWanted', t(form.wantsMealPlan ? 'cr.mealWantedYes' : 'cr.mealWantedNo')],
     form.schedule && ['cr.schedule', form.schedule],
     form.notes && ['cr.notes', form.notes],
   ].filter(Boolean);
@@ -35,7 +37,7 @@ export default function RequestSummary({ request, showBody }) {
           ))}
         </div>
       )}
-      {form.photo && <img className="request-photo" src={form.photo} alt={t('cr.photoAlt')} />}
+      {form.photo && <ViewableImage className="request-photo-btn" imgClassName="request-photo" images={[{ src: form.photo, alt: t('cr.photoAltOf', { name: form.name }) }]} />}
     </section>
   );
 }
