@@ -22,6 +22,7 @@ export default function ImageViewerModal({ images = [], index = 0 }) {
   const stageRef = useRef(null);
   const imgRef = useRef(null);
   const pointers = useRef(new Map());
+  const lastTap = useRef(0);
   const gesture = useRef(null);
   const rtl = lang === 'fa';
   const many = images.length > 1;
@@ -80,7 +81,8 @@ export default function ImageViewerModal({ images = [], index = 0 }) {
       const [a, b] = [...pointers.current.values()];
       gesture.current = { type: 'pinch', dist: Math.hypot(a.x - b.x, a.y - b.y) || 1, z: view.z, moved: true };
     } else {
-      gesture.current = { type: 'drag', sx: e.clientX, sy: e.clientY, ox: view.x, oy: view.y, moved: false };
+      // `target` is remembered now: pointer capture makes later events report the stage instead of what was touched.
+      gesture.current = { type: 'drag', sx: e.clientX, sy: e.clientY, ox: view.x, oy: view.y, moved: false, onImage: Boolean(e.target.closest('.lb-img')) };
     }
   };
 
@@ -114,17 +116,22 @@ export default function ImageViewerModal({ images = [], index = 0 }) {
         // A swipe moves the picture the way the finger goes, so the neighbour on that side is shown.
         const towardNext = rtl ? dx > 0 : dx < 0;
         go(towardNext ? 1 : -1);
-      } else if (!g.moved && e.target === stageRef.current) {
+      } else if (!g.moved && !g.onImage) {
         close(); // a plain tap on the empty area around the picture
+      } else if (!g.moved && g.onImage) {
+        // Two taps within 300 ms on the picture: zoom in / back out (works for touch and mouse alike).
+        const now = Date.now();
+        if (now - lastTap.current < 300) {
+          lastTap.current = 0;
+          zoomTo(view.z > 1 ? 1 : 2.5);
+        } else {
+          lastTap.current = now;
+        }
       }
     }
   };
 
   const onWheel = (e) => zoomTo(view.z * (e.deltaY < 0 ? 1.15 : 1 / 1.15));
-  const onDoubleClick = (e) => {
-    if (e.target.closest('button')) return;
-    zoomTo(view.z > 1 ? 1 : 2.5);
-  };
 
   if (!current) return null;
   const PrevIcon = rtl ? ChevronRight : ChevronLeft;
@@ -151,7 +158,6 @@ export default function ImageViewerModal({ images = [], index = 0 }) {
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
           onWheel={onWheel}
-          onDoubleClick={onDoubleClick}
         >
           <img
             ref={imgRef}

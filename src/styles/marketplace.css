@@ -903,7 +903,8 @@
 }
 
 /* Public trainer page: banner, overlapping photo, real numbers */
-.trainer-hero {
+.trainer-hero,
+.panel.trainer-hero {
   padding: 0;
   overflow: hidden;
   display: grid;
@@ -933,8 +934,10 @@
 }
 
 .trainer-hero-body {
+  position: relative; /* paints above the banner, which is positioned too */
+  z-index: 1;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 16px;
   padding-inline: 24px;
   margin-top: -36px;
@@ -951,7 +954,7 @@
 .trainer-hero-main {
   flex: 1;
   min-width: 0;
-  padding-bottom: 4px;
+  padding-top: 44px; /* the photo overlaps the banner; the name starts below it */
 }
 
 .trainer-title-row {
@@ -1164,6 +1167,10 @@
   .trainer-hero-body {
     padding-inline: 16px;
     margin-top: -32px;
+  }
+
+  .trainer-hero-main {
+    padding-top: 40px;
   }
 
   .trainer-hero .hero-avatar {

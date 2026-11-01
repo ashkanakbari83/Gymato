@@ -575,7 +575,7 @@
 .modal-backdrop.lightbox-backdrop {
   padding: 0;
   align-items: stretch;
-  background: rgb(8 8 10 / .94);
+  background: #08080a; /* opaque: the page behind must not show through the toolbar */
 }
 
 .modal-card.lightbox-card {
