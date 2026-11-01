@@ -14,10 +14,15 @@
 
   /* Brand orange, split by job so each part can meet contrast on its own */
   --accent-glow: #ff4d00; /* the pure brand colour: tints, glows, art and big graphic accents (never small text) */
-  --accent-fill: #ff4d00; /* the bright brand orange as a solid surface: buttons, bubbles, switches, bars. Text on it is --on-accent (5.7:1) */
+  --accent-fill: #ff4d00; /* the bright brand orange as a solid surface without text: switches, bars, dots, selected borders */
   --accent-ink: #b02e00; /* orange used as text or a thin icon on page surfaces (>=4.7:1, also on tinted badges) */
   --accent-on-inverse: #ff4d00; /* orange text on the inverted hero card (.today), which is dark in the light theme */
-  --on-accent: #0e1013; /* text on --accent-fill: near-black, 5.7:1 (white would only reach 3.3:1) */
+  /* Filled orange buttons carry white text. White needs 4.5:1, which the pure brand orange cannot give (3.3:1), so
+     buttons use the same hue one step deeper. Every other orange surface keeps --accent-fill. */
+  --btn-fill: #d44000; /* white on it: 4.7:1 */
+  --btn-fill-hover: #c43a00; /* 5.3:1 */
+  --btn-fill-active: #b33500; /* 6.0:1 */
+  --on-btn: #fff;
   --on-accent-icon: #fff; /* glyphs and switch thumbs on --accent-fill: graphics only need 3:1 (white gives 3.3:1) */
 
   /* Status colours: a base for tints and icons, and an ink for text */
@@ -51,7 +56,6 @@
   --soft: #1d2024;
   --accent-glow: #ff5a1f;
   --accent-fill: #ff5a1f;
-  --on-accent: #0b0c0e; /* 6.1:1 on --accent-fill */
   --accent-ink: #ff6a33;
   --accent-on-inverse: #b02e00; /* the hero card is light in the dark theme */
   --ok: #22c55e;

@@ -32,7 +32,7 @@ test('option ids, categories, phases and notification types are labelled in both
     ...['request_new', 'request_cancelled', 'request_accepted', 'request_rejected', 'program_ready', 'program_updated', 'subscription_active', 'subscription_renewed', 'purchase', 'message_new'].flatMap((t) => [`notif.${t}.title`, `notif.${t}.text`]),
     ...['pending', 'accepted', 'rejected', 'cancelled'].map((s) => `request.${s}`),
     ...['none', 'draft', 'published'].map((s) => `programStatus.${s}`),
-    ...['none', 'initiated', 'confirmed', 'failed'].map((s) => `payment.${s}`),
+    ...['pending', 'paid', 'failed', 'cancelled'].map((s) => `pay.status.${s}`),
     ...['none', 'pending_payment', 'active', 'expired', 'cancelled'].map((s) => `subscription.${s}`),
     ...['rejected', 'cancelled'].map((s) => `co.closed.${s}`), ...['general', 'custom'].map((k) => `type.${k}`),
     ...['required', 'invalid', 'too_long'].map((c) => `field.${c}`),

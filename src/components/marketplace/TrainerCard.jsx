@@ -4,6 +4,7 @@ import { locationLabel } from '../../data/locations.js';
 import { useApp } from '../../context/AppContext.jsx';
 import { num } from '../../lib/format.js';
 import { getPublishedPrograms } from '../../lib/marketplace.js';
+import Avatar from '../ui/Avatar.jsx';
 import Badge from '../ui/Badge.jsx';
 
 export default function TrainerCard({ trainer, onOpen }) {
@@ -12,7 +13,7 @@ export default function TrainerCard({ trainer, onOpen }) {
 
   return (
     <button className="card trainer-card" onClick={onOpen}>
-      <span className="avatar lg">{trainer.name[0]}</span>
+      <Avatar user={trainer} size="lg" />
       <span className="trainer-main">
         <b>{trainer.name}</b>
         <small className="muted">

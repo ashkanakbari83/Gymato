@@ -13,7 +13,7 @@ const TARGET_FIELDS = [
   { key: 'rest', label: () => 'plan.rest', min: 0 },
 ];
 
-export default function ExercisePlanner({ exercises, draft, setDraft, decks = [], error }) {
+export default function ExercisePlanner({ exercises, draft, setDraft, decks = [], error, targetErrors = {} }) {
   const { lang, t } = useApp();
   const selected = draft.exercises ?? [];
   const targets = draft.targets ?? {};
@@ -51,18 +51,20 @@ export default function ExercisePlanner({ exercises, draft, setDraft, decks = []
         </div>
       )}
 
-      <div className="modal-subtitle">
+      <div className="modal-subtitle" data-field="exercises">
         <b>{t('plan.title')}</b>
         <small>{t('plan.selected', { n: num(selected.length) })}</small>
       </div>
-      {error && <small className="field-error">{error}</small>}
+      {error && <small className="field-error" id="exercises-error">{error}</small>}
 
-      <div className="exercise-picker">
+      <div className={`exercise-picker ${error ? 'invalid' : ''}`} aria-describedby={error ? 'exercises-error' : undefined}>
         {exercises.map((exercise) => {
           const on = selected.includes(exercise.id);
           const target = targets[exercise.id] ?? {};
+          const bad = (key) => Boolean(targetErrors[`target.${exercise.id}.${key}`]);
+          const anyBad = on && TARGET_FIELDS.some(({ key }) => bad(key));
           return (
-            <div key={exercise.id} className={`picker-item ${on ? 'on' : ''}`}>
+            <div key={exercise.id} className={`picker-item ${on ? 'on' : ''} ${anyBad ? 'invalid' : ''}`}>
               <label className="picker-row">
                 <input type="checkbox" checked={on} onChange={(e) => toggle(exercise, e.target.checked)} />
                 <span>
@@ -73,11 +75,12 @@ export default function ExercisePlanner({ exercises, draft, setDraft, decks = []
               {on && (
                 <div className="target-inputs">
                   {TARGET_FIELDS.map(({ key, label, min = 1 }) => (
-                    <label key={key}>
+                    <label key={key} data-field={`target.${exercise.id}.${key}`} className={bad(key) ? 'invalid' : ''}>
                       {t(label(exercise))}
-                      <input type="number" min={min} value={target[key] ?? ''} onChange={(e) => setTarget(exercise.id, key, e.target.value)} />
+                      <input type="number" min={min} value={target[key] ?? ''} aria-invalid={bad(key) || undefined} onChange={(e) => setTarget(exercise.id, key, e.target.value)} />
                     </label>
                   ))}
+                  {anyBad && <small className="field-error target-error">{t('plan.targetInvalid')}</small>}
                 </div>
               )}
             </div>

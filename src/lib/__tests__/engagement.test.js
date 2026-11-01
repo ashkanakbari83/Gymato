@@ -6,7 +6,8 @@ import { DAY_MS } from '../constants.js';
 import { claimFreeProgram } from '../domain/catalog.js';
 import { acceptRequest, saveCustomProgram, submitRequest } from '../domain/coaching.js';
 import { recordView, reviewBlocker, submitReview, toggleLike } from '../domain/engagement.js';
-import { confirmPayment, startCheckout } from '../domain/payments.js';
+import { startCheckout } from '../domain/payments.js';
+import { settlePaid } from './helpers.js';
 import { getIncome, getIncomeByWeek, getProgramStats, getTrainerStats } from '../analytics.js';
 import { parseMoney } from '../format.js';
 
@@ -14,7 +15,7 @@ const NOW = Date.UTC(2026, 9, 21, 9, 0, 0);
 const must = (r) => { assert.equal(r.ok, true, `expected ok, got ${r.error} ${JSON.stringify(r.fields ?? {})}`); return r; };
 const buy = (db, athlete, kind, targetId, at = NOW) => {
   const started = must(startCheckout(db, athlete, { kind, targetId }, at));
-  return must(confirmPayment(started.db, athlete, started.payment.id, at)).db;
+  return settlePaid(started.db, athlete, started.payment.id, at);
 };
 
 test('views: athletes count once a day; trainers and repeats do not', () => {
@@ -60,7 +61,7 @@ test('reviews need real use: free = saved it, paid = confirmed purchase, coachin
 
   // coaching: not before a payment
   const offer = { price: 800000, renewalPrice: 500000, durationDays: 30 };
-  const req = must(submitRequest(db, 'bardia', 'adel', { name: 'b', goal: 'fatloss', level: 'beginner', daysPerWeek: 3 }, NOW));
+  const req = must(submitRequest(db, 'bardia', 'adel', { name: 'b', goal: 'fatloss', level: 'beginner', daysPerWeek: 3, wantsMealPlan: false }, NOW));
   let c = must(acceptRequest(req.db, 'adel', req.request.id, offer, NOW)).db;
   assert.equal(reviewBlocker(c, 'bardia', 'coaching', req.request.id), 'review_not_allowed');
   c = must(saveCustomProgram(c, 'adel', req.request.id, { title: 't', exercises: ['squat'], daysPerWeek: 3, durationWeeks: 4, offer }, { publish: true }, NOW)).db;
@@ -75,7 +76,7 @@ test('income: gross payments by source, last 30 days and weekly buckets', () => 
   db = buy(db, 'ashkan', 'general_purchase', 'gp-six-pack', NOW - 40 * DAY_MS);
   db = buy(db, 'bardia', 'general_purchase', 'gp-six-pack', NOW - 2 * DAY_MS);
   const offer = { price: 800000, renewalPrice: 500000, durationDays: 30 };
-  const req = must(submitRequest(db, 'mohammad', 'adel', { name: 'm', goal: 'endurance', level: 'beginner', daysPerWeek: 3 }, NOW - 10 * DAY_MS));
+  const req = must(submitRequest(db, 'mohammad', 'adel', { name: 'm', goal: 'endurance', level: 'beginner', daysPerWeek: 3, wantsMealPlan: false }, NOW - 10 * DAY_MS));
   db = must(acceptRequest(req.db, 'adel', req.request.id, offer, NOW - 10 * DAY_MS)).db;
   db = must(saveCustomProgram(db, 'adel', req.request.id, { title: 't', exercises: ['squat'], daysPerWeek: 3, durationWeeks: 4, offer }, { publish: true }, NOW - 10 * DAY_MS)).db;
   db = buy(db, 'mohammad', 'coaching_initial', db.subscriptions[0].id, NOW - 9 * DAY_MS);

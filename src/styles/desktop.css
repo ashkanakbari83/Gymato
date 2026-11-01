@@ -1,0 +1,162 @@
+/* Desktop layer. Everything here is inside a min-width query, so phones and tablets are untouched.
+   >= 1100px: the page tabs become a sidebar with icons, the content uses the width, and pages that opt in with
+   `.desk-grid` lay their blocks out in two columns (`.half` = one column, anything else = full width). */
+
+.tab-icon {
+  display: none;
+}
+
+@media (min-width: 1100px) {
+  .app {
+    --side: 232px;
+  }
+
+  /* backdrop-filter would make the topbar the containing block of the fixed sidebar */
+  .topbar {
+    backdrop-filter: none;
+    background: var(--bg);
+  }
+
+  .topbar-in {
+    max-width: none;
+    padding-inline: 24px;
+  }
+
+  .tabs {
+    position: fixed;
+    inset-block: 61px 0;
+    inset-inline-start: 0;
+    width: var(--side);
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 16px 12px;
+    background: var(--bg);
+    border-inline-end: 1px solid var(--line);
+    overflow-y: auto;
+    z-index: 20;
+  }
+
+  .tabs button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 44px;
+    padding: 0 14px;
+    border-radius: 12px;
+    text-align: start;
+  }
+
+  .tabs button:hover {
+    background: var(--soft);
+  }
+
+  .tabs .active,
+  .tabs .active:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  .tab-icon {
+    display: block;
+    flex: none;
+  }
+
+  .main {
+    max-width: none;
+    margin: 0;
+    margin-inline-start: var(--side);
+    padding: 32px clamp(24px, 3.5vw, 64px) 80px;
+  }
+
+  .main > * {
+    max-width: 1320px;
+    margin-inline: auto;
+  }
+
+  .narrow {
+    max-width: 760px;
+  }
+
+  .desk-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .desk-grid > * {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  .desk-grid > .half {
+    grid-column: auto;
+  }
+
+  /* the right block of an uneven pair should not stretch into a tall empty card */
+  .desk-grid.wide-form > .half {
+    align-self: start;
+  }
+
+  /* trainer discovery: filters in one row */
+  .filters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    align-items: end;
+    gap: 16px;
+  }
+
+  .filters .form-grid {
+    display: contents;
+  }
+
+  .trainer-banner {
+    max-height: 300px;
+  }
+
+  /* wider dialogs for the big forms */
+  .modal-card.wide {
+    width: min(100%, 780px);
+  }
+
+  .modal-card.wide .exercise-picker {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    align-items: start;
+  }
+
+  .modal-card.wide .form-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1100px) and (max-width: 1299px) {
+  .app {
+    --side: 208px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .main > * {
+    max-width: 1440px;
+  }
+
+  .grid-cards {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+/* A wide screen but no sidebar yet (900-1099): let the content breathe a little more */
+@media (min-width: 900px) and (max-width: 1099px) {
+  .main,
+  .topbar-in {
+    max-width: 1080px;
+  }
+
+  .modal-card.wide {
+    width: min(100%, 680px);
+  }
+}

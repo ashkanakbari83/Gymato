@@ -26,7 +26,7 @@ export function filterTrainers(db, { query = '', province = '', city = '', focus
 export function getBuyers(db, programId) {
   const ids = new Set(
     db.payments
-      .filter((p) => p.kind === PAYMENT_KIND.GENERAL && p.targetId === programId && p.status === PAYMENT_STATUS.CONFIRMED)
+      .filter((p) => p.kind === PAYMENT_KIND.GENERAL && p.targetId === programId && p.status === PAYMENT_STATUS.PAID)
       .map((p) => p.athleteId),
   );
   return db.users.filter((u) => ids.has(u.id));
@@ -58,7 +58,7 @@ export function getAthleteLibrary(db, athleteId, now = Date.now()) {
 
   const purchasedIds = new Set(
     db.payments
-      .filter((p) => p.kind === PAYMENT_KIND.GENERAL && p.athleteId === athleteId && p.status === PAYMENT_STATUS.CONFIRMED)
+      .filter((p) => p.kind === PAYMENT_KIND.GENERAL && p.athleteId === athleteId && p.status === PAYMENT_STATUS.PAID)
       .map((p) => p.targetId),
   );
   const programsByIds = (ids) => db.programs.filter((p) => ids.has(p.id));

@@ -142,3 +142,8 @@ docs/marketplace.md        طراحی بازار مربی‌ها
 TBD
 
 https://gymato.vercel.app/
+
+
+## Payments
+
+No payment is simulated: orders stay *pending* until a payment server confirms them. See [docs/payments.md](docs/payments.md) for the design, the HTTP contract, and what real payments need (backend, merchant account, HTTPS).

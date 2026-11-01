@@ -1,4 +1,5 @@
 // One coaching relationship in a list, for the athlete or the trainer. Opens the coaching sheet.
+import Avatar from '../ui/Avatar.jsx';
 import { useApp } from '../../context/AppContext.jsx';
 import { formatDate, num } from '../../lib/format.js';
 import { daysLeft } from '../../lib/marketplace.js';
@@ -16,7 +17,7 @@ export default function CoachingRow({ item }) {
 
   return (
     <button className="row" onClick={() => openModal({ type: 'coaching', requestId: request.id })}>
-      <span className="avatar">{other.name[0]}</span>
+      <Avatar user={other} />
       <span className="row-main">
         <b>{other.name}</b>
         <small>{detail}</small>

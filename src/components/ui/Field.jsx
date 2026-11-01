@@ -1,17 +1,24 @@
 // Form controls. Every control can show a field error (already translated) under itself.
 import { Eye, EyeOff } from 'lucide-react';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext.jsx';
 
-const ErrorText = ({ error }) => (error ? <small className="field-error">{error}</small> : null);
+const ErrorText = ({ error, id }) => (error ? <small id={id} className="field-error">{error}</small> : null);
 
-export function Field({ label, value, onChange, type = 'text', error, hint, ...inputProps }) {
+/** The wiring every control shares: `name` lets an error summary jump to it, and an error is announced with it. */
+export function useFieldA11y(error) {
+  const errorId = useId();
+  return { errorId, control: error ? { 'aria-invalid': true, 'aria-describedby': errorId } : {} };
+}
+
+export function Field({ label, value, onChange, type = 'text', error, hint, name, ...inputProps }) {
+  const { errorId, control } = useFieldA11y(error);
   return (
-    <label className={`field ${error ? 'invalid' : ''}`}>
+    <label className={`field ${error ? 'invalid' : ''}`} data-field={name}>
       <span>{label}</span>
-      <input type={type} value={value ?? ''} onChange={(e) => onChange(e.target.value)} {...inputProps} />
+      <input type={type} value={value ?? ''} onChange={(e) => onChange(e.target.value)} {...control} {...inputProps} />
       {hint && !error && <small className="field-hint">{hint}</small>}
-      <ErrorText error={error} />
+      <ErrorText error={error} id={errorId} />
     </label>
   );
 }
@@ -35,39 +42,42 @@ export function PasswordField({ label, value, onChange, error, hint, ...inputPro
   );
 }
 
-export function TextArea({ label, value, onChange, error, rows = 3, ...rest }) {
+export function TextArea({ label, value, onChange, error, rows = 3, name, hint, ...rest }) {
+  const { errorId, control } = useFieldA11y(error);
   return (
-    <label className={`field ${error ? 'invalid' : ''}`}>
+    <label className={`field ${error ? 'invalid' : ''}`} data-field={name}>
       <span>{label}</span>
-      <textarea rows={rows} value={value ?? ''} onChange={(e) => onChange(e.target.value)} {...rest} />
-      <ErrorText error={error} />
+      <textarea rows={rows} value={value ?? ''} onChange={(e) => onChange(e.target.value)} {...control} {...rest} />
+      {hint && !error && <small className="field-hint">{hint}</small>}
+      <ErrorText error={error} id={errorId} />
     </label>
   );
 }
 
 /** options: [{ value, label }] */
-export function SelectField({ label, value, onChange, options, error, ...rest }) {
+export function SelectField({ label, value, onChange, options, error, name, ...rest }) {
+  const { errorId, control } = useFieldA11y(error);
   return (
-    <label className={`field ${error ? 'invalid' : ''}`}>
+    <label className={`field ${error ? 'invalid' : ''}`} data-field={name}>
       <span>{label}</span>
-      <select value={value ?? ''} onChange={(e) => onChange(e.target.value)} {...rest}>
+      <select value={value ?? ''} onChange={(e) => onChange(e.target.value)} {...control} {...rest}>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
         ))}
       </select>
-      <ErrorText error={error} />
+      <ErrorText error={error} id={errorId} />
     </label>
   );
 }
 
 /** Pick-one (`multi` false) or pick-many chips. options: [{ value, label }] */
-export function ChipSelect({ label, options, value, onChange, multi = false, error }) {
+export function ChipSelect({ label, options, value, onChange, multi = false, error, name }) {
   const isOn = (v) => (multi ? value.includes(v) : value === v);
   const toggle = (v) => onChange(multi ? (value.includes(v) ? value.filter((x) => x !== v) : [...value, v]) : v);
   return (
-    <div className={`field ${error ? 'invalid' : ''}`}>
+    <div className={`field ${error ? 'invalid' : ''}`} data-field={name}>
       <span>{label}</span>
       <div className="chip-select">
         {options.map((option) => (
@@ -77,6 +87,27 @@ export function ChipSelect({ label, options, value, onChange, multi = false, err
         ))}
       </div>
       <ErrorText error={error} />
+    </div>
+  );
+}
+
+/** Pick exactly one of a few clear choices (radio buttons drawn as large tappable rows). options: [{ value, label, hint }] */
+export function RadioCards({ label, options, value, onChange, error, name }) {
+  const groupId = useId();
+  const { errorId } = useFieldA11y(error);
+  return (
+    <div className={`field ${error ? 'invalid' : ''}`} data-field={name} role="radiogroup" aria-labelledby={groupId} aria-describedby={error ? errorId : undefined} aria-invalid={error ? true : undefined}>
+      <span id={groupId}>{label}</span>
+      <div className="radio-cards">
+        {options.map((option) => (
+          <label key={String(option.value)} className={value === option.value ? 'on' : ''}>
+            <input type="radio" name={groupId} checked={value === option.value} onChange={() => onChange(option.value)} />
+            <span>{option.label}</span>
+            {option.hint && <small>{option.hint}</small>}
+          </label>
+        ))}
+      </div>
+      <ErrorText error={error} id={errorId} />
     </div>
   );
 }

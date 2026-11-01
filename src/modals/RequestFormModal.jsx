@@ -1,7 +1,8 @@
 // "Request Custom Coaching": prefilled from the athlete's profile, editable, with an optional full-body photo.
 import { Camera, Trash2 } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { ChipSelect, Field, SelectField, TextArea } from '../components/ui/Field.jsx';
+import ErrorSummary from '../components/ui/ErrorSummary.jsx';
+import { ChipSelect, Field, RadioCards, SelectField, TextArea } from '../components/ui/Field.jsx';
 import Sheet from '../components/ui/Sheet.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import { GOALS, LEVELS, MUSCLES } from '../lib/constants.js';
@@ -26,9 +27,15 @@ export default function RequestFormModal({ trainerId }) {
     schedule: '',
     notes: '',
     photo: '',
+    wantsMealPlan: null, // must be answered: the trainer needs to know whether to prepare a meal plan
   });
   const [errors, setErrors] = useState({});
-  const set = (key) => (value) => setForm((f) => ({ ...f, [key]: value }));
+  const [attempted, setAttempted] = useState(false);
+  const summaryRef = useRef(null);
+  const set = (key) => (value) => {
+    setForm((f) => ({ ...f, [key]: value }));
+    setErrors((e) => (e[key] ? { ...e, [key]: undefined } : e)); // an error goes away as soon as the field is touched
+  };
   const error = (key) => (errors[key] ? t(`field.${errors[key]}`) : undefined);
 
   const pickPhoto = async (event) => {
@@ -36,7 +43,7 @@ export default function RequestFormModal({ trainerId }) {
     event.target.value = '';
     if (!file) return;
     try {
-      set('photo')(await fileToDataUrl(file));
+      set('photo')(await fileToDataUrl(file, 1080)); // large enough to look at closely in the viewer
       setErrors((e) => ({ ...e, photo: undefined }));
     } catch {
       setErrors((e) => ({ ...e, photo: 'invalid' }));
@@ -46,30 +53,48 @@ export default function RequestFormModal({ trainerId }) {
   const submit = () => {
     const found = validateRequestForm(form);
     setErrors(found);
+    setAttempted(true);
     if (!Object.keys(found).length) requestCoaching(trainerId, form);
+    else requestAnimationFrame(() => summaryRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
   };
+
+  const FIELD_LABELS = { name: 'cr.name', age: 'cr.age', height: 'cr.heightOptional', weight: 'cr.weightOptional', level: 'cr.level', goal: 'cr.goal', daysPerWeek: 'cr.daysPerWeek', schedule: 'cr.schedule', notes: 'cr.notes', photo: 'cr.photoOptional', wantsMealPlan: 'cr.mealQuestion' };
+  const problems = Object.keys(errors).filter((key) => errors[key]).map((key) => ({ name: key, label: `${t(FIELD_LABELS[key] ?? 'field.invalid')}: ${t(`field.${errors[key]}`)}` }));
 
   const options = (ids, prefix) => ids.map((id) => ({ value: id, label: t(`${prefix}.${id}`) }));
 
   return (
-    <Sheet title={t('cr.title', { name: trainer.name })}>
+    <Sheet title={t('cr.title', { name: trainer.name })} size="wide">
       <p className="muted">{t('cr.intro')}</p>
-      <Field label={t('cr.name')} value={form.name} onChange={set('name')} error={error('name')} />
+      {attempted && <ErrorSummary items={problems} containerRef={summaryRef} />}
+      <Field name="name" label={t('cr.name')} value={form.name} onChange={set('name')} error={error('name')} />
       <div className="form-grid">
-        <Field label={t('cr.ageOptional')} type="number" value={form.age} onChange={set('age')} error={error('age')} />
-        <Field label={t('cr.heightOptional')} type="number" value={form.height} onChange={set('height')} error={error('height')} />
-        <Field label={t('cr.weightOptional')} type="number" value={form.weight} onChange={set('weight')} error={error('weight')} />
-        <SelectField label={t('cr.level')} value={form.level} onChange={set('level')} options={options(LEVELS, 'level')} error={error('level')} />
+        <Field name="age" label={t('cr.ageOptional')} type="number" value={form.age} onChange={set('age')} error={error('age')} />
+        <Field name="height" label={t('cr.heightOptional')} type="number" value={form.height} onChange={set('height')} error={error('height')} />
+        <Field name="weight" label={t('cr.weightOptional')} type="number" value={form.weight} onChange={set('weight')} error={error('weight')} />
+        <SelectField name="level" label={t('cr.level')} value={form.level} onChange={set('level')} options={options(LEVELS, 'level')} error={error('level')} />
       </div>
-      <SelectField label={t('cr.goal')} value={form.goal} onChange={set('goal')} options={options(GOALS, 'goal')} error={error('goal')} />
+      <SelectField name="goal" label={t('cr.goal')} value={form.goal} onChange={set('goal')} options={options(GOALS, 'goal')} error={error('goal')} />
       <ChipSelect multi label={t('cr.musclesOptional')} options={options(MUSCLES, 'focus')} value={form.muscles} onChange={set('muscles')} />
       <div className="form-grid">
-        <SelectField label={t('cr.daysPerWeek')} value={form.daysPerWeek} onChange={set('daysPerWeek')} options={DAYS.map((d) => ({ value: d, label: String(d) }))} error={error('daysPerWeek')} />
-        <Field label={t('cr.scheduleOptional')} value={form.schedule} onChange={set('schedule')} error={error('schedule')} />
+        <SelectField name="daysPerWeek" label={t('cr.daysPerWeek')} value={form.daysPerWeek} onChange={set('daysPerWeek')} options={DAYS.map((d) => ({ value: d, label: String(d) }))} error={error('daysPerWeek')} />
+        <Field name="schedule" label={t('cr.scheduleOptional')} value={form.schedule} onChange={set('schedule')} error={error('schedule')} />
       </div>
-      <TextArea label={t('cr.notesOptional')} value={form.notes} onChange={set('notes')} error={error('notes')} />
+      <TextArea name="notes" label={t('cr.notesOptional')} value={form.notes} onChange={set('notes')} error={error('notes')} />
 
-      <div className="field">
+      <RadioCards
+        name="wantsMealPlan"
+        label={t('cr.mealQuestion')}
+        value={form.wantsMealPlan}
+        onChange={set('wantsMealPlan')}
+        error={error('wantsMealPlan')}
+        options={[
+          { value: true, label: t('cr.mealYes') },
+          { value: false, label: t('cr.mealNo') },
+        ]}
+      />
+
+      <div className="field" data-field="photo">
         <span>{t('cr.photoOptional')}</span>
         {form.photo ? (
           <div className="photo-preview">

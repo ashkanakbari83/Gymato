@@ -1,10 +1,13 @@
 // A trainer's public profile: info, their published general programs, and the "Request Custom Coaching" action.
-import { MapPin, Share2 } from 'lucide-react';
+import { Images, MapPin, Share2, UserPen } from 'lucide-react';
 import { useEffect } from 'react';
 import { ReviewList } from '../components/marketplace/ReviewSection.jsx';
 import { Stars } from '../components/marketplace/Stars.jsx';
 import { PhaseBadge } from '../components/marketplace/Badges.jsx';
 import ProgramListing from '../components/marketplace/ProgramListing.jsx';
+import TrainerAlbum from '../components/trainer/TrainerAlbum.jsx';
+import TrainerResume from '../components/trainer/TrainerResume.jsx';
+import Avatar from '../components/ui/Avatar.jsx';
 import Badge from '../components/ui/Badge.jsx';
 import Empty from '../components/ui/Empty.jsx';
 import { ArrowBack } from '../components/ui/Arrow.jsx';
@@ -13,7 +16,7 @@ import { useApp } from '../context/AppContext.jsx';
 import { hasGeneralAccess, isFreeProgram, requestPhase } from '../lib/access.js';
 import { REQUEST_STATUS } from '../lib/constants.js';
 import { formatPrice, num } from '../lib/format.js';
-import { getTrainerReviews, ratingOf } from '../lib/analytics.js';
+import { getStudentStats, getTrainerReviews, ratingOf } from '../lib/analytics.js';
 import { getPublishedPrograms } from '../lib/marketplace.js';
 
 export default function TrainerProfilePage() {
@@ -23,41 +26,83 @@ export default function TrainerProfilePage() {
   if (!trainer) return <Empty icon={MapPin} title={t('trainer.notFound')} text="" actionLabel={t('common.back')} onAction={() => go('trainers')} />;
 
   const programs = getPublishedPrograms(db, trainer.id);
+  const rating = ratingOf(getTrainerReviews(db, trainer.id));
+  const students = getStudentStats(db, trainer.id);
+  const resume = trainer.resume ?? [];
+  const album = trainer.album ?? [];
+  const isOwn = user.id === trainer.id;
   const isAthlete = user.role === 'athlete';
   const openRequest = db.requests.find(
     (r) => r.athleteId === user.id && r.trainerId === trainer.id && [REQUEST_STATUS.PENDING, REQUEST_STATUS.ACCEPTED].includes(r.status),
   );
 
   return (
-    <div className="stack">
+    <div className="stack desk-grid">
       <button className="link back-link" onClick={() => go('trainers')}>
         <ArrowBack size={16} /> {t('nav.trainers')}
       </button>
 
-      <section className="panel trainer-head">
-        <span className="avatar xl">{trainer.name[0]}</span>
-        <div>
-          <div className="trainer-title-row">
-            <h1>{trainer.name}</h1>
-            <button className="icon-btn sm" onClick={() => openModal({ type: 'share', kind: 'trainer', id: trainer.id })} aria-label={t('share.title')}>
-              <Share2 size={17} />
-            </button>
+      <section className="panel trainer-hero">
+        <div className={`trainer-banner ${trainer.banner ? '' : 'is-default'}`}>
+          {trainer.banner && <img src={trainer.banner} alt={t('trainer.bannerAlt', { name: trainer.name })} />}
+        </div>
+        <div className="trainer-hero-body">
+          <Avatar user={trainer} size="xl" className="hero-avatar" />
+          <div className="trainer-hero-main">
+            <div className="trainer-title-row">
+              <h1>{trainer.name}</h1>
+              <div className="trainer-title-actions">
+                {isOwn && (
+                  <button className="btn ghost" onClick={() => go('profile')}><UserPen size={16} /> {t('trainer.editProfile')}</button>
+                )}
+                <button className="icon-btn sm" onClick={() => openModal({ type: 'share', kind: 'trainer', id: trainer.id })} aria-label={t('share.title')}>
+                  <Share2 size={17} />
+                </button>
+              </div>
+            </div>
+            <p className="muted trainer-meta">
+              <span>
+                <MapPin size={14} /> {locationLabel(trainer.province, trainer.city, lang) || t('trainer.noLocation')}
+              </span>
+            </p>
+            <Stars {...rating} value={rating.avg} />
           </div>
-          <p className="muted trainer-meta">
-            <span>
-              <MapPin size={14} /> {locationLabel(trainer.province, trainer.city, lang) || t('trainer.noLocation')}
-            </span>
-            {trainer.experienceYears > 0 && <span>{t('trainer.experience', { n: num(trainer.experienceYears) })}</span>}
-          </p>
-          <Stars {...ratingOf(getTrainerReviews(db, trainer.id))} value={ratingOf(getTrainerReviews(db, trainer.id)).avg} />
-          {trainer.bio && <p>{trainer.bio}</p>}
+        </div>
+
+        <dl className="trainer-stats">
+          <div><dt>{t('trainer.stat.active')}</dt><dd>{num(students.active)}</dd></div>
+          <div><dt>{t('trainer.stat.total')}</dt><dd>{num(students.total)}</dd></div>
+          <div><dt>{t('trainer.stat.programs')}</dt><dd>{num(programs.length)}</dd></div>
+          <div><dt>{t('trainer.stat.experience')}</dt><dd>{trainer.experienceYears > 0 ? t('trainer.yearsShort', { n: num(trainer.experienceYears) }) : '—'}</dd></div>
+        </dl>
+
+        {trainer.bio ? <p className="trainer-bio">{trainer.bio}</p> : <p className="muted">{t(isOwn ? 'trainer.bioEmptyOwn' : 'trainer.bioEmpty')}</p>}
+        {(trainer.specialties ?? []).length > 0 && (
           <div className="listing-tags">
-            {(trainer.specialties ?? []).map((id) => (
+            {trainer.specialties.map((id) => (
               <Badge key={id}>{t(`focus.${id}`)}</Badge>
             ))}
           </div>
-        </div>
+        )}
       </section>
+
+      {resume.length > 0 && (
+        <section className="panel half">
+          <div className="section-title"><h2>{t('resume.title')}</h2></div>
+          <TrainerResume resume={resume} />
+        </section>
+      )}
+      {album.length > 0 && (
+        <section className="panel half">
+          <div className="section-title"><h2>{t('album.title')}</h2></div>
+          <TrainerAlbum album={album} trainerName={trainer.name} />
+        </section>
+      )}
+      {isOwn && (resume.length === 0 || album.length === 0) && (
+        <section className="panel">
+          <Empty icon={Images} title={t('trainer.completeTitle')} text={t('trainer.completeText')} actionLabel={t('trainer.editProfile')} onAction={() => go('profile')} />
+        </section>
+      )}
 
       {/* Two different services, explained side by side before anything is bought. */}
       <section className="panel service-compare">

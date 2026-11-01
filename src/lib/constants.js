@@ -25,7 +25,7 @@ export const FOCUS_AREAS = [...GOALS, ...MUSCLES];
 export const PROGRAM_KIND = { GENERAL: 'general', CUSTOM: 'custom' };
 export const PROGRAM_STATUS = { DRAFT: 'draft', PUBLISHED: 'published' };
 export const REQUEST_STATUS = { PENDING: 'pending', ACCEPTED: 'accepted', REJECTED: 'rejected', CANCELLED: 'cancelled' };
-export const PAYMENT_STATUS = { INITIATED: 'initiated', CONFIRMED: 'confirmed', FAILED: 'failed' };
+export const PAYMENT_STATUS = { PENDING: 'pending', PAID: 'paid', FAILED: 'failed', CANCELLED: 'cancelled' };
 export const PAYMENT_KIND = { GENERAL: 'general_purchase', COACHING: 'coaching_initial', RENEWAL: 'coaching_renewal' };
 export const SUBSCRIPTION_STATUS = { PENDING: 'pending_payment', ACTIVE: 'active', EXPIRED: 'expired', CANCELLED: 'cancelled' };
 

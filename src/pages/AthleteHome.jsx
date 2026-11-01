@@ -35,7 +35,7 @@ export default function AthleteHome() {
   ].filter(Boolean);
 
   return (
-    <div className="stack">
+    <div className="stack desk-grid">
       <section className="today">
         <small>{workout ? t('home.inProgress') : program ? t('home.todayWorkout') : t('home.freeWorkout')}</small>
         <h2>{workout ? t('home.continue') : session?.name ?? t('home.simpleWorkout')}</h2>
@@ -61,7 +61,7 @@ export default function AthleteHome() {
         </button>
       ))}
 
-      <button className="nutri-card" onClick={() => setPage('nutrition')}>
+      <button className="nutri-card half" onClick={() => setPage('nutrition')}>
         <span className="nutri-card-icon"><UtensilsCrossed size={20} /></span>
         <span className="nutri-card-text">
           <b>{t('nutrition.homeTitle')}</b>
@@ -74,6 +74,7 @@ export default function AthleteHome() {
       </button>
 
       <Metrics
+        className="half"
         items={[
           { value: sessions.length, label: t('stat.workouts') },
           { value: countActiveDays(sessions), label: t('stat.activeDays') },
@@ -81,7 +82,7 @@ export default function AthleteHome() {
         ]}
       />
 
-      <section className="panel">
+      <section className="panel half">
         <div className="week">
           {week.map((day, i) => (
             <span key={i} className={day.count ? 'on' : ''}>
@@ -93,7 +94,7 @@ export default function AthleteHome() {
       </section>
 
       {sessions[0] && (
-        <section className="panel">
+        <section className="panel half">
           <div className="section-title">
             <h2>{t('home.lastWorkout')}</h2>
             <button className="link" onClick={() => setPage('progress')}>

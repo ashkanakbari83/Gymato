@@ -9,7 +9,7 @@ import { useCoachingActions } from '../hooks/useCoachingActions.js';
 import { useEngagementActions } from '../hooks/useEngagementActions.js';
 import { useNutritionActions } from '../hooks/useNutritionActions.js';
 import { useOnboarding } from '../hooks/useOnboarding.js';
-import { usePaymentActions } from '../hooks/usePaymentActions.js';
+import { usePaymentActions, usePaymentReturn } from '../hooks/usePaymentActions.js';
 import { useTheme } from '../hooks/useTheme.js';
 import { useToast } from '../hooks/useToast.js';
 import { useWorkoutActions } from '../hooks/useWorkoutActions.js';
@@ -98,6 +98,7 @@ export function AppProvider({ children, initial = {} }) {
   const engagement = useEngagementActions(base);
   const nutrition = useNutritionActions(base);
   const payments = usePaymentActions(base);
+  usePaymentReturn({ signedIn: db.signedIn, verifyPayment: payments.verifyPayment, openModal });
   const workouts = useWorkoutActions(base);
   const accounts = useAccountActions(base);
   const backup = useBackup(base);

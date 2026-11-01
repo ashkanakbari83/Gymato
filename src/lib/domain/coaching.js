@@ -3,6 +3,7 @@ import { FOCUS_AREAS, GOALS, LEVELS, PROGRAM_KIND, PROGRAM_STATUS, REQUEST_STATU
 import { chatState, getCustomProgram, getSubscription, subscriptionState } from '../access.js';
 import { uid } from '../format.js';
 import { sanitizeMealPlan } from '../mealPlan.js';
+import { hasPaymentInProgress } from './payments.js';
 import { buildSessions } from '../programs.js';
 import { canTransition } from '../transitions.js';
 import { byId, fail, nowIso, ok, replaceById, withNotification } from './shared.js';
@@ -10,13 +11,14 @@ import { byId, fail, nowIso, ok, replaceById, withNotification } from './shared.
 const between = (value, min, max) => Number.isFinite(Number(value)) && Number(value) >= min && Number(value) <= max;
 const blank = (value) => value === '' || value == null;
 
-/** Field errors for the athlete's request form. Only goal, level, training days and name are required. */
+/** Field errors for the athlete's request form. Name, goal, level, training days and the meal-plan choice are required. */
 export function validateRequestForm(form) {
   const errors = {};
   if (!form.name?.trim()) errors.name = 'required';
   if (!GOALS.includes(form.goal)) errors.goal = 'required';
   if (!LEVELS.includes(form.level)) errors.level = 'required';
   if (!Number.isInteger(Number(form.daysPerWeek)) || !between(form.daysPerWeek, 1, 7)) errors.daysPerWeek = 'invalid';
+  if (typeof form.wantsMealPlan !== 'boolean') errors.wantsMealPlan = 'required'; // an explicit yes or no
   if (!blank(form.age) && !between(form.age, 10, 100)) errors.age = 'invalid';
   if (!blank(form.height) && !between(form.height, 100, 250)) errors.height = 'invalid';
   if (!blank(form.weight) && !between(form.weight, 25, 300)) errors.weight = 'invalid';
@@ -72,6 +74,7 @@ export function submitRequest(db, athleteId, trainerId, form, now = Date.now()) 
       muscles: (form.muscles ?? []).filter((m) => FOCUS_AREAS.includes(m)),
       level: form.level,
       daysPerWeek: Number(form.daysPerWeek),
+      wantsMealPlan: form.wantsMealPlan,
       schedule: (form.schedule ?? '').trim(),
       notes: (form.notes ?? '').trim(),
       photo: form.photo || '',
@@ -129,14 +132,46 @@ export function rejectRequest(db, trainerId, requestId, reason = '', now = Date.
   return ok(next);
 }
 
-/** Errors for a custom program draft. The offer is only mandatory when publishing a proposal. */
-export function validateCustomProgram(draft, { needsOffer }) {
+export const CUSTOM_MODE = { DRAFT: 'draft', PUBLISH: 'publish' };
+
+/**
+ * Errors for a custom program, by field. Shared by the editor (to show them next to the fields before anything
+ * is sent) and by saveCustomProgram (which enforces them). The two modes differ on purpose:
+ *  - draft:   may be incomplete, but needs a title and sane numbers, so there is something to come back to.
+ *  - publish: the proposal the athlete will pay for, so everything must be complete: at least one exercise, valid
+ *             sets / reps for each, days and weeks, and the offer (price, renewal price, duration).
+ * Keys are field names; `target.<exerciseId>.<sets|reps|rest>` marks one cell of the exercise table.
+ */
+export function validateCustomProgram(draft, { mode = CUSTOM_MODE.PUBLISH } = {}) {
   const errors = {};
-  if (!draft.title?.trim()) errors.title = 'required';
-  if (!draft.exercises?.length) errors.exercises = 'required';
-  if (!between(draft.daysPerWeek, 1, 7)) errors.daysPerWeek = 'invalid';
-  if (!between(draft.durationWeeks, 1, 52)) errors.durationWeeks = 'invalid';
-  if (needsOffer) Object.assign(errors, validateOffer(draft.offer));
+  const publishing = mode === CUSTOM_MODE.PUBLISH;
+  const title = draft.title?.trim() ?? '';
+  if (!title) errors.title = 'required';
+  else if (title.length > 100) errors.title = 'too_long';
+  if (!between(draft.daysPerWeek, 1, 7) || !Number.isInteger(Number(draft.daysPerWeek))) errors.daysPerWeek = blank(draft.daysPerWeek) ? 'required' : 'invalid';
+  if (!between(draft.durationWeeks, 1, 52) || !Number.isInteger(Number(draft.durationWeeks))) errors.durationWeeks = blank(draft.durationWeeks) ? 'required' : 'invalid';
+  if ((draft.notes ?? '').length > 1000) errors.notes = 'too_long';
+  if ((draft.safety ?? '').length > 1000) errors.safety = 'too_long';
+
+  const exercises = draft.exercises ?? [];
+  if (publishing) {
+    if (!exercises.length) errors.exercises = 'no_exercises';
+    for (const id of exercises) {
+      // No override at all means "use the exercise's own defaults"; an override that was emptied or is nonsense is an error.
+      const target = draft.targets?.[id];
+      if (!target) continue;
+      if ('sets' in target && !between(target.sets, 1, 20)) errors[`target.${id}.sets`] = 'invalid';
+      if ('reps' in target && !between(target.reps, 1, 1000)) errors[`target.${id}.reps`] = 'invalid';
+      if (!blank(target.rest) && !between(target.rest, 0, 3600)) errors[`target.${id}.rest`] = 'invalid';
+    }
+    Object.assign(errors, validateOffer(draft.offer));
+  } else if (draft.offer) {
+    // A draft keeps whatever offer figures were typed, as long as they are not nonsense.
+    const { price, renewalPrice, durationDays } = draft.offer;
+    if (!blank(price) && !(Number.isInteger(Number(price)) && Number(price) > 0)) errors.price = 'invalid';
+    if (!blank(renewalPrice) && !(Number.isInteger(Number(renewalPrice)) && Number(renewalPrice) > 0)) errors.renewalPrice = 'invalid';
+    if (!blank(durationDays) && !between(durationDays, 7, 365)) errors.durationDays = 'invalid';
+  }
   return errors;
 }
 
@@ -160,9 +195,10 @@ export function saveCustomProgram(db, trainerId, requestId, draft, { publish = f
   // Offer terms: editable until paid; afterwards only the renewal price may change.
   const baseOffer = subscription ? { price: subscription.price, renewalPrice: subscription.renewalPrice, durationDays: subscription.durationDays } : request.offer;
   const offer = { ...(baseOffer ?? {}), ...(draft.offer ?? {}) };
-  if (paidBefore) Object.assign(offer, { price: subscription.price, durationDays: subscription.durationDays });
+  // Frozen once paid, and also while the athlete is at the payment provider (they agreed to these exact terms).
+  if (paidBefore || (subscription && hasPaymentInProgress(db, subscription.id))) Object.assign(offer, { price: subscription.price, durationDays: subscription.durationDays });
 
-  const errors = validateCustomProgram({ ...draft, offer }, { needsOffer: willBePublished });
+  const errors = validateCustomProgram({ ...draft, offer }, { mode: willBePublished ? CUSTOM_MODE.PUBLISH : CUSTOM_MODE.DRAFT });
   if (Object.keys(errors).length) return fail('validation', errors);
 
   const exercises = [...draft.exercises];

@@ -57,7 +57,9 @@
   color: var(--ink);
 }
 
-.tabs .active {
+/* :hover is listed too, otherwise `.tabs button:hover` (more specific) turns the label ink-on-ink under the pointer */
+.tabs .active,
+.tabs .active:hover {
   background: var(--ink);
   color: var(--bg);
 }
