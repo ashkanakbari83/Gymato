@@ -2,6 +2,9 @@
 // `index` is the one this thumbnail shows. It is a real button, so it works with keyboard and screen readers.
 import { useApp } from '../../context/AppContext.jsx';
 
+/** Stable id of a thumbnail, so focus can go back to it when the viewer closes. */
+export const viewerId = (image, index) => `${image.src.slice(-24)}:${index}`;
+
 export default function ViewableImage({ images, index = 0, className = '', imgClassName = '', loading = 'lazy' }) {
   const { openModal, t } = useApp();
   const image = images[index];
@@ -10,6 +13,7 @@ export default function ViewableImage({ images, index = 0, className = '', imgCl
     <button
       type="button"
       className={`viewable ${className}`}
+      data-viewer-id={viewerId(image, index)}
       onClick={() => openModal({ type: 'image-viewer', images, index })}
       aria-label={t('viewer.open', { alt: image.alt || '' })}
     >

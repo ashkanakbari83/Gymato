@@ -5,6 +5,7 @@
 import { ChevronLeft, ChevronRight, RotateCcw, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Sheet from '../components/ui/Sheet.jsx';
+import { viewerId } from '../components/ui/ViewableImage.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import { num } from '../lib/format.js';
 
@@ -25,6 +26,15 @@ export default function ImageViewerModal({ images = [], index = 0 }) {
   const rtl = lang === 'fa';
   const many = images.length > 1;
   const current = images[i];
+
+  // When the viewer goes away, focus returns to the thumbnail that opened it (the dialog underneath is restored first).
+  const last = useRef(null);
+  last.current = images[i] ? viewerId(images[i], i) : null;
+  const opener = useRef(images[index] ? viewerId(images[index], index) : null);
+  useEffect(() => () => {
+    const id = opener.current;
+    setTimeout(() => document.querySelector(`[data-viewer-id="${CSS.escape(id)}"]`)?.focus({ preventScroll: true }), 120);
+  }, []);
 
   const close = useCallback(() => {
     // The viewer was pushed as a history entry; stepping back removes it (and restores a dialog underneath).

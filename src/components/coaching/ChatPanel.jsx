@@ -13,7 +13,7 @@ export default function ChatPanel({ request, state }) {
   const conversation = getConversation(db, request.id);
   const messages = conversation ? getMessages(db, conversation.id) : [];
 
-  useEffect(() => endRef.current?.scrollIntoView?.({ block: 'nearest' }), [messages.length]);
+  useEffect(() => { endRef.current?.scrollIntoView?.({ block: 'nearest' }); }, [messages.length]);
 
   if (state === 'locked' || !conversation) {
     return (
