@@ -42,12 +42,13 @@ export function PasswordField({ label, value, onChange, error, hint, ...inputPro
   );
 }
 
-export function TextArea({ label, value, onChange, error, rows = 3, name, ...rest }) {
+export function TextArea({ label, value, onChange, error, rows = 3, name, hint, ...rest }) {
   const { errorId, control } = useFieldA11y(error);
   return (
     <label className={`field ${error ? 'invalid' : ''}`} data-field={name}>
       <span>{label}</span>
       <textarea rows={rows} value={value ?? ''} onChange={(e) => onChange(e.target.value)} {...control} {...rest} />
+      {hint && !error && <small className="field-hint">{hint}</small>}
       <ErrorText error={error} id={errorId} />
     </label>
   );

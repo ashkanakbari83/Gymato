@@ -35,7 +35,7 @@ export default function TopBar() {
             <Settings size={20} />
           </button>
           <button className="avatar-btn" aria-label={t('nav.account')} onClick={() => openModal({ type: 'account' })}>
-            {user.name[0]}
+            {user.avatar ? <img src={user.avatar} alt="" /> : user.name[0]}
           </button>
         </div>
       </div>

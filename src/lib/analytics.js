@@ -1,6 +1,7 @@
 // Statistics and income for a trainer, computed from events, likes, reviews and confirmed payments.
 // Income is gross (what athletes paid); there is no platform fee in this prototype.
-import { DAY_MS, PAYMENT_KIND, PAYMENT_STATUS } from './constants.js';
+import { subscriptionState } from './access.js';
+import { DAY_MS, PAYMENT_KIND, PAYMENT_STATUS, SUBSCRIPTION_STATUS } from './constants.js';
 
 const confirmed = (db, trainerId) =>
   db.payments.filter((p) => p.trainerId === trainerId && p.status === PAYMENT_STATUS.PAID).sort((a, b) => new Date(b.paidAt) - new Date(a.paidAt));
@@ -70,4 +71,15 @@ export function getIncomeByWeek(db, trainerId, now = Date.now(), weeks = 6) {
     const amount = payments.filter((p) => new Date(p.paidAt) > start && new Date(p.paidAt) <= end).reduce((sum, p) => sum + p.amount, 0);
     return { start: new Date(start).toISOString(), amount };
   });
+}
+
+/**
+ * Real student numbers for a trainer, from paid coaching subscriptions: `active` = people whose subscription is running
+ * now, `total` = people who ever paid for coaching (active or expired). Each person counts once, however often they renewed.
+ */
+export function getStudentStats(db, trainerId, now = Date.now()) {
+  const mine = db.subscriptions.filter((s) => s.trainerId === trainerId);
+  const withState = mine.map((s) => ({ athleteId: s.athleteId, state: subscriptionState(s, now) }));
+  const distinct = (states) => new Set(withState.filter((s) => states.includes(s.state)).map((s) => s.athleteId)).size;
+  return { active: distinct([SUBSCRIPTION_STATUS.ACTIVE]), total: distinct([SUBSCRIPTION_STATUS.ACTIVE, SUBSCRIPTION_STATUS.EXPIRED]) };
 }

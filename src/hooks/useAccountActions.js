@@ -1,5 +1,6 @@
 // Account actions: sign-up, sign-in / sign-out, profile edits and notification handling.
 import { findAccounts, registerAccount, signInAs, signOut } from '../lib/domain/accounts.js';
+import { updateTrainerProfile } from '../lib/domain/trainerProfile.js';
 
 export function useAccountActions({ db, user, update, notify, t, closeModal, go, openModal, dispatch, setWorkout }) {
   /** A running workout belongs to its athlete; another account never inherits it. */
@@ -39,6 +40,13 @@ export function useAccountActions({ db, user, update, notify, t, closeModal, go,
     notify(t('profile.saved'));
   };
 
+  /** A trainer saves their public profile (photo, banner, resume, album…). Returns the domain result for field errors. */
+  const saveTrainerProfile = (form) => {
+    const result = dispatch(updateTrainerProfile, user.id, form);
+    if (result.ok) notify(t('profile.saved'));
+    return result;
+  };
+
   const markNotificationsRead = () =>
     update((d) => ({ notifications: d.notifications.map((n) => (n.userId === user.id ? { ...n, read: true } : n)) }));
 
@@ -50,5 +58,5 @@ export function useAccountActions({ db, user, update, notify, t, closeModal, go,
     else if (target.kind === 'page') go(target.page);
   };
 
-  return { signUp, signInTo, findLogin, logout, updateProfile, markNotificationsRead, openTarget };
+  return { signUp, signInTo, findLogin, logout, updateProfile, saveTrainerProfile, markNotificationsRead, openTarget };
 }
