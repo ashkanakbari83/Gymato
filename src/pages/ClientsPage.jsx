@@ -25,9 +25,9 @@ export default function ClientsPage() {
   }
 
   return (
-    <div className="stack">
+    <div className="stack desk-grid">
       {shown.map(([key, title]) => (
-        <section className="panel" key={key}>
+        <section className="panel half" key={key}>
           <div className="section-title"><h2>{t(title)}</h2></div>
           <div className="list">
             {clients[key].map((item) => <CoachingRow key={item.request.id} item={item} />)}

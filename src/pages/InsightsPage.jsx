@@ -20,8 +20,8 @@ export default function InsightsPage() {
   const money = (amount) => formatPrice(amount, t);
 
   return (
-    <div className="stack">
-      <section className="stack">
+    <div className="stack desk-grid">
+      <section className="stack half">
         <h2 className="block-title">{t('insights.engagement')}</h2>
         <Metrics
           columns={2}
@@ -34,7 +34,7 @@ export default function InsightsPage() {
         />
       </section>
 
-      <section className="stack">
+      <section className="stack half">
         <h2 className="block-title">{t('insights.income')}</h2>
         <Metrics
           columns={2}
@@ -58,7 +58,7 @@ export default function InsightsPage() {
         </div>
       </section>
 
-      <section className="panel">
+      <section className="panel half">
         <div className="section-title"><h2>{t('insights.byProgram')}</h2></div>
         {programs.length ? (
           <div className="list">
@@ -80,7 +80,7 @@ export default function InsightsPage() {
         )}
       </section>
 
-      <section className="panel">
+      <section className="panel half">
         <div className="section-title"><h2>{t('insights.transactions')}</h2></div>
         {income.payments.length ? (
           <div className="list">

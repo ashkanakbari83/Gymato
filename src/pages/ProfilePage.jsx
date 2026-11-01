@@ -38,7 +38,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="stack narrow">
+    <div className={`stack ${isTrainer ? 'desk-grid wide-form' : 'narrow'}`}>
       <section className="panel">
         <div className="id-row">
           <div>

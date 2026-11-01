@@ -69,12 +69,12 @@ export default function TrainerProfileEditor() {
       {attempts > 0 && <ErrorSummary items={items} title={t('profile.fixThese')} containerRef={summaryRef} />}
       {saved === 'storage_full' && <p className="field-error" role="alert">{t('profile.storageFull')}</p>}
 
-      <section className="panel form-stack">
+      <section className="panel form-stack half">
         <ImageField name="banner" label={t('profile.banner')} value={form.banner} onChange={set('banner')} maxSide={IMAGE_SIZES.banner} shape="wide" alt={t('profile.bannerAlt')} hint={t('profile.bannerHint')} error={errors.banner} addLabel="img.addBanner" />
         <ImageField name="avatar" label={t('profile.avatar')} value={form.avatar} onChange={set('avatar')} maxSide={IMAGE_SIZES.avatar} shape="round" alt={t('profile.avatarAlt')} hint={t('profile.avatarHint')} error={errors.avatar} fallback={<Avatar user={{ ...user, name: form.name || user.name, avatar: '' }} size="xl" />} />
       </section>
 
-      <section className="panel form-stack">
+      <section className="panel form-stack half">
         <Field name="name" label={t('cr.name')} value={form.name} maxLength={PROFILE_LIMITS.name} onChange={set('name')} error={error('name')} />
         <div className="form-grid">
           <LocationFields province={form.province} city={form.city} emptyLabel={t('common.notSet')} onChange={(loc) => setForm((f) => ({ ...f, ...loc }))} />
@@ -88,8 +88,8 @@ export default function TrainerProfileEditor() {
         </label>
       </section>
 
-      <section className="panel form-stack"><ResumeEditor value={form.resume} onChange={set('resume')} errors={errors} /></section>
-      <section className="panel form-stack"><AlbumEditor value={form.album} onChange={set('album')} errors={errors} /></section>
+      <section className="panel form-stack half"><ResumeEditor value={form.resume} onChange={set('resume')} errors={errors} /></section>
+      <section className="panel form-stack half"><AlbumEditor value={form.album} onChange={set('album')} errors={errors} /></section>
 
       <button className="btn wide" disabled={busy !== null} aria-busy={busy === 'save'} onClick={submit}>
         {busy === 'save' ? <Spinner /> : <Save size={17} />} {t(busy === 'save' ? 'editor.saving' : 'common.save')}

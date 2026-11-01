@@ -23,7 +23,7 @@ export default function TrainerHome() {
   ].filter(([, items]) => items.length);
 
   return (
-    <div className="stack">
+    <div className="stack desk-grid">
       <Metrics
         items={[
           { value: clients.pending.length, label: t('home.m.pending') },
@@ -39,7 +39,7 @@ export default function TrainerHome() {
       </button>
 
       {sections.map(([title, items]) => (
-        <section className="panel" key={title}>
+        <section className="panel half" key={title}>
           <div className="section-title">
             <h2>{t(title)}</h2>
             <button className="link" onClick={() => setPage('clients')}>

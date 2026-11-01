@@ -37,7 +37,7 @@ export default function TrainerProfilePage() {
   );
 
   return (
-    <div className="stack">
+    <div className="stack desk-grid">
       <button className="link back-link" onClick={() => go('trainers')}>
         <ArrowBack size={16} /> {t('nav.trainers')}
       </button>
@@ -87,13 +87,13 @@ export default function TrainerProfilePage() {
       </section>
 
       {resume.length > 0 && (
-        <section className="panel">
+        <section className="panel half">
           <div className="section-title"><h2>{t('resume.title')}</h2></div>
           <TrainerResume resume={resume} />
         </section>
       )}
       {album.length > 0 && (
-        <section className="panel">
+        <section className="panel half">
           <div className="section-title"><h2>{t('album.title')}</h2></div>
           <TrainerAlbum album={album} trainerName={trainer.name} />
         </section>

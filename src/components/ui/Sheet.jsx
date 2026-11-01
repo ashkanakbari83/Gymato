@@ -42,7 +42,7 @@ function hidePageBehind(backdrop) {
 }
 
 /** Modal shell: centered dialog on desktop, bottom sheet on mobile. */
-export default function Sheet({ title, label, children, onClose, bodyClassName = '', variant = 'sheet' }) {
+export default function Sheet({ title, label, children, onClose, bodyClassName = '', variant = 'sheet', size = '' }) {
   const lightbox = variant === 'lightbox'; // full-screen viewer: no header, no padding, the children own the whole card
   const { closeModal, t } = useApp();
   const close = onClose ?? closeModal;
@@ -102,7 +102,7 @@ export default function Sheet({ title, label, children, onClose, bodyClassName =
 
   return (
     <div ref={backdropRef} className={`modal-backdrop ${lightbox ? 'lightbox-backdrop' : ''}`} onMouseDown={(e) => e.target === e.currentTarget && close()}>
-      <section ref={cardRef} className={`modal-card ${lightbox ? 'lightbox-card' : ''}`} role="dialog" aria-modal="true" aria-labelledby={title ? titleId : undefined} aria-label={title ? undefined : label} tabIndex={-1}>
+      <section ref={cardRef} className={`modal-card ${lightbox ? 'lightbox-card' : ''} ${size}`.trim()} role="dialog" aria-modal="true" aria-labelledby={title ? titleId : undefined} aria-label={title ? undefined : label} tabIndex={-1}>
         {title && (
           <header className="modal-head">
             <h2 id={titleId}>{title}</h2>

@@ -64,7 +64,7 @@ export default function RequestFormModal({ trainerId }) {
   const options = (ids, prefix) => ids.map((id) => ({ value: id, label: t(`${prefix}.${id}`) }));
 
   return (
-    <Sheet title={t('cr.title', { name: trainer.name })}>
+    <Sheet title={t('cr.title', { name: trainer.name })} size="wide">
       <p className="muted">{t('cr.intro')}</p>
       {attempted && <ErrorSummary items={problems} containerRef={summaryRef} />}
       <Field name="name" label={t('cr.name')} value={form.name} onChange={set('name')} error={error('name')} />

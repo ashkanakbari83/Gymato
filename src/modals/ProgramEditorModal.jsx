@@ -103,7 +103,7 @@ export default function ProgramEditorModal({ kind, requestId, editing }) {
   const mealMissing = Boolean(request?.form?.wantsMealPlan) && !(draft.mealPlan?.meals?.length > 0);
 
   return (
-    <Sheet title={title}>
+    <Sheet title={title} size="wide">
       {attempts > 0 && <ErrorSummary items={problems} title={summaryTitle} containerRef={summaryRef} />}
 
       <Field name="title" label={t('editor.title')} value={draft.title} onChange={set('title')} error={error('title')} />

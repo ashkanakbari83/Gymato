@@ -130,7 +130,7 @@ export default function CoachingModal({ requestId }) {
   };
 
   return (
-    <Sheet title={other.name}>
+    <Sheet title={other.name} size="wide">
       <div className="co-head">
         <TypeBadge kind="custom" />
         <PhaseBadge phase={phase} />

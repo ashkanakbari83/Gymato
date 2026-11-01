@@ -18,10 +18,10 @@ export default function ProgressPage() {
   const totals = totalsByExercise(sessions, db.exercises).slice(0, 6);
 
   return (
-    <div className="stack">
+    <div className="stack desk-grid">
       <Metrics items={[{ value: sessions.length, label: t('stat.workouts') }, { value: minutes, label: t('stat.minutes') }, { value: sessionsCalories(sessions, db.exercises), label: t('stat.kcal') }]} />
 
-      <section className="panel">
+      <section className="panel half">
         <div className="section-title"><h2>{t('progress.week')}</h2></div>
         <div className="bars">
           {week.map((day, i) => (
@@ -33,7 +33,7 @@ export default function ProgressPage() {
         </div>
       </section>
 
-      <section className="panel">
+      <section className="panel half">
         <div className="section-title"><h2>{t('progress.totals')}</h2></div>
         {totals.length ? (
           totals.map(({ id, exercise, n, timed, kcal }) => {

@@ -19,8 +19,9 @@ export default function TopBar() {
         </button>
 
         <nav className="tabs" aria-label={t('nav.pages')}>
-          {getNavItems(isTrainer).map(({ id }) => (
+          {getNavItems(isTrainer).map(({ id, icon: Icon }) => (
             <button key={id} className={navTabFor(page) === id ? 'active' : ''} aria-current={navTabFor(page) === id ? 'page' : undefined} onClick={() => setPage(id)}>
+              <Icon size={19} className="tab-icon" aria-hidden="true" />
               {t(`nav.${id}`)}
             </button>
           ))}
