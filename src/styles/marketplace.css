@@ -890,16 +890,21 @@
 }
 
 /* Avatars with a photo */
-.avatar,
-.avatar-btn {
+.avatar {
   overflow: hidden;
 }
 
+/* The round button must not clip itself: its invisible 44px touch area is a child pseudo-element. The photo is
+   rounded on its own instead. */
 .avatar img,
 .avatar-btn img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.avatar-btn img {
+  border-radius: inherit;
 }
 
 /* Public trainer page: banner, overlapping photo, real numbers */

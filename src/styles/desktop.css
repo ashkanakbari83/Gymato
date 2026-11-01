@@ -55,6 +55,7 @@
   .tabs .active,
   .tabs .active:hover {
     background: var(--ink);
+    color: var(--bg);
   }
 
   .tab-icon {
