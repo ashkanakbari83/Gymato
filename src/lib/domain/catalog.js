@@ -72,7 +72,7 @@ export function deleteGeneralProgram(db, trainerId, programId) {
   const program = byId(db.programs, programId);
   if (!program || program.ownerId !== trainerId) return fail('forbidden');
   const inUse =
-    db.payments.some((p) => p.targetId === programId && p.status === 'confirmed') ||
+    db.payments.some((p) => p.targetId === programId && p.status === 'paid') ||
     db.freeLibrary.some((entry) => entry.programId === programId);
   if (inUse) return fail('has_customers');
   return ok({ ...db, programs: db.programs.filter((p) => p.id !== programId) });

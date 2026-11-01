@@ -3,6 +3,7 @@ import { FOCUS_AREAS, GOALS, LEVELS, PROGRAM_KIND, PROGRAM_STATUS, REQUEST_STATU
 import { chatState, getCustomProgram, getSubscription, subscriptionState } from '../access.js';
 import { uid } from '../format.js';
 import { sanitizeMealPlan } from '../mealPlan.js';
+import { hasPaymentInProgress } from './payments.js';
 import { buildSessions } from '../programs.js';
 import { canTransition } from '../transitions.js';
 import { byId, fail, nowIso, ok, replaceById, withNotification } from './shared.js';
@@ -194,7 +195,8 @@ export function saveCustomProgram(db, trainerId, requestId, draft, { publish = f
   // Offer terms: editable until paid; afterwards only the renewal price may change.
   const baseOffer = subscription ? { price: subscription.price, renewalPrice: subscription.renewalPrice, durationDays: subscription.durationDays } : request.offer;
   const offer = { ...(baseOffer ?? {}), ...(draft.offer ?? {}) };
-  if (paidBefore) Object.assign(offer, { price: subscription.price, durationDays: subscription.durationDays });
+  // Frozen once paid, and also while the athlete is at the payment provider (they agreed to these exact terms).
+  if (paidBefore || (subscription && hasPaymentInProgress(db, subscription.id))) Object.assign(offer, { price: subscription.price, durationDays: subscription.durationDays });
 
   const errors = validateCustomProgram({ ...draft, offer }, { mode: willBePublished ? CUSTOM_MODE.PUBLISH : CUSTOM_MODE.DRAFT });
   if (Object.keys(errors).length) return fail('validation', errors);

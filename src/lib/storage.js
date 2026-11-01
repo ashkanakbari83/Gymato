@@ -46,9 +46,19 @@ function migratePrevious(previous) {
 
 /** Collections added after v5 shipped; older saves simply start them empty (additive, no data lost). */
 const ADDED_COLLECTIONS = ['events', 'likes', 'reviews', 'foodLog', 'waterLog'];
+/** Orders used to be `initiated` / `confirmed`; they are `pending` / `paid` now (same meaning, same data). */
+const LEGACY_PAYMENT_STATUS = { initiated: 'pending', confirmed: 'paid' };
+const normalizePayment = ({ confirmedAt, ...payment }) => ({
+  ...payment,
+  status: LEGACY_PAYMENT_STATUS[payment.status] ?? payment.status,
+  paidAt: payment.paidAt ?? confirmedAt ?? null,
+  gatewayRef: payment.gatewayRef ?? null,
+});
+
 export const withDefaults = (state) => ({
   ...Object.fromEntries(ADDED_COLLECTIONS.map((key) => [key, []])),
   ...state,
+  payments: (state.payments ?? []).map(normalizePayment),
   feedback: { ...DEFAULT_FEEDBACK, ...(state.feedback ?? {}) }, // sound / vibration / keep-awake preferences
 });
 

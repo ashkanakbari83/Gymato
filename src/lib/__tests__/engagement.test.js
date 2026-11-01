@@ -6,7 +6,8 @@ import { DAY_MS } from '../constants.js';
 import { claimFreeProgram } from '../domain/catalog.js';
 import { acceptRequest, saveCustomProgram, submitRequest } from '../domain/coaching.js';
 import { recordView, reviewBlocker, submitReview, toggleLike } from '../domain/engagement.js';
-import { confirmPayment, startCheckout } from '../domain/payments.js';
+import { startCheckout } from '../domain/payments.js';
+import { settlePaid } from './helpers.js';
 import { getIncome, getIncomeByWeek, getProgramStats, getTrainerStats } from '../analytics.js';
 import { parseMoney } from '../format.js';
 
@@ -14,7 +15,7 @@ const NOW = Date.UTC(2026, 9, 21, 9, 0, 0);
 const must = (r) => { assert.equal(r.ok, true, `expected ok, got ${r.error} ${JSON.stringify(r.fields ?? {})}`); return r; };
 const buy = (db, athlete, kind, targetId, at = NOW) => {
   const started = must(startCheckout(db, athlete, { kind, targetId }, at));
-  return must(confirmPayment(started.db, athlete, started.payment.id, at)).db;
+  return settlePaid(started.db, athlete, started.payment.id, at);
 };
 
 test('views: athletes count once a day; trainers and repeats do not', () => {

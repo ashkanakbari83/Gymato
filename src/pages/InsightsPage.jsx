@@ -88,7 +88,7 @@ export default function InsightsPage() {
               <div className="row" key={payment.id}>
                 <span className="row-main">
                   <b>{db.users.find((u) => u.id === payment.athleteId)?.name}</b>
-                  <small>{t(`pay.kind.${payment.kind}`)} · {formatDate(payment.confirmedAt, { month: 'short', day: 'numeric' })}</small>
+                  <small>{t(`pay.kind.${payment.kind}`)} · {formatDate(payment.paidAt, { month: 'short', day: 'numeric' })}</small>
                 </span>
                 <span className="row-end">{money(payment.amount)}</span>
               </div>

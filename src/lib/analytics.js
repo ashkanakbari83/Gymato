@@ -3,7 +3,7 @@
 import { DAY_MS, PAYMENT_KIND, PAYMENT_STATUS } from './constants.js';
 
 const confirmed = (db, trainerId) =>
-  db.payments.filter((p) => p.trainerId === trainerId && p.status === PAYMENT_STATUS.CONFIRMED).sort((a, b) => new Date(b.confirmedAt) - new Date(a.confirmedAt));
+  db.payments.filter((p) => p.trainerId === trainerId && p.status === PAYMENT_STATUS.PAID).sort((a, b) => new Date(b.paidAt) - new Date(a.paidAt));
 
 /** { avg, count } for a list of reviews (avg is 0 when there are none). */
 export function ratingOf(reviews) {
@@ -32,7 +32,7 @@ export function getProgramStats(db, programId) {
 }
 
 const confirmedPurchases = (db, programId) =>
-  db.payments.filter((p) => p.kind === PAYMENT_KIND.GENERAL && p.targetId === programId && p.status === PAYMENT_STATUS.CONFIRMED);
+  db.payments.filter((p) => p.kind === PAYMENT_KIND.GENERAL && p.targetId === programId && p.status === PAYMENT_STATUS.PAID);
 
 /** Engagement across all of a trainer's profile and programs. */
 export function getTrainerStats(db, trainerId) {
@@ -52,7 +52,7 @@ export function getIncome(db, trainerId, now = Date.now()) {
   const kind = (k) => payments.filter((p) => p.kind === k);
   return {
     total: sum(payments),
-    last30: sum(payments.filter((p) => now - new Date(p.confirmedAt) < 30 * DAY_MS)),
+    last30: sum(payments.filter((p) => now - new Date(p.paidAt) < 30 * DAY_MS)),
     general: sum(kind(PAYMENT_KIND.GENERAL)),
     coaching: sum(kind(PAYMENT_KIND.COACHING)),
     renewals: sum(kind(PAYMENT_KIND.RENEWAL)),
@@ -67,7 +67,7 @@ export function getIncomeByWeek(db, trainerId, now = Date.now(), weeks = 6) {
   return Array.from({ length: weeks }, (_, i) => {
     const end = now - (weeks - 1 - i) * 7 * DAY_MS;
     const start = end - 7 * DAY_MS;
-    const amount = payments.filter((p) => new Date(p.confirmedAt) > start && new Date(p.confirmedAt) <= end).reduce((sum, p) => sum + p.amount, 0);
+    const amount = payments.filter((p) => new Date(p.paidAt) > start && new Date(p.paidAt) <= end).reduce((sum, p) => sum + p.amount, 0);
     return { start: new Date(start).toISOString(), amount };
   });
 }

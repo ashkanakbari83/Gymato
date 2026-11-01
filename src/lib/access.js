@@ -14,7 +14,7 @@ export function subscriptionState(subscription, now = Date.now()) {
 }
 
 const confirmedPayment = (db, predicate) =>
-  db.payments.some((p) => p.status === PAYMENT_STATUS.CONFIRMED && predicate(p));
+  db.payments.some((p) => p.status === PAYMENT_STATUS.PAID && predicate(p));
 
 export const isFreeProgram = (program) => Number(program.price) === 0;
 

@@ -10,11 +10,12 @@ export const TRANSITIONS = {
     [R.REJECTED]: [],
     [R.CANCELLED]: [],
   },
-  /** One payment attempt. Only a confirmed payment can unlock anything. */
+  /** One order. Only a paid order (confirmed by the payment gateway's server) can unlock anything. */
   payment: {
-    [P.INITIATED]: [P.CONFIRMED, P.FAILED],
-    [P.CONFIRMED]: [],
+    [P.PENDING]: [P.PAID, P.FAILED, P.CANCELLED],
+    [P.PAID]: [],
     [P.FAILED]: [],
+    [P.CANCELLED]: [],
   },
   /** Coaching subscription. Expiry is derived from endAt; renewal moves expired -> active. */
   subscription: {

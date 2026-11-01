@@ -13,7 +13,9 @@ import SessionList from '../components/marketplace/SessionList.jsx';
 import Empty from '../components/ui/Empty.jsx';
 import Sheet from '../components/ui/Sheet.jsx';
 import { useApp } from '../context/AppContext.jsx';
+import { PaymentHistory } from '../components/payments/PaymentStatus.jsx';
 import { chatState, hasCustomAccess } from '../lib/access.js';
+import { findOpenOrder } from '../lib/domain/payments.js';
 import { PHASE } from '../lib/constants.js';
 import { formatDate, num } from '../lib/format.js';
 import { describeCoaching, daysLeft } from '../lib/marketplace.js';
@@ -38,8 +40,11 @@ export default function CoachingModal({ requestId }) {
   const canTrain = hasCustomAccess(db, user.id, program) && !isTrainer;
   const period = subscription?.startAt && `${formatDate(subscription.startAt, { month: 'short', day: 'numeric' })} – ${formatDate(subscription.endAt, { month: 'short', day: 'numeric' })}`;
 
+  const hasMeal = (program?.mealPlan?.meals?.length ?? 0) > 0;
+  const mealState = hasMeal ? 'included' : request.form.wantsMealPlan ? 'missing' : undefined;
+  const orders = subscription ? db.payments.filter((p) => p.targetId === subscription.id).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) : [];
   const offerCard = (cta) => subscription && (
-    <OfferCard price={subscription.price} renewalPrice={subscription.renewalPrice} durationDays={subscription.durationDays}>
+    <OfferCard price={subscription.price} renewalPrice={subscription.renewalPrice} durationDays={subscription.durationDays} meal={mealState}>
       {cta}
     </OfferCard>
   );
@@ -99,7 +104,7 @@ export default function CoachingModal({ requestId }) {
           <p className="locked-note"><Lock size={16} /> {t('co.athlete.locked')}</p>
           {offerCard(
             <button className="btn wide" onClick={() => openCheckout('coaching_initial', subscription.id)}>
-              {t('pay.payDemo')}
+              {t(subscription && findOpenOrder(db, user.id, 'coaching_initial', subscription.id) ? 'pay.continue' : 'pay.payNow')}
             </button>,
           )}
         </>
@@ -132,6 +137,7 @@ export default function CoachingModal({ requestId }) {
       </div>
       <StatusOverview item={item} />
       {body()}
+      <PaymentHistory payments={orders} />
       <RequestSummary request={request} showBody={isTrainer} />
       <ChatPanel request={request} state={chatState(db, request)} />
       {!isTrainer && ['active', 'expired'].includes(phase) && (

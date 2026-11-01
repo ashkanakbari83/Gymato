@@ -43,7 +43,7 @@ export function toggleLike(db, userId, programId, now = Date.now()) {
 /** Has the athlete really used this program? Paid: confirmed purchase. Free: saved it or trained with it. */
 export function hasUsedProgram(db, userId, program) {
   if (program.price > 0) {
-    return db.payments.some((p) => p.kind === PAYMENT_KIND.GENERAL && p.targetId === program.id && p.athleteId === userId && p.status === PAYMENT_STATUS.CONFIRMED);
+    return db.payments.some((p) => p.kind === PAYMENT_KIND.GENERAL && p.targetId === program.id && p.athleteId === userId && p.status === PAYMENT_STATUS.PAID);
   }
   return db.freeLibrary.some((e) => e.athleteId === userId && e.programId === program.id) || db.sessions.some((s) => s.userId === userId && s.programId === program.id);
 }

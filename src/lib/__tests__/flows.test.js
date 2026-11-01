@@ -7,7 +7,8 @@ import { canStartProgram, chatState, hasCustomAccess, hasGeneralAccess, requestP
 import { DAY_MS, PHASE } from '../constants.js';
 import { claimFreeProgram, deleteGeneralProgram, saveGeneralProgram, setProgramStatus } from '../domain/catalog.js';
 import { CUSTOM_MODE, acceptRequest, cancelRequest, rejectRequest, saveCustomProgram, sendMessage, submitRequest, validateCustomProgram, validateRequestForm } from '../domain/coaching.js';
-import { confirmPayment, failPayment, startCheckout } from '../domain/payments.js';
+import { applyGatewayResult, attachGatewaySession, cancelPayment, startCheckout } from '../domain/payments.js';
+import { sendToGateway, serverAnswer, settlePaid } from './helpers.js';
 import { filterTrainers, getAthleteLibrary, getTrainerClients } from '../marketplace.js';
 import { canTransition } from '../transitions.js';
 
@@ -35,7 +36,7 @@ function untilProposal(db = createSeedState()) {
 /** Pays the initial coaching price (initiate, then confirm). */
 function activate(state) {
   const started = must(startCheckout(state.db, ATHLETE, { kind: 'coaching_initial', targetId: state.db.subscriptions[0].id }, NOW));
-  return { ...state, db: must(confirmPayment(started.db, ATHLETE, started.payment.id, NOW)).db };
+  return { ...state, db: settlePaid(started.db, ATHLETE, started.payment.id, NOW) };
 }
 
 test('1. athletes can browse trainers and filter by location and specialty', () => {
@@ -67,18 +68,22 @@ test('3. a paid general program stays locked until the payment is confirmed', ()
 
   const { db: d1, payment } = must(startCheckout(db, ATHLETE, { kind: 'general_purchase', targetId: paid.id }, NOW));
   assert.equal(hasGeneralAccess(d1, ATHLETE, paid), false, 'initiating a payment must not unlock');
-  const failed = must(failPayment(d1, ATHLETE, payment.id)).db;
+  const sent = sendToGateway(d1, ATHLETE, payment.id, NOW);
+  assert.equal(hasGeneralAccess(sent, ATHLETE, paid), false, 'being sent to the gateway must not unlock');
+  const failed = must(applyGatewayResult(sent, ATHLETE, serverAnswer(sent, payment.id, { status: 'failed' }), NOW)).db;
+  assert.equal(failed.payments[0].status, 'failed');
   assert.equal(hasGeneralAccess(failed, ATHLETE, paid), false, 'a failed payment must not unlock');
 
   const retry = must(startCheckout(failed, ATHLETE, { kind: 'general_purchase', targetId: paid.id }, NOW));
-  const paidDb = must(confirmPayment(retry.db, ATHLETE, retry.payment.id, NOW)).db;
+  assert.notEqual(retry.payment.id, payment.id, 'a failed order is closed; retrying makes a new one');
+  const paidDb = settlePaid(retry.db, ATHLETE, retry.payment.id, NOW);
   assert.equal(hasGeneralAccess(paidDb, ATHLETE, paid), true);
 });
 
 test('4. buying a general program does not create or activate coaching', () => {
   const db = createSeedState();
   const { db: d1, payment } = must(startCheckout(db, ATHLETE, { kind: 'general_purchase', targetId: 'gp-six-pack' }, NOW));
-  const bought = must(confirmPayment(d1, ATHLETE, payment.id, NOW)).db;
+  const bought = settlePaid(d1, ATHLETE, payment.id, NOW);
   assert.equal(bought.requests.length, 0);
   assert.equal(bought.subscriptions.length, 0);
   assert.equal(bought.conversations.length, 0);
@@ -148,7 +153,8 @@ test('9/10. the custom program is locked until payment is confirmed, then the su
   assert.equal(hasCustomAccess(started.db, ATHLETE, state.program, NOW), false, 'initiated is not confirmed');
   assert.equal(startCheckout(state.db, 'bardia', { kind: 'coaching_initial', targetId: sub.id }, NOW).ok, false);
 
-  const confirmed = must(confirmPayment(started.db, ATHLETE, started.payment.id, NOW));
+  const sent = sendToGateway(started.db, ATHLETE, started.payment.id, NOW);
+  const confirmed = must(applyGatewayResult(sent, ATHLETE, serverAnswer(sent, started.payment.id), NOW));
   const active = confirmed.db.subscriptions[0];
   assert.equal(active.status, 'active');
   assert.equal(active.startAt, NOW);
@@ -156,7 +162,10 @@ test('9/10. the custom program is locked until payment is confirmed, then the su
   assert.equal(hasCustomAccess(confirmed.db, ATHLETE, state.program, NOW), true);
   assert.equal(confirmed.db.notifications[0].userId, TRAINER);
   assert.equal(confirmed.db.notifications[0].type, 'subscription_active');
-  assert.equal(confirmPayment(confirmed.db, ATHLETE, started.payment.id, NOW).error, 'invalid_transition', 'cannot confirm twice');
+  const again = must(applyGatewayResult(confirmed.db, ATHLETE, serverAnswer(confirmed.db, started.payment.id), NOW + 1000));
+  assert.equal(again.outcome, 'already_paid');
+  assert.deepEqual(again.db.subscriptions[0], active, 'a repeated answer never activates twice or moves the dates');
+  assert.equal(again.db.notifications.length, confirmed.db.notifications.length, 'and sends no second notification');
 });
 
 test('11. the trainer reviews activity and edits only this athlete\'s program', () => {
@@ -175,7 +184,7 @@ test('12. renewal uses the trainer-configured renewal price and duration', () =>
   const sub = state.db.subscriptions[0];
   const early = must(startCheckout(state.db, ATHLETE, { kind: 'coaching_renewal', targetId: sub.id }, NOW + 10 * DAY_MS));
   assert.equal(early.payment.amount, 500000, 'renewal price, not the initial price');
-  const renewed = must(confirmPayment(early.db, ATHLETE, early.payment.id, NOW + 10 * DAY_MS)).db.subscriptions[0];
+  const renewed = settlePaid(early.db, ATHLETE, early.payment.id, NOW + 10 * DAY_MS).subscriptions[0];
   assert.equal(renewed.endAt, NOW + 60 * DAY_MS, 'early renewal extends from the current end');
   assert.equal(renewed.renewalCount, 1);
   assert.equal(renewed.startAt, NOW);
@@ -195,7 +204,7 @@ test('13. expiry stops access but keeps every record; renewing restores it', () 
   assert.equal(getTrainerClients(state.db, TRAINER, later).renewals.length, 1);
 
   const renewal = must(startCheckout(state.db, ATHLETE, { kind: 'coaching_renewal', targetId: sub.id }, later));
-  const renewed = must(confirmPayment(renewal.db, ATHLETE, renewal.payment.id, later)).db;
+  const renewed = settlePaid(renewal.db, ATHLETE, renewal.payment.id, later);
   assert.equal(hasCustomAccess(renewed, ATHLETE, state.program, later), true);
   assert.equal(renewed.subscriptions[0].endAt, later + 30 * DAY_MS, 'an expired subscription restarts now');
 });
@@ -208,7 +217,7 @@ test('trainers manage only their own general programs; buyers keep access when u
   assert.equal(setProgramStatus(db, 'kian', own.id, 'draft', NOW).error, 'forbidden');
 
   const { db: d1, payment } = must(startCheckout(db, ATHLETE, { kind: 'general_purchase', targetId: own.id }, NOW));
-  const d2 = must(confirmPayment(d1, ATHLETE, payment.id, NOW)).db;
+  const d2 = settlePaid(d1, ATHLETE, payment.id, NOW);
   const unpublished = must(setProgramStatus(d2, TRAINER, own.id, 'draft', NOW)).db;
   const program = unpublished.programs.find((p) => p.id === own.id);
   assert.equal(hasGeneralAccess(unpublished, ATHLETE, program), false, 'unpublished programs are not served');
@@ -250,4 +259,91 @@ test('custom program: saving without exercises works as a draft but is refused w
   const saved = must(saveCustomProgram(db, TRAINER, request.id, bare, {}, NOW));
   assert.equal(saved.db.customPrograms[0].status, 'draft');
   assert.equal(saved.db.subscriptions.length, 0, 'a draft does not create a subscription');
+});
+
+test('payment: an order unlocks nothing until the gateway server says it is paid', () => {
+  const state = untilProposal();
+  const sub = state.db.subscriptions[0];
+  const started = must(startCheckout(state.db, ATHLETE, { kind: 'coaching_initial', targetId: sub.id }, NOW));
+  assert.equal(started.payment.status, 'pending');
+  assert.equal(started.payment.amount, sub.price, 'the amount comes from the trainer offer');
+
+  // Never sent to a provider: no answer, however well-formed, can mark it paid.
+  assert.equal(applyGatewayResult(started.db, ATHLETE, serverAnswer(started.db, started.payment.id, { gatewayRef: 'x' }), NOW).error, 'no_gateway_session');
+  assert.equal(started.db.subscriptions[0].status, sub.status);
+
+  const sent = sendToGateway(started.db, ATHLETE, started.payment.id, NOW);
+  // Returning from the gateway ("pending" answer) is not success.
+  const waiting = must(applyGatewayResult(sent, ATHLETE, serverAnswer(sent, started.payment.id, { status: 'pending' }), NOW));
+  assert.equal(waiting.outcome, 'pending');
+  assert.equal(waiting.db.payments[0].status, 'pending');
+  assert.equal(hasCustomAccess(waiting.db, ATHLETE, state.program, NOW), false);
+});
+
+test('payment: a duplicate click reuses the order; another person cannot pay or verify it', () => {
+  const state = untilProposal();
+  const sub = state.db.subscriptions[0];
+  const a = must(startCheckout(state.db, ATHLETE, { kind: 'coaching_initial', targetId: sub.id }, NOW));
+  const b = must(startCheckout(a.db, ATHLETE, { kind: 'coaching_initial', targetId: sub.id }, NOW));
+  assert.equal(b.payment.id, a.payment.id);
+  assert.equal(b.db.payments.length, 1, 'no duplicate order');
+  const sent = sendToGateway(b.db, ATHLETE, a.payment.id, NOW);
+  assert.equal(applyGatewayResult(sent, 'bardia', serverAnswer(sent, a.payment.id), NOW).error, 'forbidden');
+  assert.equal(cancelPayment(sent, 'bardia', a.payment.id, NOW).error, 'forbidden');
+});
+
+test('payment: a wrong reference or a different amount never activates', () => {
+  const state = untilProposal();
+  const sub = state.db.subscriptions[0];
+  const started = must(startCheckout(state.db, ATHLETE, { kind: 'coaching_initial', targetId: sub.id }, NOW));
+  const sent = sendToGateway(started.db, ATHLETE, started.payment.id, NOW);
+
+  assert.equal(applyGatewayResult(sent, ATHLETE, serverAnswer(sent, started.payment.id, { gatewayRef: 'someone-elses' }), NOW).error, 'reference_mismatch');
+  assert.equal(applyGatewayResult(sent, ATHLETE, serverAnswer(sent, started.payment.id, { status: 'success' }), NOW).error, 'bad_result');
+
+  const cheap = must(applyGatewayResult(sent, ATHLETE, serverAnswer(sent, started.payment.id, { amount: 1000 }), NOW));
+  assert.equal(cheap.outcome, 'failed');
+  assert.equal(cheap.db.payments[0].status, 'failed');
+  assert.equal(cheap.db.payments[0].needsReview, true, 'a mismatch is flagged for a person to look at');
+  assert.equal(cheap.db.subscriptions[0].status, sub.status, 'nothing was activated');
+});
+
+test('payment: closing the page leaves it pending; only an explicit cancel closes it, and not once at the provider', () => {
+  const state = untilProposal();
+  const sub = state.db.subscriptions[0];
+  const started = must(startCheckout(state.db, ATHLETE, { kind: 'coaching_initial', targetId: sub.id }, NOW));
+  // (closing the modal changes no data at all)
+  assert.equal(started.db.payments[0].status, 'pending');
+
+  const cancelled = must(cancelPayment(started.db, ATHLETE, started.payment.id, NOW));
+  assert.equal(cancelled.db.payments[0].status, 'cancelled');
+  assert.equal(cancelled.db.subscriptions[0].status, sub.status);
+  assert.equal(applyGatewayResult(cancelled.db, ATHLETE, serverAnswer(cancelled.db, started.payment.id), NOW).error, 'invalid_transition', 'a cancelled order cannot be paid later');
+
+  const again = must(startCheckout(cancelled.db, ATHLETE, { kind: 'coaching_initial', targetId: sub.id }, NOW));
+  const sent = sendToGateway(again.db, ATHLETE, again.payment.id, NOW);
+  assert.equal(cancelPayment(sent, ATHLETE, again.payment.id, NOW).error, 'payment_in_progress');
+});
+
+test('payment: the same gateway reference cannot be attached to two orders', () => {
+  const state = untilProposal();
+  const sub = state.db.subscriptions[0];
+  const a = must(startCheckout(state.db, ATHLETE, { kind: 'coaching_initial', targetId: sub.id }, NOW));
+  const sent = must(attachGatewaySession(a.db, ATHLETE, a.payment.id, { gateway: 't', gatewayRef: 'R1' }, NOW)).db;
+  const again = must(attachGatewaySession(sent, ATHLETE, a.payment.id, { gateway: 't', gatewayRef: 'R1' }, NOW)); // same order, same session: fine
+  assert.equal(again.db.payments.length, 1);
+  const general = must(startCheckout(again.db, ATHLETE, { kind: 'general_purchase', targetId: 'gp-six-pack' }, NOW));
+  assert.equal(attachGatewaySession(general.db, ATHLETE, general.payment.id, { gateway: 't', gatewayRef: 'R1' }, NOW).error, 'reference_reused');
+});
+
+test('payment: the trainer cannot change price or duration while the athlete is at the gateway, and both see the status', () => {
+  const state = untilProposal();
+  const sub = state.db.subscriptions[0];
+  const started = must(startCheckout(state.db, ATHLETE, { kind: 'coaching_initial', targetId: sub.id }, NOW));
+  const sent = sendToGateway(started.db, ATHLETE, started.payment.id, NOW);
+  const edited = must(saveCustomProgram(sent, TRAINER, state.request.id, { ...draft, offer: { price: 1, renewalPrice: 2, durationDays: 90 } }, {}, NOW));
+  assert.equal(edited.db.subscriptions[0].price, sub.price, 'price is frozen while a payment is in progress');
+  assert.equal(edited.db.subscriptions[0].durationDays, sub.durationDays);
+  // Both people can read the order: same record, scoped by the request's subscription.
+  assert.equal(edited.db.payments.filter((p) => p.targetId === sub.id)[0].status, 'pending');
 });
