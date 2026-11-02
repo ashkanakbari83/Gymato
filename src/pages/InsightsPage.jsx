@@ -6,7 +6,7 @@ import Empty from '../components/ui/Empty.jsx';
 import Metrics from '../components/ui/Metrics.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import { getIncome, getIncomeByWeek, getProgramStats, getTrainerReviews, getTrainerStats } from '../lib/analytics.js';
-import { decimal, formatDate, formatPrice, num } from '../lib/format.js';
+import { decimal, formatDate, formatMoney, num } from '../lib/format.js';
 import { getOwnPrograms } from '../lib/marketplace.js';
 
 export default function InsightsPage() {
@@ -17,7 +17,7 @@ export default function InsightsPage() {
   const weeks = getIncomeByWeek(db, user.id);
   const peak = Math.max(1, ...weeks.map((w) => w.amount));
   const programs = getOwnPrograms(db, user.id);
-  const money = (amount) => formatPrice(amount, t);
+  const money = (amount) => formatMoney(amount, t);
 
   return (
     <div className="stack desk-grid">
@@ -47,14 +47,18 @@ export default function InsightsPage() {
         />
         <div className="panel">
           <div className="section-title"><h2>{t('insights.weekly')}</h2></div>
-          <div className="bars">
-            {weeks.map((week) => (
-              <div key={week.start}>
-                <span className={week.amount ? 'on' : ''} style={{ height: Math.max(6, (week.amount / peak) * 96) }} />
-                <small>{formatDate(week.start, { month: 'numeric', day: 'numeric' })}</small>
-              </div>
-            ))}
-          </div>
+          {income.total > 0 ? (
+            <div className="bars">
+              {weeks.map((week) => (
+                <div key={week.start}>
+                  <span className={week.amount ? 'on' : ''} style={{ height: Math.max(6, (week.amount / peak) * 96) }} />
+                  <small>{formatDate(week.start, { month: 'numeric', day: 'numeric' })}</small>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="muted">{t('insights.noIncomeYet')}</p>
+          )}
         </div>
       </section>
 

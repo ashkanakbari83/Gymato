@@ -43,6 +43,9 @@ export const parseMoney = (text) =>
 export const formatPrice = (amount, t) =>
   amount === 0 ? t('common.free') : `${groupNumber(amount)} ${t('common.currency')}`;
 
+/** An amount of money that is never "free": zero reads "۰ تومان". Use for income and totals; formatPrice is for prices. */
+export const formatMoney = (amount, t) => `${groupNumber(amount)} ${t('common.currency')}`;
+
 export const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 
 /** Public, shareable account ID such as JM-4F2A91. */

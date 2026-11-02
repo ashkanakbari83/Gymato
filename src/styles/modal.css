@@ -695,3 +695,26 @@
   .lb-img { transition: none; }
   .modal-card.lightbox-card { animation: none; }
 }
+
+/* A long form is read in three groups, and a jump to a field must clear the sticky header. */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.form-group + .form-group {
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+}
+
+.form-group > h3 {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.modal-card [data-field],
+.modal-card .error-summary {
+  scroll-margin-top: 84px;
+}

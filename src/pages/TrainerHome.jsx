@@ -7,7 +7,7 @@ import { ArrowForward } from '../components/ui/Arrow.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import { getIncome } from '../lib/analytics.js';
 import { PROGRAM_STATUS } from '../lib/constants.js';
-import { formatPrice } from '../lib/format.js';
+import { formatMoney } from '../lib/format.js';
 import { getOwnPrograms, getTrainerClients } from '../lib/marketplace.js';
 
 export default function TrainerHome() {
@@ -34,7 +34,7 @@ export default function TrainerHome() {
       />
 
       <button className="attention" onClick={() => setPage('insights')}>
-        <span>{t('insights.home', { amount: formatPrice(income.last30, t) })}</span>
+        <span>{t('insights.home', { amount: formatMoney(income.last30, t) })}</span>
         <ArrowForward size={16} />
       </button>
 

@@ -21,7 +21,7 @@ export default function TrainersPage() {
     <section className="stack">
       <div className="search-box">
         <Search size={18} />
-        <input value={filters.query} onChange={(e) => set({ query: e.target.value })} placeholder={t('trainers.search')} />
+        <input value={filters.query} onChange={(e) => set({ query: e.target.value })} placeholder={t('trainers.search')} aria-label={t('trainers.search')} />
       </div>
 
       <div className="panel filters">
