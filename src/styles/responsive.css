@@ -297,7 +297,9 @@
   .avatar-btn,
   .icon-btn.sm,
   .seg button,
-  .stepper .icon-btn {
+  .stepper .icon-btn,
+  .back-link,
+  .link-plain {
     position: relative;
   }
 
@@ -308,7 +310,9 @@
   .avatar-btn::after,
   .icon-btn.sm::after,
   .seg button::after,
-  .stepper .icon-btn::after {
+  .stepper .icon-btn::after,
+  .back-link::after,
+  .link-plain::after {
     content: '';
     position: absolute;
     inset-block: min(0px, calc((100% - 44px) / 2));

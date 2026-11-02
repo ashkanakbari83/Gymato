@@ -135,10 +135,13 @@ export default function CoachingModal({ requestId }) {
         <TypeBadge kind="custom" />
         <PhaseBadge phase={phase} />
       </div>
-      <StatusOverview item={item} />
+      {/* While a request is only pending, three of the four status tiles would say "none": the badge above is enough. */}
+      {phase !== PHASE.PENDING && <StatusOverview item={item} />}
+      {/* The trainer reads who is asking before pricing them; every later phase keeps the request below the action. */}
+      {isTrainer && phase === PHASE.PENDING && <RequestSummary request={request} showBody />}
       {body()}
       <PaymentHistory payments={orders} />
-      <RequestSummary request={request} showBody={isTrainer} />
+      {!(isTrainer && phase === PHASE.PENDING) && <RequestSummary request={request} showBody={isTrainer} />}
       <ChatPanel request={request} state={chatState(db, request)} />
       {!isTrainer && ['active', 'expired'].includes(phase) && (
         <section className="co-section">

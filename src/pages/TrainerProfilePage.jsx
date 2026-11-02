@@ -70,8 +70,13 @@ export default function TrainerProfilePage() {
         </div>
 
         <dl className="trainer-stats">
-          <div><dt>{t('trainer.stat.active')}</dt><dd>{num(students.active)}</dd></div>
-          <div><dt>{t('trainer.stat.total')}</dt><dd>{num(students.total)}</dd></div>
+          {/* A zero here tells an athlete nothing good, so student counts appear only once there are students. */}
+          {students.total > 0 && (
+            <>
+              <div><dt>{t('trainer.stat.active')}</dt><dd>{num(students.active)}</dd></div>
+              <div><dt>{t('trainer.stat.total')}</dt><dd>{num(students.total)}</dd></div>
+            </>
+          )}
           <div><dt>{t('trainer.stat.programs')}</dt><dd>{num(programs.length)}</dd></div>
           <div><dt>{t('trainer.stat.experience')}</dt><dd>{trainer.experienceYears > 0 ? t('trainer.yearsShort', { n: num(trainer.experienceYears) }) : '—'}</dd></div>
         </dl>

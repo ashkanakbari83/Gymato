@@ -128,7 +128,9 @@
 }
 
 .search-box:focus-within {
-  border-color: var(--accent-fill);
+  border-color: var(--accent-ink);
+  outline: 2px solid var(--accent-ink); /* the input's own outline is off, so the box carries the focus ring */
+  outline-offset: 2px;
 }
 
 .search-box input {

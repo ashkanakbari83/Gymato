@@ -1,5 +1,6 @@
 // Program-related sheets: program editor, deck editor, and the two "assign" flows.
-import { CalendarDays, ChevronLeft, Plus, Save } from 'lucide-react';
+import { CalendarDays, Plus, Save } from 'lucide-react';
+import { ArrowForward } from '../components/ui/Arrow.jsx';
 import AthleteBodyInfo from '../components/athlete/AthleteBodyInfo';
 import ExercisePlanner from '../components/exercise/ExercisePlanner';
 import { Field, SelectField } from '../components/ui/Field';
@@ -93,7 +94,7 @@ export function AssignModal({ program }) {
             <b>{athlete.name}</b>
             <small>{athlete.goal}</small>
           </span>
-          <ChevronLeft size={17} />
+          <ArrowForward size={17} />
         </button>
       ))}
     </Sheet>
@@ -126,7 +127,7 @@ export function AssignSelectModal({ athlete }) {
               {faNum(program.exercises?.length ?? 0)} حرکت · {program.goal}
             </small>
           </span>
-          <ChevronLeft size={17} />
+          <ArrowForward size={17} />
         </button>
       ))}
     </Sheet>

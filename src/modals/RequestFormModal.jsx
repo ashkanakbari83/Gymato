@@ -1,7 +1,7 @@
 // "Request Custom Coaching": prefilled from the athlete's profile, editable, with an optional full-body photo.
 import { Camera, Trash2 } from 'lucide-react';
 import { useRef, useState } from 'react';
-import ErrorSummary from '../components/ui/ErrorSummary.jsx';
+import ErrorSummary, { focusField } from '../components/ui/ErrorSummary.jsx';
 import { ChipSelect, Field, RadioCards, SelectField, TextArea } from '../components/ui/Field.jsx';
 import Sheet from '../components/ui/Sheet.jsx';
 import { useApp } from '../context/AppContext.jsx';
@@ -10,6 +10,7 @@ import { fileToDataUrl } from '../lib/images.js';
 import { validateRequestForm } from '../lib/domain/coaching.js';
 
 const DAYS = [1, 2, 3, 4, 5, 6, 7];
+const FIELD_ORDER = ['name', 'age', 'height', 'weight', 'level', 'goal', 'daysPerWeek', 'schedule', 'notes', 'wantsMealPlan', 'photo'];
 
 export default function RequestFormModal({ trainerId }) {
   const { user, db, t, requestCoaching } = useApp();
@@ -55,7 +56,11 @@ export default function RequestFormModal({ trainerId }) {
     setErrors(found);
     setAttempted(true);
     if (!Object.keys(found).length) requestCoaching(trainerId, form);
-    else requestAnimationFrame(() => summaryRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
+    else {
+      // Take the person to the first thing to fix, in form order. The summary above lists the rest.
+      const first = FIELD_ORDER.find((key) => found[key]);
+      requestAnimationFrame(() => focusField(summaryRef.current?.closest('.modal-card') ?? document, first));
+    }
   };
 
   const FIELD_LABELS = { name: 'cr.name', age: 'cr.age', height: 'cr.heightOptional', weight: 'cr.weightOptional', level: 'cr.level', goal: 'cr.goal', daysPerWeek: 'cr.daysPerWeek', schedule: 'cr.schedule', notes: 'cr.notes', photo: 'cr.photoOptional', wantsMealPlan: 'cr.mealQuestion' };
@@ -67,6 +72,8 @@ export default function RequestFormModal({ trainerId }) {
     <Sheet title={t('cr.title', { name: trainer.name })} size="wide">
       <p className="muted">{t('cr.intro')}</p>
       {attempted && <ErrorSummary items={problems} containerRef={summaryRef} />}
+      <section className="form-group">
+      <h3>{t('cr.group.about')}</h3>
       <Field name="name" label={t('cr.name')} value={form.name} onChange={set('name')} error={error('name')} />
       <div className="form-grid">
         <Field name="age" label={t('cr.ageOptional')} type="number" value={form.age} onChange={set('age')} error={error('age')} />
@@ -74,6 +81,10 @@ export default function RequestFormModal({ trainerId }) {
         <Field name="weight" label={t('cr.weightOptional')} type="number" value={form.weight} onChange={set('weight')} error={error('weight')} />
         <SelectField name="level" label={t('cr.level')} value={form.level} onChange={set('level')} options={options(LEVELS, 'level')} error={error('level')} />
       </div>
+      </section>
+
+      <section className="form-group">
+      <h3>{t('cr.group.training')}</h3>
       <SelectField name="goal" label={t('cr.goal')} value={form.goal} onChange={set('goal')} options={options(GOALS, 'goal')} error={error('goal')} />
       <ChipSelect multi label={t('cr.musclesOptional')} options={options(MUSCLES, 'focus')} value={form.muscles} onChange={set('muscles')} />
       <div className="form-grid">
@@ -82,6 +93,10 @@ export default function RequestFormModal({ trainerId }) {
       </div>
       <TextArea name="notes" label={t('cr.notesOptional')} value={form.notes} onChange={set('notes')} error={error('notes')} />
 
+      </section>
+
+      <section className="form-group">
+      <h3>{t('cr.group.extras')}</h3>
       <RadioCards
         name="wantsMealPlan"
         label={t('cr.mealQuestion')}
@@ -108,6 +123,7 @@ export default function RequestFormModal({ trainerId }) {
         {error('photo') && <small className="field-error">{error('photo')}</small>}
         <small className="field-hint">{t('cr.photoHint')}</small>
       </div>
+      </section>
 
       <button className="btn wide" onClick={submit}>{t('cr.submit')}</button>
     </Sheet>
