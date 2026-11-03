@@ -114,3 +114,59 @@
     font-size: 21px;
   }
 }
+
+/* One line that says what this is, before anything asks for a password */
+.auth-tagline {
+  margin-top: -6px;
+  color: var(--mu);
+  line-height: 1.8;
+}
+
+.auth-switch {
+  text-align: center;
+  color: var(--mu);
+  font-size: 14px;
+}
+
+/* Folded extras: the summary is a full-width, thumb-sized row */
+.auth-more,
+.auth-demo {
+  border: 1px solid var(--line);
+  border-radius: var(--control-r);
+  background: var(--soft);
+}
+
+.auth-more > summary,
+.auth-demo > summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding-inline: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink);
+  list-style-position: inside;
+}
+
+.auth-more[open] > summary,
+.auth-demo[open] > summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.auth-more > .form-stack {
+  padding: 14px;
+}
+
+.auth-demo > p {
+  padding: 10px 14px;
+  color: var(--mu);
+  font-size: 12.5px;
+  line-height: 1.8;
+}
+
+@media (max-width: 360px) {
+  .auth-card .radio-cards.cols-2 {
+    grid-template-columns: 1fr;
+  }
+}

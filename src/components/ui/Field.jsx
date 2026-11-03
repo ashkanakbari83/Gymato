@@ -92,13 +92,13 @@ export function ChipSelect({ label, options, value, onChange, multi = false, err
 }
 
 /** Pick exactly one of a few clear choices (radio buttons drawn as large tappable rows). options: [{ value, label, hint }] */
-export function RadioCards({ label, options, value, onChange, error, name }) {
+export function RadioCards({ label, options, value, onChange, error, name, columns = 1 }) {
   const groupId = useId();
   const { errorId } = useFieldA11y(error);
   return (
     <div className={`field ${error ? 'invalid' : ''}`} data-field={name} role="radiogroup" aria-labelledby={groupId} aria-describedby={error ? errorId : undefined} aria-invalid={error ? true : undefined}>
       <span id={groupId}>{label}</span>
-      <div className="radio-cards">
+      <div className={`radio-cards cols-${columns}`}>
         {options.map((option) => (
           <label key={String(option.value)} className={value === option.value ? 'on' : ''}>
             <input type="radio" name={groupId} checked={value === option.value} onChange={() => onChange(option.value)} />

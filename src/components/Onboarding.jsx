@@ -4,6 +4,7 @@ import { Check, Search, Users } from 'lucide-react';
 import { useState } from 'react';
 import { useApp } from '../context/AppContext.jsx';
 import { DEMO_ACCOUNTS } from '../lib/constants.js';
+import { num } from '../lib/format.js';
 import Stickman from './exercise/Stickman.jsx';
 import Sheet from './ui/Sheet.jsx';
 
@@ -15,7 +16,42 @@ const STEPS = [
   { id: 'start', art: <Stickman id="pushup" />, points: 0, roles: true },
 ];
 
+/** Someone who just made their own account already chose a side, so they get one screen about that side only. */
+function RoleWelcome() {
+  const { onboarding, closeModal, user, t } = useApp();
+  const side = user.role === 'coach' ? 'trainer' : 'athlete';
+  const done = () => {
+    onboarding.finish();
+    closeModal();
+  };
+  return (
+    <Sheet label={t('onb.welcome.title')} onClose={done} bodyClassName="ob">
+      <div className="ob-art compact"><Stickman id={side === 'trainer' ? 'pushup' : 'jacks'} /></div>
+      <h2>{t('onb.hello', { name: user.name })}</h2>
+      <p className="ob-lead">{t(`onb.me.${side}.lead`)}</p>
+      <ol className="ob-steps">
+        {[1, 2, 3].map((n) => (
+          <li key={n}>
+            <span className="ob-step-n" aria-hidden="true">{num(n)}</span>
+            <span>
+              <b>{t(`onb.me.${side}.s${n}`)}</b>
+              <small>{t(`onb.me.${side}.s${n}.text`)}</small>
+            </span>
+          </li>
+        ))}
+      </ol>
+      <button className="btn wide ob-go" onClick={done}>{t('onb.begin')}</button>
+      <p className="muted ob-note">{t('onb.payNote')}</p>
+    </Sheet>
+  );
+}
+
 export default function Onboarding() {
+  const { user } = useApp();
+  return user.isAdmin ? <AdminGuide /> : <RoleWelcome />;
+}
+
+function AdminGuide() {
   const { onboarding, update, setPage, closeModal, user, t } = useApp();
   const [index, setIndex] = useState(0);
   const done = () => {

@@ -376,7 +376,7 @@
 .toast {
   position: fixed;
   z-index: 100;
-  top: calc(68px + env(safe-area-inset-top));
+  bottom: calc(84px + env(safe-area-inset-bottom)); /* above the bottom nav, so it never covers the page title */
   inset-inline: 0;
   margin-inline: auto;
   width: max-content;

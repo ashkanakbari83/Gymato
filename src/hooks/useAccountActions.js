@@ -29,8 +29,7 @@ export function useAccountActions({ db, user, update, notify, t, closeModal, go,
     const result = dispatch(registerAccount, form);
     if (result.ok) {
       keepOwnWorkout(result.user.id);
-      go('home');
-      notify(t('auth.welcome', { name: result.user.name }));
+      go('home'); // the first-run welcome sheet greets the new person; a toast on top of it would only cover its button
     }
     return result;
   };

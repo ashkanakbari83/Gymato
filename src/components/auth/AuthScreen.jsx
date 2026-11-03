@@ -6,12 +6,12 @@ import { useState } from 'react';
 import { useApp } from '../../context/AppContext.jsx';
 import { MIN_PASSWORD_LENGTH } from '../../lib/auth.js';
 import { GOALS, LEVELS } from '../../lib/constants.js';
-import { ChipSelect, Field, PasswordField, Segmented, SelectField } from '../ui/Field.jsx';
+import { Field, PasswordField, RadioCards, Segmented, SelectField } from '../ui/Field.jsx';
 import LocationFields from '../ui/LocationFields.jsx';
 
 const LANGUAGES = [['fa', 'فارسی'], ['en', 'English']];
 
-function LoginForm() {
+function LoginForm({ onSwitch }) {
   const { findLogin, signInTo, t } = useApp();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -55,14 +55,20 @@ function LoginForm() {
       <Field label={t('auth.identifier')} value={identifier} onChange={(v) => { setIdentifier(v); setFailed(false); }} autoComplete="username" autoCapitalize="none" autoCorrect="off" enterKeyHint="next" />
       <PasswordField label={t('auth.password')} value={password} onChange={(v) => { setPassword(v); setFailed(false); }} autoComplete="current-password" enterKeyHint="go" error={failed ? t('auth.invalid') : undefined} />
       <button className="btn wide" type="submit"><LogIn size={17} /> {t('auth.login')}</button>
-      <p className="auth-hint">{t('auth.demoHint')}</p>
+      <p className="auth-switch">
+        {t('auth.noAccount')} <button type="button" className="link" onClick={onSwitch}>{t('auth.createOne')}</button>
+      </p>
+      <details className="auth-demo">
+        <summary>{t('auth.demoTitle')}</summary>
+        <p>{t('auth.demoHint')}</p>
+      </details>
     </form>
   );
 }
 
 const EMPTY_SIGNUP = { name: '', phone: '', password: '', role: 'athlete', province: '', city: '', age: '', height: '', weight: '', goal: GOALS[0], level: LEVELS[0] };
 
-function SignupForm() {
+function SignupForm({ onSwitch }) {
   const { signUp, t } = useApp();
   const [form, setForm] = useState(EMPTY_SIGNUP);
   const [errors, setErrors] = useState({});
@@ -85,25 +91,46 @@ function SignupForm() {
 
   return (
     <form className="form-stack" onSubmit={submit} noValidate>
+      <RadioCards
+        name="role"
+        columns={2}
+        label={t('acct.role')}
+        value={form.role}
+        onChange={set('role')}
+        options={[
+          { value: 'athlete', label: t('onb.role.athlete'), hint: t('onb.role.athlete.hint') },
+          { value: 'coach', label: t('onb.role.trainer'), hint: t('onb.role.trainer.hint') },
+        ]}
+      />
       <Field label={t('cr.name')} value={form.name} onChange={set('name')} autoComplete="name" error={errors.name} />
       <Field label={t('auth.phone')} value={form.phone} onChange={set('phone')} type="tel" inputMode="tel" autoComplete="tel" placeholder={t('auth.phonePlaceholder')} error={errors.phone} />
       <PasswordField label={t('auth.password')} value={form.password} onChange={set('password')} autoComplete="new-password" hint={t('auth.passwordHint', { n: MIN_PASSWORD_LENGTH })} error={errors.password} />
-      <ChipSelect label={t('acct.role')} value={form.role} onChange={set('role')} options={[{ value: 'athlete', label: t('role.athlete') }, { value: 'coach', label: t('role.coach') }]} />
-      <div className="form-grid">
-        <LocationFields province={form.province} city={form.city} emptyLabel={t('common.notSet')} onChange={(loc) => setForm((f) => ({ ...f, ...loc }))} />
-      </div>
-      {form.role === 'athlete' && (
-        <>
-          <SelectField label={t('cr.goal')} value={form.goal} onChange={set('goal')} options={GOALS.map((id) => ({ value: id, label: t(`goal.${id}`) }))} />
-          <SelectField label={t('cr.level')} value={form.level} onChange={set('level')} options={LEVELS.map((id) => ({ value: id, label: t(`level.${id}`) }))} />
+
+      {/* Everything below only sharpens suggestions; none of it is needed to start, so it stays folded. */}
+      <details className="auth-more">
+        <summary>{t(form.role === 'athlete' ? 'auth.moreAthlete' : 'auth.moreCoach')}</summary>
+        <div className="form-stack">
           <div className="form-grid">
-            <Field label={t('cr.age')} type="number" inputMode="numeric" value={form.age} onChange={set('age')} />
-            <Field label={t('body.heightCm')} type="number" inputMode="numeric" value={form.height} onChange={set('height')} />
-            <Field label={t('body.weightKg')} type="number" inputMode="numeric" value={form.weight} onChange={set('weight')} />
+            <LocationFields province={form.province} city={form.city} emptyLabel={t('common.notSet')} onChange={(loc) => setForm((f) => ({ ...f, ...loc }))} />
           </div>
-        </>
-      )}
+          {form.role === 'athlete' && (
+            <>
+              <SelectField label={t('cr.goal')} value={form.goal} onChange={set('goal')} options={GOALS.map((id) => ({ value: id, label: t(`goal.${id}`) }))} />
+              <SelectField label={t('cr.level')} value={form.level} onChange={set('level')} options={LEVELS.map((id) => ({ value: id, label: t(`level.${id}`) }))} />
+              <div className="form-grid">
+                <Field label={t('cr.age')} type="number" inputMode="numeric" value={form.age} onChange={set('age')} />
+                <Field label={t('body.heightCm')} type="number" inputMode="numeric" value={form.height} onChange={set('height')} />
+                <Field label={t('body.weightKg')} type="number" inputMode="numeric" value={form.weight} onChange={set('weight')} />
+              </div>
+            </>
+          )}
+        </div>
+      </details>
+
       <button className="btn wide" type="submit"><UserPlus size={17} /> {t('auth.signup')}</button>
+      <p className="auth-switch">
+        {t('auth.haveAccount')} <button type="button" className="link" onClick={onSwitch}>{t('auth.tabLogin')}</button>
+      </p>
     </form>
   );
 }
@@ -126,6 +153,7 @@ export default function AuthScreen() {
           <span className="brand-mark"><Activity size={22} /></span>
           <b>{t('app.name')}</b>
         </div>
+        <p className="auth-tagline">{t('auth.tagline')}</p>
         <h1>{t(isLogin ? 'auth.loginTitle' : 'auth.signupTitle')}</h1>
         <p className="muted">{t(isLogin ? 'auth.loginLead' : 'auth.signupLead')}</p>
 
@@ -135,7 +163,7 @@ export default function AuthScreen() {
           options={[{ value: 'login', label: t('auth.tabLogin') }, { value: 'signup', label: t('auth.tabSignup') }]}
         />
 
-        {isLogin ? <LoginForm /> : <SignupForm />}
+        {isLogin ? <LoginForm onSwitch={() => setMode('signup')} /> : <SignupForm onSwitch={() => setMode('login')} />}
       </section>
       <p className="muted auth-note">{t('auth.localNote')}</p>
     </main>
