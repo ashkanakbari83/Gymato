@@ -1,6 +1,7 @@
 // Athlete dashboard: today's workout (from a program the athlete may actually use), headline numbers,
 // week streak, items needing attention (payment / pending request) and the last workout.
 import { Droplets, Play, UtensilsCrossed } from 'lucide-react';
+import GettingStarted from '../components/GettingStarted.jsx';
 import SessionRow from '../components/SessionRow.jsx';
 import Metrics from '../components/ui/Metrics.jsx';
 import { ArrowForward } from '../components/ui/Arrow.jsx';
@@ -54,6 +55,15 @@ export default function AthleteHome() {
         </button>
       </section>
 
+      <GettingStarted
+        steps={[
+          { id: 'workout', title: t('guide.athlete.workout'), text: t('guide.athlete.workout.text'), actionLabel: t('guide.athlete.workout.cta'), onAction: goToWorkout, done: sessions.length > 0 },
+          { id: 'trainer', title: t('guide.athlete.trainer'), text: t('guide.athlete.trainer.text'), actionLabel: t('guide.athlete.trainer.cta'), onAction: () => setPage('trainers'),
+            done: db.requests.some((r) => r.athleteId === user.id) || library.purchased.length > 0 || library.active.length > 0 },
+          { id: 'body', title: t('guide.athlete.body'), text: t('guide.athlete.body.text'), actionLabel: t('guide.athlete.body.cta'), onAction: () => setPage('profile'), done: Boolean(user.height && user.weight) },
+        ]}
+      />
+
       {attention.map(({ key, n }) => (
         <button key={key} className="attention" onClick={() => setPage('programs')}>
           <span>{t(key, { n: num(n) })}</span>
@@ -73,25 +83,30 @@ export default function AthleteHome() {
         <ArrowForward size={16} />
       </button>
 
-      <Metrics
-        className="half"
-        items={[
-          { value: sessions.length, label: t('stat.workouts') },
-          { value: countActiveDays(sessions), label: t('stat.activeDays') },
-          { value: sessionsCalories(sessions, db.exercises), label: t('stat.kcal') },
-        ]}
-      />
+      {/* Before the first workout these would only show zeros and empty dots; the first-steps card says what to do instead. */}
+      {sessions.length > 0 && (
+        <>
+          <Metrics
+            className="half"
+            items={[
+              { value: sessions.length, label: t('stat.workouts') },
+              { value: countActiveDays(sessions), label: t('stat.activeDays') },
+              { value: sessionsCalories(sessions, db.exercises), label: t('stat.kcal') },
+            ]}
+          />
 
-      <section className="panel half">
-        <div className="week">
-          {week.map((day, i) => (
-            <span key={i} className={day.count ? 'on' : ''}>
-              <i />
-              {day.label}
-            </span>
-          ))}
-        </div>
-      </section>
+          <section className="panel half">
+            <div className="week">
+              {week.map((day, i) => (
+                <span key={i} className={day.count ? 'on' : ''}>
+                  <i />
+                  {day.label}
+                </span>
+              ))}
+            </div>
+          </section>
+        </>
+      )}
 
       {sessions[0] && (
         <section className="panel half">

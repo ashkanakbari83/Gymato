@@ -652,6 +652,10 @@
   gap: 8px;
 }
 
+.radio-cards.cols-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
 .radio-cards label {
   display: grid;
   grid-template-columns: auto 1fr;

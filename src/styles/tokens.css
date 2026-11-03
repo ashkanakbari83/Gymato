@@ -16,7 +16,10 @@
   --accent-glow: #ff4d00; /* the pure brand colour: tints, glows, art and big graphic accents (never small text) */
   --accent-fill: #ff4d00; /* the bright brand orange as a solid surface without text: switches, bars, dots, selected borders */
   --accent-ink: #b02e00; /* orange used as text or a thin icon on page surfaces (>=4.7:1, also on tinted badges) */
-  --accent-on-inverse: #ff4d00; /* orange text on the inverted hero card (.today), which is dark in the light theme */
+  --accent-on-inverse: #ff4d00; /* orange text on the hero card (.today), which is dark in both themes */
+  --hero-bg: var(--ink);
+  --hero-ink: var(--bg);
+  --hero-edge: transparent;
   /* Filled orange buttons use the brand orange itself, with white text. Trade-off: white on #ff4d00 is 3.3:1, which
      meets WCAG for large/bold text (3:1) but not for small text (4.5:1). Hover/active step darker for feedback. */
   --btn-fill: #ff4d00;
@@ -57,7 +60,10 @@
   --accent-glow: #ff5a1f;
   --accent-fill: #ff5a1f;
   --accent-ink: #ff6a33;
-  --accent-on-inverse: #b02e00; /* the hero card is light in the dark theme */
+  --accent-on-inverse: #ff6a33;
+  --hero-bg: #1b1e23; /* stays dark: a white slab on a near-black page was the loudest thing on the first screen */
+  --hero-ink: var(--ink);
+  --hero-edge: #2e3238;
   --ok: #22c55e;
   --ok-ink: #4ade80;
   --red: #f87171;

@@ -233,10 +233,6 @@
     justify-content: center;
   }
 
-  .toast {
-    top: calc(64px + env(safe-area-inset-top));
-  }
-
   .modal-backdrop {
     align-items: flex-end;
     padding: 0;

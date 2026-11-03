@@ -58,6 +58,10 @@
     color: var(--bg);
   }
 
+  .toast {
+    bottom: 28px;
+  }
+
   .tab-icon {
     display: block;
     flex: none;

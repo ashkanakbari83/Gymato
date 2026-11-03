@@ -1,14 +1,15 @@
 /* Screens: home, library, programs, progress */
 
 .today {
-  background: var(--ink);
-  color: var(--bg);
+  background: var(--hero-bg);
+  color: var(--hero-ink);
+  border: 1px solid var(--hero-edge);
   border-radius: 20px;
   padding: 32px 28px;
 }
 
 .today :focus-visible {
-  outline-color: var(--accent-on-inverse); /* the card is dark in the light theme and light in the dark one */
+  outline-color: var(--accent-on-inverse);
 }
 
 .today small {
@@ -41,7 +42,7 @@
 .today-list li {
   padding: 5px 12px;
   border-radius: 99px;
-  border: 1px solid color-mix(in srgb,var(--bg) 28%,transparent);
+  border: 1px solid color-mix(in srgb,var(--hero-ink) 28%,transparent);
   font-size: 13px;
 }
 

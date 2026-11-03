@@ -1,5 +1,6 @@
 // Trainer dashboard: headline numbers and what needs attention (requests, payments, renewals).
 import { Users } from 'lucide-react';
+import GettingStarted from '../components/GettingStarted.jsx';
 import CoachingRow from '../components/coaching/CoachingRow.jsx';
 import Empty from '../components/ui/Empty.jsx';
 import Metrics from '../components/ui/Metrics.jsx';
@@ -11,7 +12,7 @@ import { formatMoney } from '../lib/format.js';
 import { getOwnPrograms, getTrainerClients } from '../lib/marketplace.js';
 
 export default function TrainerHome() {
-  const { db, user, setPage, t } = useApp();
+  const { db, user, setPage, openModal, t } = useApp();
   const clients = getTrainerClients(db, user.id);
   const published = getOwnPrograms(db, user.id).filter((p) => p.status === PROGRAM_STATUS.PUBLISHED).length;
 
@@ -24,6 +25,15 @@ export default function TrainerHome() {
 
   return (
     <div className="stack desk-grid">
+      <GettingStarted
+        steps={[
+          { id: 'profile', title: t('guide.trainer.profile'), text: t('guide.trainer.profile.text'), actionLabel: t('guide.trainer.profile.cta'), onAction: () => setPage('profile'), done: Boolean(user.avatar && user.bio) },
+          { id: 'program', title: t('guide.trainer.program'), text: t('guide.trainer.program.text'), actionLabel: t('guide.trainer.program.cta'), onAction: () => setPage('programs'), done: published > 0 },
+          { id: 'share', title: t('guide.trainer.share'), text: t('guide.trainer.share.text'), actionLabel: t('guide.trainer.share.cta'), onAction: () => openModal({ type: 'share', kind: 'trainer', id: user.id }),
+            done: db.requests.some((r) => r.trainerId === user.id) },
+        ]}
+      />
+
       <Metrics
         items={[
           { value: clients.pending.length, label: t('home.m.pending') },

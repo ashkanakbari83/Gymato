@@ -728,3 +728,107 @@
   inset-inline-end: 12px;
   margin: 0;
 }
+
+/* First-steps card */
+.guide-count {
+  color: var(--mu);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.guide-bar {
+  height: 6px;
+  border-radius: 99px;
+  background: var(--soft);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.guide-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent-fill);
+  transition: width .3s ease-out;
+}
+
+.guide-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.guide-steps li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.guide-steps li + li {
+  border-top: 1px solid var(--line);
+}
+
+.guide-mark {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--soft);
+  color: var(--mu);
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.guide-steps .done .guide-mark {
+  background: var(--accent-ink);
+  color: #fff;
+}
+
+.guide-steps .current .guide-mark {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.guide-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.guide-text b,
+.guide-text small {
+  display: block;
+}
+
+.guide-text small {
+  margin-top: 2px;
+  color: var(--mu);
+  line-height: 1.7;
+}
+
+.guide-steps .done .guide-text b {
+  color: var(--mu);
+  font-weight: 600;
+}
+
+.guide-hide {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--mu);
+}
+
+@media (max-width: 480px) {
+  .guide-steps .current {
+    flex-wrap: wrap;
+  }
+
+  .guide-steps .current .guide-text {
+    flex: 1 1 calc(100% - 44px);
+  }
+
+  .guide-steps .current .btn {
+    margin-inline-start: 42px;
+  }
+}
