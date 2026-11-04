@@ -32,6 +32,23 @@ export const unconfiguredGateway = {
   },
 };
 
+/**
+ * TEST MODE ONLY. A pretend payment provider that lives in the browser so the whole buy flow can be tried on a
+ * developer's machine: it "redirects" back to this page and then says the order was paid, for exactly the order's
+ * amount. It proves nothing (anyone can edit the browser), so it is never active in a production build unless
+ * VITE_PAYMENT_TEST_MODE=true is set on purpose, and the checkout labels it clearly. No money moves.
+ */
+export const testGateway = {
+  configured: true,
+  testMode: true,
+  async createSession(order) {
+    return { gateway: 'test', gatewayRef: `test-${order.id}`, redirectUrl: `${location.origin}${location.pathname}?pay=${encodeURIComponent(order.id)}` };
+  },
+  async verify(order) {
+    return { orderId: order.id, status: 'paid', amount: order.amount, gatewayRef: order.gatewayRef, receipt: 'test-mode' };
+  },
+};
+
 const isHttps = (value) => {
   try {
     const url = new URL(value, 'https://placeholder.invalid');
@@ -94,5 +111,7 @@ export const setGateway = (gateway) => {
 export function getGateway() {
   if (override) return override;
   const base = import.meta.env?.VITE_PAYMENT_API_URL;
-  return base ? httpGateway(base) : unconfiguredGateway;
+  if (base) return httpGateway(base);
+  const env = import.meta.env;
+  return env?.DEV || env?.VITE_PAYMENT_TEST_MODE === 'true' ? testGateway : unconfiguredGateway;
 }

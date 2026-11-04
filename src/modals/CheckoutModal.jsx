@@ -19,7 +19,8 @@ export default function CheckoutModal({ paymentId }) {
   const payment = db.payments.find((p) => p.id === paymentId);
   if (!payment) return null;
 
-  const configured = getGateway().configured;
+  const gateway = getGateway();
+  const configured = gateway.configured;
   const isGeneral = payment.kind === PAYMENT_KIND.GENERAL;
   const subscription = isGeneral ? null : db.subscriptions.find((s) => s.id === payment.targetId);
   const program = isGeneral ? db.programs.find((p) => p.id === payment.targetId) : db.customPrograms.find((p) => p.id === subscription?.customProgramId);
@@ -56,6 +57,12 @@ export default function CheckoutModal({ paymentId }) {
         <div className="total"><dt>{t('pay.total')}</dt><dd>{formatPrice(payment.amount, t)}</dd></div>
       </dl>
 
+      {pending && gateway.testMode && (
+        <div className="note-box" role="status">
+          <AlertTriangle size={16} aria-hidden="true" /> <b>{t('pay.testModeTitle')}</b>
+          <p>{t('pay.testModeText')}</p>
+        </div>
+      )}
       {pending && !configured && (
         <div className="note-box warn" role="status">
           <AlertTriangle size={16} aria-hidden="true" /> <b>{t('pay.notConfiguredTitle')}</b>

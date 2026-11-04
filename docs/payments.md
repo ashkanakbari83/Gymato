@@ -74,3 +74,10 @@ The server must: look the order up in **its** database; call the provider's veri
 ### The honest limit of a client-only app
 
 Even with the contract above, this app keeps its data in the browser, so a determined person can edit their own saved data. The server answer stops *accidental and casual* misuse and makes the money side correct, but **real tamper-resistance needs the server to own entitlements too**: the server should decide "this athlete has access to this program / this subscription is active until X" and the app should read that, instead of deriving it from local data. That is a larger migration (accounts, programs, subscriptions and chat on a server), not a payment-screen change.
+
+## Test mode (local only)
+
+For trying the buy flow on a developer machine there is a simulated provider (`testGateway` in `lib/payments/gateway.js`).
+It is active when no `VITE_PAYMENT_API_URL` is set **and** the app runs under `npm run dev` (or `VITE_PAYMENT_TEST_MODE=true`
+was set at build time). It "redirects" back to the page and then answers `paid` for exactly the order's amount; no money
+moves and it proves nothing, so a normal production build never uses it. The checkout shows a "Payment test mode" note.
