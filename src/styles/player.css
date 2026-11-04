@@ -10,7 +10,8 @@
   display: flex;
   flex-direction: column;
   height: 100dvh;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: var(--bg);
   padding: 0 16px calc(12px + env(safe-area-inset-bottom));
 }
@@ -83,8 +84,8 @@
 /* Animation: absorbs the leftover height. */
 .player-visual {
   position: relative;
-  flex: 1 1 120px;
-  min-height: 84px;
+  flex: 1 1 160px;
+  min-height: 150px; /* the figure must stay readable: if the rest does not fit, the screen scrolls instead */
   max-height: 320px;
   background: var(--card);
   border: 1px solid var(--line);
@@ -161,7 +162,7 @@
   font-weight: 700;
 }
 
-@media (min-height: 760px) {
+@media (min-height: 900px) { /* the steps are only shown inline when there is room left for a large animation */
   .how-inline {
     display: block;
     margin-top: 4px;
@@ -178,11 +179,6 @@
   }
 }
 
-@media (max-height: 480px) {
-  .player-screen {
-    overflow-y: auto;
-  }
-}
 
 /* Set card */
 .player-set-card {
