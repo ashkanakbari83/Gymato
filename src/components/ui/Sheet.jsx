@@ -44,6 +44,7 @@ function hidePageBehind(backdrop) {
 /** Modal shell: centered dialog on desktop, bottom sheet on mobile. */
 export default function Sheet({ title, label, children, onClose, bodyClassName = '', variant = 'sheet', size = '' }) {
   const lightbox = variant === 'lightbox'; // full-screen viewer: no header, no padding, the children own the whole card
+  const story = variant === 'story'; // full-screen story (first-run): same, but on the page's own background
   const { closeModal, t } = useApp();
   const close = onClose ?? closeModal;
   const closeRef = useRef(close);
@@ -101,8 +102,8 @@ export default function Sheet({ title, label, children, onClose, bodyClassName =
   }, []);
 
   return (
-    <div ref={backdropRef} className={`modal-backdrop ${lightbox ? 'lightbox-backdrop' : ''}`} onMouseDown={(e) => e.target === e.currentTarget && close()}>
-      <section ref={cardRef} className={`modal-card ${lightbox ? 'lightbox-card' : ''} ${size}`.trim()} role="dialog" aria-modal="true" aria-labelledby={title ? titleId : undefined} aria-label={title ? undefined : label} tabIndex={-1}>
+    <div ref={backdropRef} className={`modal-backdrop ${lightbox ? 'lightbox-backdrop' : ''} ${story ? 'story-backdrop' : ''}`.trim()} onMouseDown={(e) => e.target === e.currentTarget && close()}>
+      <section ref={cardRef} className={`modal-card ${lightbox ? 'lightbox-card' : ''} ${story ? 'story-card' : ''} ${size}`.trim()} role="dialog" aria-modal="true" aria-labelledby={title ? titleId : undefined} aria-label={title ? undefined : label} tabIndex={-1}>
         {title && (
           <header className="modal-head">
             <h2 id={titleId}>{title}</h2>
@@ -111,7 +112,7 @@ export default function Sheet({ title, label, children, onClose, bodyClassName =
             </button>
           </header>
         )}
-        {lightbox ? children : <div className={`modal-body ${bodyClassName}`}>{children}</div>}
+        {lightbox || story ? children : <div className={`modal-body ${bodyClassName}`}>{children}</div>}
       </section>
     </div>
   );
