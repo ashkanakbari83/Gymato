@@ -35,8 +35,8 @@ export const unconfiguredGateway = {
 /**
  * TEST MODE ONLY. A pretend payment provider that lives in the browser so the whole buy flow can be tried on a
  * developer's machine: it "redirects" back to this page and then says the order was paid, for exactly the order's
- * amount. It proves nothing (anyone can edit the browser), so it is never active in a production build unless
- * VITE_PAYMENT_TEST_MODE=true is set on purpose, and the checkout labels it clearly. No money moves.
+ * amount. It proves nothing (anyone can edit the browser), so it is only active under `npm run dev`, when the page is
+ * opened on localhost, or when VITE_PAYMENT_TEST_MODE=true is set on purpose, and the checkout labels it clearly. No money moves.
  */
 export const testGateway = {
   configured: true,
@@ -113,5 +113,6 @@ export function getGateway() {
   const base = import.meta.env?.VITE_PAYMENT_API_URL;
   if (base) return httpGateway(base);
   const env = import.meta.env;
-  return env?.DEV || env?.VITE_PAYMENT_TEST_MODE === 'true' ? testGateway : unconfiguredGateway;
+  const onThisMachine = typeof location !== 'undefined' && ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+  return env?.DEV || onThisMachine || env?.VITE_PAYMENT_TEST_MODE === 'true' ? testGateway : unconfiguredGateway;
 }
