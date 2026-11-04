@@ -102,6 +102,10 @@ export function httpGateway(base, { fetchImpl = (...args) => fetch(...args), ret
   };
 }
 
+/** localhost, loopback and private-network addresses (a phone opening the dev machine over Wi-Fi), plus *.local names. */
+export const isLocalHost = (host) =>
+  /^(localhost|\[::1\]|127(\.\d+){3}|10(\.\d+){3}|192\.168(\.\d+){2}|172\.(1[6-9]|2\d|3[01])(\.\d+){2}|[\w-]+\.local)$/i.test(host);
+
 let override = null;
 /** Lets a test (or a host page) plug in another gateway. Pass null to go back to the configured one. */
 export const setGateway = (gateway) => {
@@ -113,6 +117,6 @@ export function getGateway() {
   const base = import.meta.env?.VITE_PAYMENT_API_URL;
   if (base) return httpGateway(base);
   const env = import.meta.env;
-  const onThisMachine = typeof location !== 'undefined' && ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+  const onThisMachine = typeof location !== 'undefined' && isLocalHost(location.hostname);
   return env?.DEV || onThisMachine || env?.VITE_PAYMENT_TEST_MODE === 'true' ? testGateway : unconfiguredGateway;
 }
