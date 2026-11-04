@@ -500,6 +500,8 @@ const payments = {
   'pay.paidNote': ['پرداخت توسط درگاه تأیید شد و برنامه فعال است.', 'The gateway confirmed the payment and the program is active.'],
   'pay.notUnlocked': ['این پرداخت کامل نشد و چیزی فعال نشد. می‌توانی دوباره تلاش کنی.', 'This payment did not complete and nothing was activated. You can try again.'],
   'pay.mismatchNote': ['مبلغ پرداخت‌شده با مبلغ سفارش یکی نبود، پس چیزی فعال نشد. برای بررسی با پشتیبانی تماس بگیر.', 'The amount paid did not match the order, so nothing was activated. Contact support to have it reviewed.'],
+  'pay.testModeTitle': ['حالت آزمایشی پرداخت', 'Payment test mode'],
+  'pay.testModeText': ['این پرداخت شبیه‌سازی است؛ هیچ مبلغی از حساب شما کسر نمی‌شود. با زدن دکمه‌ی پرداخت، سفارش بلافاصله پرداخت‌شده حساب می‌شود.', 'This payment is simulated; nothing is charged. Pressing Pay marks the order as paid straight away.'],
   'pay.notConfiguredTitle': ['درگاه پرداخت هنوز متصل نیست', 'The payment gateway is not connected yet'],
   'pay.notConfiguredText': ['سفارش ثبت شده و «در انتظار پرداخت» می‌ماند. تا اتصال سرور پرداخت، هیچ پرداختی انجام نمی‌شود و برنامه فعال نخواهد شد.', 'The order is saved and stays pending. Until a payment server is connected no payment can be made and nothing will be activated.'],
   'pay.lockedUntil': ['تا تأیید پرداخت توسط درگاه، چیزی باز نمی‌شود؛ بستن این صفحه سفارش را «در انتظار پرداخت» نگه می‌دارد.', 'Nothing unlocks until the gateway confirms the payment; closing this page keeps the order pending.'],

@@ -21,6 +21,9 @@ export function usePaymentActions({ db, user, notify, t, dispatch, openModal, cl
       const session = await getGateway().createSession(order); // the server answers the same session for the same order
       const saved = dispatch(attachGatewaySession, user.id, paymentId, session);
       if (!saved.ok) return saved;
+      // The saved order (with its gateway reference) is written to storage by an effect after this render; leaving the
+      // page before that happens would lose it, so give it a moment.
+      await new Promise((resolve) => setTimeout(resolve, 150));
       window.location.assign(session.redirectUrl);
       return { ok: true };
     } catch (error) {
