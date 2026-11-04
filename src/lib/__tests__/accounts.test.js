@@ -134,3 +134,20 @@ test('saved data from the earlier version is replaced by the starter accounts bu
   assert.equal(state.users.some((u) => u.id === 'old'), false);
   delete globalThis.localStorage;
 });
+
+test('abs release: older saves gain the new exercises and programs once, without duplicates or lost data', async () => {
+  const { withDefaults } = await import('../storage.js');
+  const { createSeedState } = await import('../../data/seed.js');
+  const seed = createSeedState();
+  const old = { ...seed, seedRelease: undefined };
+  old.exercises = seed.exercises.filter((e) => e.id !== 'vup');
+  old.programs = seed.programs.filter((p) => !p.id.startsWith('gp-abs-'));
+  old.programs[0] = { ...old.programs[0], title: 'edited by the trainer' };
+  const once = withDefaults(old);
+  assert.ok(once.exercises.some((e) => e.id === 'vup'));
+  assert.equal(once.programs.filter((p) => p.id.startsWith('gp-abs-')).length, 4);
+  assert.equal(once.programs[0].title, 'edited by the trainer');
+  const twice = withDefaults(once);
+  assert.equal(twice.exercises.length, once.exercises.length);
+  assert.equal(twice.programs.length, once.programs.length);
+});

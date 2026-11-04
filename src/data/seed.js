@@ -2,10 +2,11 @@
 // reviews and likes so the marketplace looks lived-in, and three programs from the original demo.
 // Coaching requests, payments, subscriptions and chats all start empty.
 import { communityAthletes, communityLikes, communityPrograms, communityReviews, communityTrainers, generalProgram } from './community.js';
+import { absPrograms } from './absPrograms.js';
 import { decks } from './decks.js';
 import { exercises } from './exercises.js';
 import { users as accounts } from './users.js';
-import { STATE_VERSION } from '../lib/constants.js';
+import { SEED_RELEASE, STATE_VERSION } from '../lib/constants.js';
 import { DEFAULT_FEEDBACK } from '../lib/feedback.js';
 
 const programs = [
@@ -92,6 +93,7 @@ const programs = [
     ],
   ),
   ...communityPrograms,
+  ...absPrograms,
 ];
 
 /** Accounts first, then the sample trainers and the athletes who reviewed them (neither can sign in). */
@@ -99,6 +101,7 @@ const users = [...accounts, ...communityTrainers, ...communityAthletes];
 
 export const createSeedState = () => ({
   version: STATE_VERSION,
+  seedRelease: SEED_RELEASE,
   users,
   exercises,
   decks,

@@ -15,6 +15,14 @@ const EQUIPMENT = {
       <line x1="160" y1="108" x2="160" y2="126" />
     </g>
   ),
+  hangraise: <line className="sm-bar" x1="70" y1="12" x2="130" y2="12" />,
+  cablecrunch: <line className="sm-bar" x1="104" y1="4" x2="106" y2="38" />,
+  abwheel: (
+    <circle className="sm-bar" r="8" cx="118" cy="118">
+      <animate attributeName="cx" values="118;164;118" keyTimes="0;.5;1" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1" dur="1.8s" repeatCount="indefinite" />
+    </circle>
+  ),
+  carry: <rect className="sm-bar" x="86" y="78" width="16" height="7" rx="2" />,
   treadmill: <rect className="sm-bar" x="52" y="122" width="100" height="4" rx="2" />,
 };
 
