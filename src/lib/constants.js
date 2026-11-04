@@ -5,6 +5,8 @@ export const PREVIOUS_STORAGE_KEY = 'jimato:state:v5'; // marketplace without si
 export const LEGACY_STORAGE_KEY = 'jimato:state:v4';
 export const ONBOARDING_KEY = 'jimato:onboarding:v2';
 export const STATE_VERSION = 6;
+/** Bumped when the starter exercises / programs grow; saves from an older release get the new ones added (see withDefaults). */
+export const SEED_RELEASE = 2;
 
 export const DEFAULT_FREE_WORKOUT = ['pushup', 'squat'];
 export const DAY_MS = 86400000;

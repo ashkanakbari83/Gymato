@@ -1,7 +1,7 @@
 // localStorage persistence. All reads/writes of the app state go through here.
 import { createSeedState } from '../data/seed.js';
 import { DEFAULT_FEEDBACK } from './feedback.js';
-import { LEGACY_STORAGE_KEY, PREVIOUS_STORAGE_KEY, STATE_VERSION, STORAGE_KEY } from './constants.js';
+import { LEGACY_STORAGE_KEY, PREVIOUS_STORAGE_KEY, SEED_RELEASE, STATE_VERSION, STORAGE_KEY } from './constants.js';
 
 const readJson = (key) => {
   try {
@@ -55,12 +55,31 @@ const normalizePayment = ({ confirmedAt, ...payment }) => ({
   gatewayRef: payment.gatewayRef ?? null,
 });
 
-export const withDefaults = (state) => ({
-  ...Object.fromEntries(ADDED_COLLECTIONS.map((key) => [key, []])),
-  ...state,
-  payments: (state.payments ?? []).map(normalizePayment),
-  feedback: { ...DEFAULT_FEEDBACK, ...(state.feedback ?? {}) }, // sound / vibration / keep-awake preferences
-});
+/**
+ * Saves from before the abs release lack the new starter exercises and programs. Add whatever is missing by id
+ * (never overwrite or re-add anything the person already has), once per release.
+ */
+function addNewSeedContent(state) {
+  if ((state.seedRelease ?? 1) >= SEED_RELEASE) return state;
+  const seed = createSeedState();
+  const missing = (have, fresh) => fresh.filter((item) => !have.some((x) => x.id === item.id));
+  return {
+    ...state,
+    seedRelease: SEED_RELEASE,
+    exercises: [...(state.exercises ?? []), ...missing(state.exercises ?? [], seed.exercises)],
+    programs: [...(state.programs ?? []), ...missing(state.programs ?? [], seed.programs)],
+  };
+}
+
+export const withDefaults = (raw) => {
+  const state = addNewSeedContent(raw);
+  return {
+    ...Object.fromEntries(ADDED_COLLECTIONS.map((key) => [key, []])),
+    ...state,
+    payments: (state.payments ?? []).map(normalizePayment),
+    feedback: { ...DEFAULT_FEEDBACK, ...(state.feedback ?? {}) }, // sound / vibration / keep-awake preferences
+  };
+};
 
 export function loadState() {
   const saved = readJson(STORAGE_KEY);
