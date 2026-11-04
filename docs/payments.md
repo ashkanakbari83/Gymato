@@ -78,6 +78,6 @@ Even with the contract above, this app keeps its data in the browser, so a deter
 ## Test mode (local only)
 
 For trying the buy flow on a developer machine there is a simulated provider (`testGateway` in `lib/payments/gateway.js`).
-It is active when no `VITE_PAYMENT_API_URL` is set **and** the app runs under `npm run dev` (or the page is opened on `localhost`, or `VITE_PAYMENT_TEST_MODE=true`
+It is active when no `VITE_PAYMENT_API_URL` is set **and** the app runs under `npm run dev` (or the page is opened on `localhost`, a private-network address or a `*.vercel.app` demo deployment, or `VITE_PAYMENT_TEST_MODE=true`
 was set at build time). It "redirects" back to the page and then answers `paid` for exactly the order's amount; no money
 moves and it proves nothing, so a normal production build never uses it. The checkout shows a "Payment test mode" note.

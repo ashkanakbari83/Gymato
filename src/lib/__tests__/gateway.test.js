@@ -55,6 +55,6 @@ test('saved orders from before the rework are read as pending / paid with their 
 
 test('test mode is limited to this machine and private networks', async () => {
   const { isLocalHost } = await import('../payments/gateway.js');
-  for (const host of ['localhost', '127.0.0.1', '[::1]', '192.168.1.20', '10.0.0.5', '172.20.3.4', 'my-pc.local']) assert.ok(isLocalHost(host), host);
-  for (const host of ['gymato.ir', 'example.com', '8.8.8.8', '172.32.0.1', '0.0.0.0', 'localhost.evil.com']) assert.ok(!isLocalHost(host), host);
+  for (const host of ['localhost', '127.0.0.1', '[::1]', '192.168.1.20', '10.0.0.5', '172.20.3.4', 'my-pc.local', 'gymato.vercel.app', 'gymato-git-main-ashkan.vercel.app']) assert.ok(isLocalHost(host), host);
+  for (const host of ['gymato.ir', 'example.com', '8.8.8.8', '172.32.0.1', '0.0.0.0', 'localhost.evil.com', 'vercel.app.evil.com', 'evilvercel.app']) assert.ok(!isLocalHost(host), host);
 });

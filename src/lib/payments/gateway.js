@@ -102,9 +102,12 @@ export function httpGateway(base, { fetchImpl = (...args) => fetch(...args), ret
   };
 }
 
-/** localhost, loopback and private-network addresses (a phone opening the dev machine over Wi-Fi), plus *.local names. */
+/**
+ * Hosts where the simulated provider may run: localhost, loopback and private-network addresses (a phone opening the
+ * dev machine over Wi-Fi), *.local names, and *.vercel.app (the demo deployment; a custom domain is not included).
+ */
 export const isLocalHost = (host) =>
-  /^(localhost|\[::1\]|127(\.\d+){3}|10(\.\d+){3}|192\.168(\.\d+){2}|172\.(1[6-9]|2\d|3[01])(\.\d+){2}|[\w-]+\.local)$/i.test(host);
+  /^(localhost|\[::1\]|127(\.\d+){3}|10(\.\d+){3}|192\.168(\.\d+){2}|172\.(1[6-9]|2\d|3[01])(\.\d+){2}|[\w-]+\.local|([\w-]+\.)+vercel\.app)$/i.test(host);
 
 let override = null;
 /** Lets a test (or a host page) plug in another gateway. Pass null to go back to the configured one. */
