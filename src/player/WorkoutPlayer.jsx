@@ -66,7 +66,7 @@ export default function WorkoutPlayer() {
   if (!workout) {
     return (
       <div className="player-screen">
-        <Empty icon={Dumbbell} title={t('player.noneTitle')} text={t('player.noneText')} actionLabel={t('common.back')} onAction={exitWorkout} />
+        <Empty icon={Dumbbell} art="dumbbell" title={t('player.noneTitle')} text={t('player.noneText')} actionLabel={t('common.back')} onAction={exitWorkout} />
       </div>
     );
   }

@@ -46,7 +46,7 @@ export default function AthleteProgramsPage() {
   const isEmpty = Object.values(lib).every((list) => list.length === 0);
 
   if (isEmpty) {
-    return <Empty icon={Search} title={t('programs.emptyTitle')} text={t('programs.emptyText')} actionLabel={t('programs.browse')} onAction={() => setPage('trainers')} />;
+    return <Empty icon={Search} art="clipboard" title={t('programs.emptyTitle')} text={t('programs.emptyText')} actionLabel={t('programs.browse')} onAction={() => setPage('trainers')} />;
   }
 
   return (

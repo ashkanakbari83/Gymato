@@ -52,7 +52,7 @@ export default function TrainerProgramsPage() {
           );
         })}
       </div>
-      {!programs.length && <Empty icon={CalendarDays} title={t('programs.emptyTrainerTitle')} text={t('programs.emptyTrainerText')} actionLabel={t('programs.newGeneral')} onAction={() => openGeneralEditor()} />}
+      {!programs.length && <Empty icon={CalendarDays} art="clipboard" title={t('programs.emptyTrainerTitle')} text={t('programs.emptyTrainerText')} actionLabel={t('programs.newGeneral')} onAction={() => openGeneralEditor()} />}
 
       <div className="section-title sec-gap">
         <div>
