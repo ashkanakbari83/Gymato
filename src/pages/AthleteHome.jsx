@@ -40,7 +40,7 @@ export default function AthleteHome() {
   const guide = (
     <GettingStarted
       steps={[
-        { id: 'body', title: t('guide.athlete.body'), text: t('guide.athlete.body.text'), actionLabel: t('guide.athlete.body.cta'), onAction: () => setPage('profile'), done: Boolean(user.height && user.weight) },
+        { id: 'body', title: t('guide.athlete.body'), text: t('guide.athlete.body.text'), actionLabel: t('guide.athlete.body.cta'), onAction: () => setPage('profile', { from: 'guide' }), done: Boolean(user.height && user.weight) },
         { id: 'trainer', title: t('guide.athlete.trainer'), text: t('guide.athlete.trainer.text'), actionLabel: t('guide.athlete.trainer.cta'), onAction: () => setPage('trainers'),
           done: db.requests.some((r) => r.athleteId === user.id) || library.purchased.length > 0 || library.active.length > 0 },
         { id: 'workout', title: t('guide.athlete.workout'), text: t('guide.athlete.workout.text'), actionLabel: t('guide.athlete.workout.cta'), onAction: goToWorkout, done: sessions.length > 0 },
