@@ -2,7 +2,7 @@
 import { findAccounts, registerAccount, signInAs, signOut } from '../lib/domain/accounts.js';
 import { updateTrainerProfile } from '../lib/domain/trainerProfile.js';
 
-export function useAccountActions({ db, user, update, notify, t, closeModal, go, openModal, dispatch, setWorkout, onboarding }) {
+export function useAccountActions({ db, user, update, notify, t, closeModal, go, openModal, dispatch, setWorkout, onboarding, pageParams }) {
   /** A running workout belongs to its athlete; another account never inherits it. */
   const keepOwnWorkout = (userId) => setWorkout((w) => (w && w.userId !== userId ? null : w));
 
@@ -35,15 +35,24 @@ export function useAccountActions({ db, user, update, notify, t, closeModal, go,
     return result;
   };
 
+  /** Saved from the first-steps card: the person came here for one job, so after it they go back to Home. */
+  const backToGuide = () => {
+    if (pageParams?.from === 'guide') go('home');
+  };
+
   const updateProfile = (changes) => {
     update((d) => ({ users: d.users.map((u) => (u.id === user.id ? { ...u, ...changes } : u)) }));
     notify(t('profile.saved'));
+    backToGuide();
   };
 
   /** A trainer saves their public profile (photo, banner, resume, album…). Returns the domain result for field errors. */
   const saveTrainerProfile = (form) => {
     const result = dispatch(updateTrainerProfile, user.id, form);
-    if (result.ok) notify(t('profile.saved'));
+    if (result.ok) {
+      notify(t('profile.saved'));
+      backToGuide();
+    }
     return result;
   };
 
