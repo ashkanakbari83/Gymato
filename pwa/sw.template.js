@@ -21,6 +21,24 @@ self.addEventListener('message', (event) => {
   if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
 
+// A tap on a device notification brings the app to the front (opening it if it is closed) and tells it which
+// screen the notification points to. When the app was closed and has to be opened from scratch, it simply opens on
+// its home screen (the notification is still in the app's list).
+self.addEventListener('notificationclick', (event) => {
+  const target = event.notification.data?.target ?? null;
+  event.notification.close();
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windows) => {
+      const open = windows.find((client) => 'focus' in client);
+      if (open) {
+        open.postMessage({ type: 'OPEN_TARGET', target });
+        return open.focus();
+      }
+      return self.clients.openWindow(scope);
+    }),
+  );
+});
+
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches

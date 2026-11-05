@@ -10,7 +10,7 @@ export const CUES = {
   finish: { tones: [{ freq: 784, ms: 140 }, { freq: 988, ms: 140, at: 170 }, { freq: 1319, ms: 360, at: 340 }], vibrate: [120, 60, 120, 60, 400] },
 };
 
-export const DEFAULT_FEEDBACK = { sound: true, vibrate: true, keepAwake: true };
+export const DEFAULT_FEEDBACK = { sound: true, vibrate: true, keepAwake: true, deviceNotify: false };
 
 /** Which cue to play when `secondsLeft` seconds of a countdown remain (null: nothing this second). */
 export function countdownCue(secondsLeft) {

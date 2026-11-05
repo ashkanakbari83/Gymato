@@ -8,6 +8,7 @@ import PwaNotices from './components/pwa/PwaNotices.jsx';
 import Toast from './components/ui/Toast.jsx';
 import { AppProvider, useApp } from './context/AppContext.jsx';
 import { useDeepLink } from './hooks/useDeepLink.js';
+import { useDeviceNotifications } from './hooks/useDeviceNotifications.js';
 import { useOnboardingDialog } from './hooks/useOnboardingDialog.js';
 import ModalHost from './modals/ModalHost.jsx';
 
@@ -48,6 +49,7 @@ function Shell() {
   const { db, page } = useApp();
   const Page = PAGES[page];
   useDeepLink();
+  useDeviceNotifications();
   useOnboardingDialog();
   useEffect(() => {
     if (!db.signedIn) return undefined;
