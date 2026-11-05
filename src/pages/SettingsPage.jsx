@@ -1,8 +1,9 @@
 // Settings: theme, language, onboarding replay and data backup.
-import { CircleHelp, Download, Moon, RotateCcw, Settings, Sun, Upload, Volume2 } from 'lucide-react';
+import { Bell, CircleHelp, Download, Moon, RotateCcw, Settings, Sun, Upload, Volume2 } from 'lucide-react';
 import InstallCard from '../components/pwa/InstallCard.jsx';
 import Switch from '../components/ui/Switch.jsx';
 import { useApp } from '../context/AppContext.jsx';
+import { askDevicePermission, devicePermission, showDeviceNotification } from '../lib/deviceNotify.js';
 import { canKeepAwake, canVibrate, feedbackPrefs, playCue, unlockAudio } from '../lib/feedback.js';
 
 const THEMES = [['light', Sun], ['dark', Moon], ['system', Settings]];
@@ -16,6 +17,16 @@ export default function SettingsPage() {
     unlockAudio();
     playCue('restEnd', prefs);
   };
+
+  // Turning it on asks the browser for permission (from this tap, as browsers require); a refusal leaves it off.
+  const permission = devicePermission();
+  const toggleNotify = async (on) => {
+    if (!on) return setPref('deviceNotify')(false);
+    const answer = await askDevicePermission();
+    setPref('deviceNotify')(answer === 'granted');
+  };
+  const testNotify = () => showDeviceNotification({ title: t('settings.notifyTestTitle'), body: t('settings.notifyTestText'), tag: 'jimato-test' });
+  const notifyHint = permission === 'unsupported' ? t('settings.notifyUnsupported') : permission === 'denied' ? t('settings.notifyDenied') : t('settings.notifyHint');
 
   return (
     <div className="stack narrow">
@@ -65,6 +76,24 @@ export default function SettingsPage() {
           <b>{t('settings.testCue')}</b>
           <button className="btn ghost" onClick={testCue}><Volume2 size={16} /> {t('settings.testCueBtn')}</button>
         </div>
+      </section>
+
+      <section className="panel">
+        <h2 className="panel-title">{t('settings.notifyTitle')}</h2>
+        <Switch
+          label={t('settings.notify')}
+          hint={notifyHint}
+          checked={prefs.deviceNotify && permission === 'granted'}
+          disabled={permission === 'unsupported' || permission === 'denied'}
+          onChange={toggleNotify}
+        />
+        <p className="muted small">{t('settings.notifyLimit')}</p>
+        {prefs.deviceNotify && permission === 'granted' && (
+          <div className="setting">
+            <b>{t('settings.notifyTest')}</b>
+            <button className="btn ghost" onClick={testNotify}><Bell size={16} /> {t('settings.notifyTest')}</button>
+          </div>
+        )}
       </section>
 
       <InstallCard />

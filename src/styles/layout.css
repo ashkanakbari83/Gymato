@@ -161,3 +161,8 @@
   font-size: 14px;
   color: var(--mu);
 }
+
+/* Shown for a moment while a page's code loads for the first time. */
+.page-loading {
+  min-height: 40dvh;
+}

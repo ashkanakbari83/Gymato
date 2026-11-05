@@ -80,7 +80,7 @@ export default function InsightsPage() {
             })}
           </div>
         ) : (
-          <Empty icon={ShoppingBag} title={t('programs.emptyTrainerTitle')} text={t('programs.emptyTrainerText')} />
+          <Empty icon={ShoppingBag} art="coin" title={t('programs.emptyTrainerTitle')} text={t('programs.emptyTrainerText')} />
         )}
       </section>
 
