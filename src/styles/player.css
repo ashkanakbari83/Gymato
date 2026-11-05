@@ -85,7 +85,7 @@
 .player-visual {
   position: relative;
   flex: 1 1 160px;
-  min-height: 150px; /* the figure must stay readable: if the rest does not fit, the screen scrolls instead */
+  min-height: clamp(190px, 30dvh, 280px); /* the figure must stay readable: if the rest does not fit, the screen scrolls instead */
   max-height: 320px;
   background: var(--card);
   border: 1px solid var(--line);
@@ -173,7 +173,7 @@
   }
 }
 
-@media (max-height: 640px) {
+@media (max-height: 800px) {
   .player-info > p {
     display: none;
   }
