@@ -36,8 +36,21 @@ export default function AthleteHome() {
     library.pending.length && { key: 'home.pendingRequests', n: library.pending.length },
   ].filter(Boolean);
 
+  // A newcomer sees the first steps (profile, trainer, workout last) before the workout card; once they have trained it moves below it.
+  const guide = (
+    <GettingStarted
+      steps={[
+        { id: 'body', title: t('guide.athlete.body'), text: t('guide.athlete.body.text'), actionLabel: t('guide.athlete.body.cta'), onAction: () => setPage('profile'), done: Boolean(user.height && user.weight) },
+        { id: 'trainer', title: t('guide.athlete.trainer'), text: t('guide.athlete.trainer.text'), actionLabel: t('guide.athlete.trainer.cta'), onAction: () => setPage('trainers'),
+          done: db.requests.some((r) => r.athleteId === user.id) || library.purchased.length > 0 || library.active.length > 0 },
+        { id: 'workout', title: t('guide.athlete.workout'), text: t('guide.athlete.workout.text'), actionLabel: t('guide.athlete.workout.cta'), onAction: goToWorkout, done: sessions.length > 0 },
+      ]}
+    />
+  );
+
   return (
     <div className="stack desk-grid">
+      {sessions.length === 0 && guide}
       <section className="today">
         <span className="today-art" aria-hidden="true"><Icon3D name={workout ? 'timer' : 'dumbbell'} /></span>
         <small>{workout ? t('home.inProgress') : program ? t('home.todayWorkout') : t('home.freeWorkout')}</small>
@@ -57,14 +70,7 @@ export default function AthleteHome() {
         </button>
       </section>
 
-      <GettingStarted
-        steps={[
-          { id: 'workout', title: t('guide.athlete.workout'), text: t('guide.athlete.workout.text'), actionLabel: t('guide.athlete.workout.cta'), onAction: goToWorkout, done: sessions.length > 0 },
-          { id: 'trainer', title: t('guide.athlete.trainer'), text: t('guide.athlete.trainer.text'), actionLabel: t('guide.athlete.trainer.cta'), onAction: () => setPage('trainers'),
-            done: db.requests.some((r) => r.athleteId === user.id) || library.purchased.length > 0 || library.active.length > 0 },
-          { id: 'body', title: t('guide.athlete.body'), text: t('guide.athlete.body.text'), actionLabel: t('guide.athlete.body.cta'), onAction: () => setPage('profile'), done: Boolean(user.height && user.weight) },
-        ]}
-      />
+      {sessions.length > 0 && guide}
 
       {attention.map(({ key, n }) => (
         <button key={key} className="attention" onClick={() => setPage('programs')}>

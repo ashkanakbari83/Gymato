@@ -89,12 +89,12 @@
 
 @media (max-width: 899px) {
   .main {
-    padding-bottom: calc(116px + env(safe-area-inset-bottom));
+    padding-bottom: calc(100px + env(safe-area-inset-bottom));
   }
 
   .dock {
     inset-inline: 12px;
-    bottom: calc(10px + env(safe-area-inset-bottom));
+    bottom: max(6px, calc(env(safe-area-inset-bottom) - 14px)); /* sits low; on phones with a home bar it only clears the bar's lower part */
     padding: 6px;
     border: 1px solid var(--line);
     border-radius: 28px;

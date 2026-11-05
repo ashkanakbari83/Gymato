@@ -2,7 +2,7 @@
 import { findAccounts, registerAccount, signInAs, signOut } from '../lib/domain/accounts.js';
 import { updateTrainerProfile } from '../lib/domain/trainerProfile.js';
 
-export function useAccountActions({ db, user, update, notify, t, closeModal, go, openModal, dispatch, setWorkout }) {
+export function useAccountActions({ db, user, update, notify, t, closeModal, go, openModal, dispatch, setWorkout, onboarding }) {
   /** A running workout belongs to its athlete; another account never inherits it. */
   const keepOwnWorkout = (userId) => setWorkout((w) => (w && w.userId !== userId ? null : w));
 
@@ -29,6 +29,7 @@ export function useAccountActions({ db, user, update, notify, t, closeModal, go,
     const result = dispatch(registerAccount, form);
     if (result.ok) {
       keepOwnWorkout(result.user.id);
+      onboarding.reopen(); // a new account always gets the guide for its own side (trainer or athlete), even on a browser that has shown it before
       go('home'); // the first-run welcome sheet greets the new person; a toast on top of it would only cover its button
     }
     return result;
