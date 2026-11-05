@@ -1,6 +1,7 @@
 // Athlete dashboard: today's workout (from a program the athlete may actually use), headline numbers,
 // week streak, items needing attention (payment / pending request) and the last workout.
 import { Droplets, Play, UtensilsCrossed } from 'lucide-react';
+import Icon3D from '../components/story/Icon3D.jsx';
 import GettingStarted from '../components/GettingStarted.jsx';
 import SessionRow from '../components/SessionRow.jsx';
 import Metrics from '../components/ui/Metrics.jsx';
@@ -38,6 +39,7 @@ export default function AthleteHome() {
   return (
     <div className="stack desk-grid">
       <section className="today">
+        <span className="today-art" aria-hidden="true"><Icon3D name={workout ? 'timer' : 'dumbbell'} /></span>
         <small>{workout ? t('home.inProgress') : program ? t('home.todayWorkout') : t('home.freeWorkout')}</small>
         <h2>{workout ? t('home.continue') : session?.name ?? t('home.simpleWorkout')}</h2>
         <p>{program ? `${program.title} · ${t('home.moves', { n: num(moves.length) })}` : t('home.noProgram')}</p>

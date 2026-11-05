@@ -46,6 +46,13 @@ export default function Stickman({ id }) {
 
   return (
     <svg className="stickman" viewBox="0 0 200 140" role="img" aria-label={t('ex.animation')}>
+      <defs>
+        <radialGradient id="sm-head" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stopColor="#ff9a66" />
+          <stop offset="55%" stopColor="var(--accent-fill)" />
+          <stop offset="100%" stopColor="#d23f00" />
+        </radialGradient>
+      </defs>
       <line className="sm-floor" x1="8" y1="126" x2="192" y2="126" />
       {EQUIPMENT[id]}
       {BONES.map(([from, to]) => (
@@ -56,7 +63,7 @@ export default function Stickman({ id }) {
           <Motion attr="y2" from={a[to][1]} to={b[to][1]} />
         </line>
       ))}
-      <circle fill="var(--accent-fill)" r="8.5" cx={a[0][0]} cy={a[0][1]}>
+      <circle fill="url(#sm-head)" r="9" cx={a[0][0]} cy={a[0][1]}>
         <Motion attr="cx" from={a[0][0]} to={b[0][0]} />
         <Motion attr="cy" from={a[0][1]} to={b[0][1]} />
       </circle>

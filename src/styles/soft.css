@@ -1,0 +1,315 @@
+/*
+  Soft 3D skin. Loaded last: it keeps every layout rule and changes how surfaces feel. The idea is "clay": warm
+  paper-like background, big radii, surfaces that are lit from the top (a thin highlight on the upper edge and a soft,
+  offset shadow below) and a pressed-in look for inputs. Colour and contrast tokens stay as defined in tokens.css,
+  the brand orange is unchanged.
+*/
+
+:root {
+  --r: 22px;
+  --control-r: 16px;
+  --bg: #f4f1ee;
+  --soft: #ebe7e3;
+  --line: #e6e1dc;
+  --hi: rgba(255, 255, 255, 0.9); /* top-edge highlight of a raised surface */
+  --lift-1: 0 1px 1px rgba(40, 24, 10, 0.04), 0 4px 10px -3px rgba(40, 24, 10, 0.08);
+  --lift-2: 0 1px 1px rgba(40, 24, 10, 0.04), 0 8px 16px -6px rgba(40, 24, 10, 0.1), 0 24px 40px -22px rgba(40, 24, 10, 0.2);
+  --press: inset 0 2px 4px rgba(40, 24, 10, 0.07);
+  --orange-top: #ff6a2e;
+  --orange-bottom: #f04600;
+  --orange-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 -2px 0 rgba(120, 30, 0, 0.18) inset, 0 10px 18px -8px rgba(255, 77, 0, 0.6);
+}
+
+:root[data-theme='dark'] {
+  --bg: #0d0e11;
+  --card: #17191d;
+  --soft: #202328;
+  --line: #262a30;
+  --hi: rgba(255, 255, 255, 0.07);
+  --lift-1: 0 1px 1px rgba(0, 0, 0, 0.3), 0 4px 10px -3px rgba(0, 0, 0, 0.45);
+  --lift-2: 0 1px 1px rgba(0, 0, 0, 0.3), 0 10px 18px -6px rgba(0, 0, 0, 0.55), 0 26px 44px -22px rgba(0, 0, 0, 0.7);
+  --press: inset 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+/* ---- raised surfaces ---- */
+.panel,
+.card,
+.ex-card,
+.nutri-card,
+.player-set-card {
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  box-shadow: inset 0 1px 0 var(--hi), var(--lift-1);
+}
+
+.card.trainer-card,
+.panel.trainer-hero {
+  box-shadow: inset 0 1px 0 var(--hi), var(--lift-2);
+}
+
+.trainer-card:hover {
+  border-color: var(--line);
+  transform: translateY(-2px);
+}
+
+.trainer-card {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
+}
+
+.attention {
+  border-radius: var(--r);
+  box-shadow: inset 0 1px 0 var(--hi), var(--lift-1);
+}
+
+/* ---- top bar and floating dock ---- */
+.topbar {
+  border-bottom: 0;
+  box-shadow: 0 1px 0 var(--line), 0 10px 24px -18px rgba(40, 24, 10, 0.25);
+}
+
+.brand-mark {
+  border-radius: 11px;
+  background: linear-gradient(180deg, var(--orange-top), var(--orange-bottom));
+  box-shadow: var(--orange-shadow);
+}
+
+.avatar-btn {
+  box-shadow: var(--lift-1);
+}
+
+.avatar {
+  background: linear-gradient(160deg, var(--card), var(--soft));
+  box-shadow: inset 0 1px 0 var(--hi), var(--lift-1);
+}
+
+.page-head h1 {
+  font-size: 30px;
+  font-weight: 900;
+}
+
+@media (max-width: 899px) {
+  .main {
+    padding-bottom: calc(116px + env(safe-area-inset-bottom));
+  }
+
+  .dock {
+    inset-inline: 12px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    padding: 6px;
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    box-shadow: inset 0 1px 0 var(--hi), var(--lift-2);
+  }
+
+  .dock button {
+    border-radius: 22px;
+    transition: background 0.2s;
+  }
+
+  .dock .active {
+    background: color-mix(in srgb, var(--accent-glow) 13%, var(--card));
+    box-shadow: inset 0 1px 0 var(--hi), var(--lift-1);
+  }
+}
+
+/* ---- buttons ---- */
+.btn:not(.ghost, .danger),
+.cta {
+  background: linear-gradient(180deg, var(--orange-top), var(--orange-bottom));
+  border-radius: 16px;
+  box-shadow: var(--orange-shadow);
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s, filter 0.15s;
+}
+
+.cta {
+  min-height: 58px;
+  border-radius: 20px;
+}
+
+.btn:not(.ghost, .danger):hover:not(:disabled),
+.cta:hover:not(:disabled) {
+  background: linear-gradient(180deg, #ff5d1f, #e44100);
+  transform: translateY(-1px);
+}
+
+.btn:not(.ghost, .danger):active:not(:disabled),
+.cta:active:not(:disabled) {
+  background: linear-gradient(180deg, #ee4400, #d93f00);
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 4px 8px -4px rgba(255, 77, 0, 0.5);
+}
+
+.btn[aria-busy='true'] {
+  background: linear-gradient(180deg, #f04f12, #dd4200);
+}
+
+.btn:disabled:not(.ghost, .danger) {
+  box-shadow: none;
+}
+
+.btn {
+  border-radius: 16px;
+}
+
+.btn.ghost {
+  background: var(--card);
+  box-shadow: inset 0 1px 0 var(--hi), var(--lift-1);
+}
+
+.btn.ghost:hover {
+  background: var(--card);
+  transform: translateY(-1px);
+}
+
+.pause-btn {
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 var(--hi), var(--lift-1);
+}
+
+/* ---- chips and fields: chips are raised, inputs are pressed in ---- */
+.chips button {
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 var(--hi), var(--lift-1);
+}
+
+.chips .on {
+  background: var(--ink);
+  border-color: var(--ink);
+  box-shadow: 0 8px 14px -8px rgba(0, 0, 0, 0.5);
+}
+
+.search-box,
+.field input,
+.field select,
+.field textarea {
+  border-radius: var(--control-r);
+  box-shadow: var(--press);
+}
+
+.badge {
+  box-shadow: inset 0 1px 0 var(--hi);
+}
+
+/* ---- today hero (home) ---- */
+.today {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--hero-bg) 82%, #5a5f69), var(--hero-bg) 62%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), var(--lift-2);
+}
+
+.today > small,
+.today > h2,
+.today > p {
+  padding-inline-end: 92px;
+}
+
+.today-art {
+  position: absolute;
+  inset-block-start: 18px;
+  inset-inline-end: 14px;
+  width: 92px;
+  pointer-events: none;
+}
+
+.today-art .icon3d {
+  width: 100%;
+  animation: none;
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.35));
+}
+
+.today-list li {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* ---- exercise art: a lit stage instead of a flat grey box ---- */
+.ex-media,
+.player-visual,
+.exercise-detail-art {
+  background: radial-gradient(120% 95% at 50% 0%, color-mix(in srgb, var(--card) 92%, #fff), var(--soft) 100%);
+}
+
+.ex-media {
+  box-shadow: inset 0 -1px 0 var(--line);
+}
+
+.player-visual {
+  border-radius: 28px;
+  border-color: var(--line);
+  box-shadow: inset 0 1px 0 var(--hi), var(--lift-2);
+}
+
+.exercise-detail-art {
+  border-radius: 24px;
+  box-shadow: inset 0 1px 0 var(--hi), var(--lift-1);
+}
+
+.stickman {
+  filter: drop-shadow(0 6px 3px rgba(40, 24, 10, 0.18));
+}
+
+:root[data-theme='dark'] .stickman {
+  filter: drop-shadow(0 6px 4px rgba(0, 0, 0, 0.55));
+}
+
+.stickman line,
+.stickman g {
+  stroke-width: 6;
+}
+
+/* ---- sheets ---- */
+.modal-card:not(.story-card):not(.lightbox-card) {
+  border-radius: 28px 28px 0 0;
+  box-shadow: 0 -20px 50px -20px rgba(0, 0, 0, 0.35);
+}
+
+@media (min-width: 640px) {
+  .modal-card:not(.story-card):not(.lightbox-card) {
+    border-radius: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trainer-card,
+  .btn,
+  .cta {
+    transition: none;
+  }
+
+  .trainer-card:hover,
+  .btn:hover,
+  .cta:hover {
+    transform: none;
+  }
+}
+
+/* ---- empty states with a 3D illustration ---- */
+.empty-state > .empty-art {
+  width: 120px;
+  height: 120px;
+  border-radius: 0;
+  background: none;
+  margin-bottom: 4px;
+}
+
+.empty-art .icon3d {
+  width: 100%;
+  animation: none;
+}
+
+@media (min-width: 900px) {
+  .today-art {
+    width: 150px;
+    inset-block-start: 24px;
+    inset-inline-end: 32px;
+  }
+
+  .today > small,
+  .today > h2,
+  .today > p {
+    padding-inline-end: 190px;
+  }
+}

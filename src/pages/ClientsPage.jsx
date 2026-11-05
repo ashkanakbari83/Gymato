@@ -21,7 +21,7 @@ export default function ClientsPage() {
   const shown = SECTIONS.filter(([key]) => clients[key].length);
 
   if (!shown.length) {
-    return <Empty icon={Users} title={t('clients.emptyTitle')} text={t('clients.emptyText')} actionLabel={t('nav.programs')} onAction={() => setPage('programs')} />;
+    return <Empty icon={Users} art="chat" title={t('clients.emptyTitle')} text={t('clients.emptyText')} actionLabel={t('nav.programs')} onAction={() => setPage('programs')} />;
   }
 
   return (

@@ -23,6 +23,7 @@ import './styles/auth.css';
 import './styles/features.css';
 import './styles/responsive.css';
 import './styles/desktop.css';
+import './styles/soft.css';
 
 initPwa();
 
