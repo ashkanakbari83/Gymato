@@ -313,3 +313,35 @@
     padding-inline-end: 190px;
   }
 }
+
+/* ---- headline numbers: separate raised tiles instead of one ruled strip ---- */
+.metrics {
+  gap: 10px;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.metrics > div,
+.metrics > div + div {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: inset 0 1px 0 var(--hi), var(--lift-1);
+}
+
+.metrics b {
+  font-weight: 900;
+}
+
+/* a plain link to a figure (trainer income) is information, not a warning: no orange alert styling */
+.attention.calm {
+  background: var(--card);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.attention.calm svg {
+  color: var(--accent-ink);
+}

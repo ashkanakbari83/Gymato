@@ -274,7 +274,7 @@ const trainers = {
 };
 
 const programs = {
-  'programs.manageTitle': ['برنامه‌های من (مربی)', 'My programs'],
+  'programs.manageTitle': ['برنامه‌های من', 'My programs'],
   'programs.myTitle': ['برنامه‌های من', 'My programs'],
   'programs.newGeneral': ['برنامه عمومی جدید', 'New general program'],
   'programs.generalHelp': ['برنامه‌های عمومی را منتشر کن تا هر ورزشکار بتواند رایگان یا با خرید به آن‌ها دسترسی پیدا کند. خرید برنامه عمومی مربی‌گری شخصی ایجاد نمی‌کند.', 'Publish general programs any athlete can get for free or by buying. Buying a general program does not create personal coaching.'],

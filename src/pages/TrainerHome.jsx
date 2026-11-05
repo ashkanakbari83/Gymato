@@ -43,7 +43,7 @@ export default function TrainerHome() {
         ]}
       />
 
-      <button className="attention" onClick={() => setPage('insights')}>
+      <button className="attention calm" onClick={() => setPage('insights')}>
         <span>{t('insights.home', { amount: formatMoney(income.last30, t) })}</span>
         <ArrowForward size={16} />
       </button>
@@ -66,7 +66,7 @@ export default function TrainerHome() {
 
       {!sections.length && (
         <section className="panel">
-          <Empty icon={Users} title={t('home.emptyTitle')} text={t('home.emptyText')} actionLabel={t('nav.programs')} onAction={() => setPage('programs')} />
+          <Empty icon={Users} art="chat" title={t('home.emptyTitle')} text={t('home.emptyText')} actionLabel={t('nav.programs')} onAction={() => setPage('programs')} />
         </section>
       )}
     </div>
