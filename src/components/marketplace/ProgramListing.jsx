@@ -10,23 +10,25 @@ import ProgramFacts from './ProgramFacts.jsx';
 export default function ProgramListing({ program, status, locked = false, owner = false, onOpen, children }) {
   const { t, openModal } = useApp();
   return (
-    <article className={`card listing ${locked ? 'is-locked' : ''}`}>
-      <div className="listing-badges">
-        <TypeBadge kind={program.kind} />
-        <PriceBadge amount={program.price} />
-        {program.mealPlan && <Badge><Utensils size={12} /> {t('meal.badge')}</Badge>}
-        {status}
+    <article className={`card listing ${locked ? 'is-locked' : ''} ${owner ? 'is-owner' : ''}`}>
+      <div className="listing-head">
+        <h3>
+          <button className="link-plain" onClick={onOpen}>
+            {program.title}
+          </button>
+        </h3>
         {program.status === 'published' && (
           <button className="icon-btn sm listing-share" onClick={() => openModal({ type: 'share', kind: 'program', id: program.id })} aria-label={t('share.title')}>
             <Share2 size={16} />
           </button>
         )}
       </div>
-      <h3>
-        <button className="link-plain" onClick={onOpen}>
-          {program.title}
-        </button>
-      </h3>
+      <div className="listing-badges">
+        <TypeBadge kind={program.kind} />
+        <PriceBadge amount={program.price} />
+        {program.mealPlan && <Badge><Utensils size={12} /> {t('meal.badge')}</Badge>}
+        {status}
+      </div>
       <ProgramFacts program={program} />
       {program.description && <p className="listing-desc">{program.description}</p>}
       <ProgramStatsLine programId={program.id} owner={owner} />

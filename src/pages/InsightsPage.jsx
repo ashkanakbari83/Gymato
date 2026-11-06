@@ -10,7 +10,7 @@ import { decimal, formatDate, formatMoney, num } from '../lib/format.js';
 import { getOwnPrograms } from '../lib/marketplace.js';
 
 export default function InsightsPage() {
-  const { db, user, isTrainer, t } = useApp();
+  const { db, user, isTrainer, go, t } = useApp();
   if (!isTrainer) return <Empty icon={ShoppingBag} title={t('co.notFoundTitle')} text={t('co.notFoundText')} />; // trainer-only page
   const stats = getTrainerStats(db, user.id);
   const income = getIncome(db, user.id);
@@ -18,6 +18,16 @@ export default function InsightsPage() {
   const peak = Math.max(1, ...weeks.map((w) => w.amount));
   const programs = getOwnPrograms(db, user.id);
   const money = (amount) => formatMoney(amount, t);
+
+  const hasActivity = income.total > 0 || stats.profileViews + stats.programViews + stats.likes + stats.count > 0;
+  if (!hasActivity) {
+    return (
+      <section className="panel">
+        <Empty icon={ShoppingBag} art="coin" title={t('progress.noDataTitle')} text={t('insights.emptyText')} actionLabel={t('nav.programs')} onAction={() => go('programs')} />
+      </section>
+    );
+  }
+  const reviews = getTrainerReviews(db, user.id).slice(0, 5);
 
   return (
     <div className="stack desk-grid">
@@ -84,29 +94,29 @@ export default function InsightsPage() {
         )}
       </section>
 
+      {income.payments.length > 0 && (
       <section className="panel half">
-        <div className="section-title"><h2>{t('insights.transactions')}</h2></div>
-        {income.payments.length ? (
+          <div className="section-title"><h2>{t('insights.transactions')}</h2></div>
           <div className="list">
-            {income.payments.slice(0, 8).map((payment) => (
-              <div className="row" key={payment.id}>
-                <span className="row-main">
-                  <b>{db.users.find((u) => u.id === payment.athleteId)?.name}</b>
-                  <small>{t(`pay.kind.${payment.kind}`)} · {formatDate(payment.paidAt, { month: 'short', day: 'numeric' })}</small>
-                </span>
-                <span className="row-end">{money(payment.amount)}</span>
-              </div>
-            ))}
+              {income.payments.slice(0, 8).map((payment) => (
+                <div className="row" key={payment.id}>
+                  <span className="row-main">
+                    <b>{db.users.find((u) => u.id === payment.athleteId)?.name}</b>
+                    <small>{t(`pay.kind.${payment.kind}`)} · {formatDate(payment.paidAt, { month: 'short', day: 'numeric' })}</small>
+                  </span>
+                  <span className="row-end">{money(payment.amount)}</span>
+                </div>
+              ))}
           </div>
-        ) : (
-          <p className="muted">{t('insights.noTransactions')}</p>
-        )}
-      </section>
+        </section>
+      )}
 
-      <section className="panel">
-        <div className="section-title"><h2>{t('insights.recentReviews')}</h2></div>
-        <ReviewList reviews={getTrainerReviews(db, user.id).slice(0, 5)} />
-      </section>
+      {reviews.length > 0 && (
+        <section className="panel">
+          <div className="section-title"><h2>{t('insights.recentReviews')}</h2></div>
+          <ReviewList reviews={reviews} />
+        </section>
+      )}
 
       <p className="muted foot">{t('insights.note')}</p>
     </div>

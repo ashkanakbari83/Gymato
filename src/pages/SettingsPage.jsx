@@ -87,7 +87,6 @@ export default function SettingsPage() {
           disabled={permission === 'unsupported' || permission === 'denied'}
           onChange={toggleNotify}
         />
-        <p className="muted small">{t('settings.notifyLimit')}</p>
         {prefs.deviceNotify && permission === 'granted' && (
           <div className="setting">
             <b>{t('settings.notifyTest')}</b>
@@ -98,7 +97,8 @@ export default function SettingsPage() {
 
       <InstallCard />
 
-      <section className="panel">
+      <details className="panel fold">
+        <summary>{t('settings.data')}</summary>
         <div className="setting">
           <b>{t('settings.backup')}</b>
           <button className="btn ghost" onClick={exportData}><Download size={16} /> {t('settings.download')}</button>
@@ -114,7 +114,7 @@ export default function SettingsPage() {
           <b>{t('settings.reset')}</b>
           <button className="btn danger" onClick={resetData}><RotateCcw size={16} /> {t('settings.resetBtn')}</button>
         </div>
-      </section>
+      </details>
 
       <p className="muted foot">{t('settings.localNote')}</p>
     </div>

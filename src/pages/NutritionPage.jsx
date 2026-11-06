@@ -93,9 +93,7 @@ function MealSection({ meal, date, entries }) {
         {kcal > 0 && <span className="muted">{t('nutrition.kcalShort', { n: groupNumber(kcal) })}</span>}
         <button className="btn ghost sm" onClick={() => openModal({ type: 'food-add', meal, date })}><Plus size={15} /> {t('nutrition.add')}</button>
       </div>
-      {entries.length === 0 ? (
-        <p className="muted small">{t('nutrition.mealEmpty')}</p>
-      ) : (
+      {entries.length > 0 && (
         <ul className="food-list">
           {entries.map((entry) => {
             const food = entry.foodId ? getFood(entry.foodId) : null;
@@ -140,6 +138,7 @@ export default function NutritionPage() {
   const [date, setDate] = useState(today);
   const entries = entriesFor(db, user.id, date);
   const target = dailyTarget(user);
+  const week = recentDays(db, user.id, date);
 
   return (
     <div className="stack narrow">
@@ -150,7 +149,7 @@ export default function NutritionPage() {
       {MEAL_TYPES.map((meal) => (
         <MealSection key={meal} meal={meal} date={date} entries={entries.filter((e) => e.meal === meal)} />
       ))}
-      <WeekChart days={recentDays(db, user.id, date)} target={target} today={today} />
+      {week.some((d) => d.kcal > 0) && <WeekChart days={week} target={target} today={today} />}
     </div>
   );
 }
