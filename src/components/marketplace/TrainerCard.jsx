@@ -4,7 +4,7 @@ import { locationLabel } from '../../data/locations.js';
 import { useApp } from '../../context/AppContext.jsx';
 import { getTrainerReviews, ratingOf } from '../../lib/analytics.js';
 import { isFreeProgram } from '../../lib/access.js';
-import { groupNumber, num } from '../../lib/format.js';
+import { groupNumber } from '../../lib/format.js';
 import { getPublishedPrograms } from '../../lib/marketplace.js';
 import Avatar from '../ui/Avatar.jsx';
 import Badge from '../ui/Badge.jsx';
@@ -33,17 +33,15 @@ export default function TrainerCard({ trainer, onOpen }) {
           <b>{trainer.name}</b>
           <Stars {...rating} value={rating.avg} />
         </span>
-        <small className="muted">
-          <MapPin size={13} /> {locationLabel(trainer.province, trainer.city, lang) || t('trainer.noLocation')}
-        </small>
-        {entry && <span className="trainer-entry">{entry}</span>}
+        <span className="trainer-meta-line">
+          <span className="trainer-place"><MapPin size={13} /> {locationLabel(trainer.province, trainer.city, lang) || t('trainer.noLocation')}</span>
+          {entry && <span className="trainer-entry">{entry}</span>}
+        </span>
         <span className="listing-tags">
           {specialties.slice(0, SHOWN_SPECIALTIES).map((id) => (
             <Badge key={id}>{t(`focus.${id}`)}</Badge>
           ))}
-          {specialties.length > SHOWN_SPECIALTIES && <Badge tone="neutral"><bdi dir="ltr">+{num(specialties.length - SHOWN_SPECIALTIES)}</bdi></Badge>}
           {trainer.offersCoaching && <Badge tone="info">{t('trainer.offersCoaching')}</Badge>}
-          <Badge tone="neutral">{t('trainer.programCount', { n: num(programs.length) })}</Badge>
         </span>
       </span>
     </button>

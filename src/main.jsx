@@ -24,6 +24,7 @@ import './styles/features.css';
 import './styles/responsive.css';
 import './styles/desktop.css';
 import './styles/soft.css';
+import './styles/calm.css';
 
 initPwa();
 

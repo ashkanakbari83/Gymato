@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import ExerciseCard from '../components/exercise/ExerciseCard.jsx';
 import Empty from '../components/ui/Empty.jsx';
 import { useApp } from '../context/AppContext.jsx';
+import { num } from '../lib/format.js';
 import { filterExercises } from '../lib/selectors.js';
 
 export default function ExercisesPage() {
@@ -37,11 +38,17 @@ export default function ExercisesPage() {
         ))}
       </div>
 
-      <div className="ex-grid">
-        {visible.map((exercise) => (
-          <ExerciseCard key={exercise.id} exercise={exercise} favorite={db.favorites.includes(exercise.id)} onToggleFavorite={() => toggleFavorite(exercise.id)} onOpen={() => openModal({ type: 'exercise', exercise })} />
-        ))}
-      </div>
+      {/* Browsing everything: grouped by type, so the eye has headings to land on. A search or a chosen chip shows a plain list. */}
+      {(category || query ? [[null, visible]] : categories.map((cat) => [cat, visible.filter((e) => e.cat === cat)]).filter(([, list]) => list.length)).map(([cat, list]) => (
+        <div className="ex-group" key={cat ?? 'all'}>
+          {cat && <h2 className="ex-group-title">{t('ex.group', { name: t(`cat.${cat}`), n: num(list.length) })}</h2>}
+          <div className="ex-grid">
+            {list.map((exercise) => (
+              <ExerciseCard key={exercise.id} exercise={exercise} favorite={db.favorites.includes(exercise.id)} onToggleFavorite={() => toggleFavorite(exercise.id)} onOpen={() => openModal({ type: 'exercise', exercise })} />
+            ))}
+          </div>
+        </div>
+      ))}
 
       {!visible.length && <Empty icon={Search} title={t('ex.emptyTitle')} text={t('ex.emptyText')} actionLabel={t('common.clear')} onAction={clear} />}
     </section>

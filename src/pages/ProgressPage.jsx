@@ -10,12 +10,21 @@ import { num } from '../lib/format.js';
 import { exerciseName, getCompletedSessions, lastSevenDays, nextMilestone, totalsByExercise } from '../lib/selectors.js';
 
 export default function ProgressPage() {
-  const { db, user, lang, t } = useApp();
+  const { db, user, lang, go, t } = useApp();
   const sessions = getCompletedSessions(db, user.id);
   const week = lastSevenDays(sessions);
   const peak = Math.max(1, ...week.map((d) => d.count));
   const minutes = Math.round(sessions.reduce((n, s) => n + (s.duration || 0), 0) / 60);
   const totals = totalsByExercise(sessions, db.exercises).slice(0, 6);
+
+  // Nothing to show yet: say so once, with the one action that fills this page, instead of three empty cards.
+  if (!sessions.length) {
+    return (
+      <section className="panel">
+        <Empty icon={Activity} art="flame" title={t('progress.noDataTitle')} text={t('progress.emptyText')} actionLabel={t('home.startWorkout')} onAction={() => go('home')} />
+      </section>
+    );
+  }
 
   return (
     <div className="stack desk-grid">

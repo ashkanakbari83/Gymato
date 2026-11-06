@@ -1,0 +1,227 @@
+/*
+  Calm layer: less to look at, in the right place. Loaded after soft.css. Rules of thumb used here:
+  - one thing to read per row (a list beats a wall of big cards on a phone),
+  - rarely-used controls fold away behind one button that says how many are on,
+  - an empty screen says one thing and offers one action,
+  - secondary decoration (tags that repeat what is already said) is hidden on small screens.
+*/
+
+/* ---- search + one filter button ---- */
+.search-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.search-row .search-box {
+  flex: 1;
+  min-width: 0;
+}
+
+.filter-btn {
+  position: relative;
+  flex: none;
+  width: var(--control-h);
+  height: var(--control-h);
+  display: grid;
+  place-items: center;
+  border-radius: var(--control-r);
+  border: 1px solid var(--line-strong);
+  background: var(--card);
+  color: var(--mu);
+}
+
+.filter-btn.on {
+  color: var(--accent-ink);
+  border-color: var(--accent-ink);
+}
+
+.filter-btn i {
+  position: absolute;
+  top: -6px;
+  inset-inline-start: -6px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 99px;
+  background: var(--ink);
+  color: var(--bg);
+  font: 700 11px/20px inherit;
+  font-style: normal;
+  text-align: center;
+}
+
+/* ---- exercises: grouped, one row each on phones ---- */
+.ex-group {
+  display: grid;
+  gap: 10px;
+}
+
+.ex-group-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--mu);
+  margin: 6px 4px 0;
+}
+
+@media (max-width: 600px) {
+  .ex-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .ex-card {
+    display: flex;
+    align-items: center;
+    border-radius: 18px;
+  }
+
+  .ex-media {
+    flex: none;
+    width: 112px;
+    aspect-ratio: 10 / 7;
+    padding: 6px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .ex-body {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 4px 4px 8px;
+  }
+
+  .ex-name b {
+    font-size: 15px;
+  }
+
+  /* program cards: the facts and price say it; the goal tags repeat it */
+  .listing > .listing-tags {
+    display: none;
+  }
+
+  .listing {
+    gap: 8px;
+  }
+
+  .listing-desc {
+    -webkit-line-clamp: 2;
+  }
+
+  /* the card's own buttons share one row */
+  .listing-actions {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .listing-actions .btn {
+    flex: 1;
+    justify-content: center;
+    white-space: nowrap;
+    padding-inline: 10px;
+  }
+
+  .listing-actions .btn.danger {
+    flex: 0 0 48px;
+  }
+}
+
+/* ---- empty states: a statement, not a poster ---- */
+.empty-state {
+  padding: 24px 16px;
+}
+
+.empty-state > .empty-art {
+  width: 84px;
+  height: 84px;
+}
+
+.empty-state p {
+  margin-bottom: 12px;
+}
+
+/* program card: the title is read first; the share button sits in the corner beside it */
+.listing > h3 {
+  padding-inline-end: 44px;
+}
+
+.listing > .listing-badges {
+  padding-inline-end: 0;
+}
+
+/* program card header: title and share button share one row */
+.listing-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.listing > .listing-head > h3 {
+  padding-inline-end: 0;
+}
+
+.listing-head .listing-share {
+  position: relative; /* its enlarged touch area is a pseudo-element positioned against it, so it must be the positioned parent */
+  flex: none;
+  margin: -6px -6px 0 0;
+}
+
+/* trainer card: name + rating, one muted line (place · price), then at most two tags */
+.trainer-card {
+  align-items: center;
+}
+
+.trainer-main {
+  gap: 6px;
+}
+
+.trainer-meta-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  font-size: 13px;
+  color: var(--mu);
+}
+
+.trainer-meta-line .trainer-entry {
+  color: var(--ink);
+  font-size: 13px;
+}
+
+/* the trainer wrote the description; on their own list the numbers and buttons matter more */
+.listing.is-owner > .listing-desc,
+.listing.is-owner > .listing-tags {
+  display: none;
+}
+
+/* rarely used settings fold away */
+.fold > summary {
+  cursor: pointer;
+  list-style: none;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 700;
+}
+
+.fold > summary::-webkit-details-marker {
+  display: none;
+}
+
+.fold > summary::after {
+  content: '‹';
+  font-size: 20px;
+  color: var(--mu);
+  transition: transform 0.15s;
+}
+
+.fold[open] > summary::after {
+  transform: rotate(-90deg);
+}
+
+.fold[open] > summary {
+  margin-bottom: 6px;
+}
