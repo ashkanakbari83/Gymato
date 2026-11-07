@@ -3,7 +3,8 @@
 // An order is created as `pending` and unlocks nothing. The only way it becomes `paid` is `applyGatewayResult`, fed with
 // an answer that the payment server gave after checking with the provider (see lib/payments/gateway.js). There is no
 // "confirm" action a button can call. Everything here is pure: (db, ...args) => { ok, db, ... } | { ok: false, error }.
-import { PAYMENT_KIND, PAYMENT_STATUS, PROGRAM_STATUS, SUBSCRIPTION_STATUS, DAY_MS } from '../constants.js';
+import { PAYMENT_KIND, PAYMENT_STATUS, PREMIUM, PROGRAM_STATUS, SUBSCRIPTION_STATUS, DAY_MS } from '../constants.js';
+import { canGoPremium, isPremium } from '../premium.js';
 import { hasGeneralAccess, isFreeProgram, subscriptionState } from '../access.js';
 import { uid } from '../format.js';
 import { canTransition } from '../transitions.js';
@@ -11,6 +12,12 @@ import { byId, fail, nowIso, ok, replaceById, withNotification } from './shared.
 
 /** Resolves who is paid and how much for a checkout target, or an error code. The amount comes from the trainer's offer. */
 function resolveTarget(db, athleteId, kind, targetId, now) {
+  if (kind === PAYMENT_KIND.PREMIUM) {
+    // A trainer pays for their own premium; the platform is the payee (no trainer income). The price is fixed here.
+    if (targetId !== athleteId) return { error: 'forbidden' };
+    const check = canGoPremium(db, byId(db.users, athleteId), now);
+    return check.ok ? { trainerId: null, amount: PREMIUM.price } : { error: check.reason };
+  }
   if (kind === PAYMENT_KIND.GENERAL) {
     const program = byId(db.programs, targetId);
     if (!program || program.status !== PROGRAM_STATUS.PUBLISHED) return { error: 'not_found' };
@@ -44,7 +51,9 @@ const setStatus = (db, payment, status, extra, now) =>
  * a duplicate. If the price changed since the open order was created, that order is cancelled and a new one made.
  */
 export function startCheckout(db, athleteId, { kind, targetId }, now = Date.now()) {
-  if (byId(db.users, athleteId)?.role !== 'athlete') return fail('forbidden');
+  // Athletes pay trainers; a trainer pays only for their own premium.
+  const payerRole = byId(db.users, athleteId)?.role;
+  if (payerRole !== (kind === PAYMENT_KIND.PREMIUM ? 'coach' : 'athlete')) return fail('forbidden');
   const target = resolveTarget(db, athleteId, kind, targetId, now);
   if (target.error) return fail(target.error);
 
@@ -85,6 +94,14 @@ const systemMessage = (conversation, systemKey, now) => ({ id: uid(), conversati
 function activate(db, payment, now) {
   const athlete = byId(db.users, payment.athleteId);
   let next = { ...db, payments: setStatus(db, payment, PAYMENT_STATUS.PAID, { paidAt: nowIso(now), failureReason: null }, now) };
+
+  if (payment.kind === PAYMENT_KIND.PREMIUM) {
+    // Extends from the current end while still active, otherwise starts now.
+    const from = isPremium(athlete, now) ? new Date(athlete.premium.until).getTime() : now;
+    const premium = { since: athlete.premium?.since && isPremium(athlete, now) ? athlete.premium.since : nowIso(now), until: nowIso(from + PREMIUM.days * DAY_MS), province: athlete.province, paymentId: payment.id };
+    next = { ...next, users: replaceById(next.users, { ...athlete, premium }) };
+    return ok(withNotification(next, athlete.id, 'premium_active', {}, { kind: 'page', page: 'premium' }, now), { outcome: 'paid' });
+  }
 
   if (payment.kind === PAYMENT_KIND.GENERAL) {
     const program = byId(db.programs, payment.targetId);

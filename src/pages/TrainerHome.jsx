@@ -6,8 +6,9 @@ import { ArrowForward } from '../components/ui/Arrow.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import { getIncome } from '../lib/analytics.js';
 import { PROGRAM_STATUS } from '../lib/constants.js';
-import { formatMoney } from '../lib/format.js';
+import { formatMoney, num } from '../lib/format.js';
 import { getOwnPrograms, getTrainerClients } from '../lib/marketplace.js';
+import { isPremium, premiumDaysLeft } from '../lib/premium.js';
 
 export default function TrainerHome() {
   const { db, user, setPage, openModal, t } = useApp();
@@ -43,6 +44,11 @@ export default function TrainerHome() {
 
       <button className="attention calm" onClick={() => setPage('insights')}>
         <span>{t('insights.home', { amount: formatMoney(income.last30, t) })}</span>
+        <ArrowForward size={16} />
+      </button>
+
+      <button className="attention calm" onClick={() => setPage('premium')}>
+        <span>{t('premium.home', { text: isPremium(user) ? t('premium.homeActive', { n: num(premiumDaysLeft(user)) }) : t('premium.homeOff') })}</span>
         <ArrowForward size={16} />
       </button>
 

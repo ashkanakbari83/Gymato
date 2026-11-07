@@ -1,11 +1,12 @@
 // Trainer in the discovery list: who they are, how good they are, and what it costs to start.
-import { MapPin } from 'lucide-react';
+import { Crown, MapPin } from 'lucide-react';
 import { locationLabel } from '../../data/locations.js';
 import { useApp } from '../../context/AppContext.jsx';
 import { getTrainerReviews, ratingOf } from '../../lib/analytics.js';
 import { isFreeProgram } from '../../lib/access.js';
 import { groupNumber } from '../../lib/format.js';
 import { getPublishedPrograms } from '../../lib/marketplace.js';
+import { isPremium } from '../../lib/premium.js';
 import Avatar from '../ui/Avatar.jsx';
 import Badge from '../ui/Badge.jsx';
 import { Stars } from './Stars.jsx';
@@ -18,6 +19,7 @@ export default function TrainerCard({ trainer, onOpen }) {
   const rating = ratingOf(getTrainerReviews(db, trainer.id));
   const paid = programs.filter((p) => !isFreeProgram(p)).map((p) => Number(p.price));
   const specialties = trainer.specialties ?? [];
+  const featured = isPremium(trainer);
   // What an athlete can start with: the cheapest paid program, or the fact that free ones exist.
   const entry = paid.length
     ? t('trainer.fromPrice', { price: `${groupNumber(Math.min(...paid))} ${t('common.currency')}` })
@@ -26,11 +28,12 @@ export default function TrainerCard({ trainer, onOpen }) {
       : '';
 
   return (
-    <button className="card trainer-card" onClick={onOpen}>
+    <button className={`card trainer-card ${featured ? 'is-premium' : ''}`.trim()} onClick={onOpen}>
       <Avatar user={trainer} size="lg" />
       <span className="trainer-main">
         <span className="trainer-name-row">
           <b>{trainer.name}</b>
+          {featured && <span className="premium-badge" title={t('premium.badgeTitle')}><Crown size={12} aria-hidden="true" /> {t('premium.badge')}</span>}
           <Stars {...rating} value={rating.avg} />
         </span>
         <span className="trainer-meta-line">

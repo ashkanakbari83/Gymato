@@ -1,5 +1,5 @@
 // A trainer's public profile: info, their published general programs, and the "Request Custom Coaching" action.
-import { Images, MapPin, Share2, UserPen } from 'lucide-react';
+import { Crown, Images, MapPin, Share2, UserPen } from 'lucide-react';
 import { useEffect } from 'react';
 import { ReviewList } from '../components/marketplace/ReviewSection.jsx';
 import { Stars } from '../components/marketplace/Stars.jsx';
@@ -18,6 +18,7 @@ import { REQUEST_STATUS } from '../lib/constants.js';
 import { formatPrice, num } from '../lib/format.js';
 import { getStudentStats, getTrainerReviews, ratingOf } from '../lib/analytics.js';
 import { getPublishedPrograms } from '../lib/marketplace.js';
+import { isPremium } from '../lib/premium.js';
 
 export default function TrainerProfilePage() {
   const { db, user, pageParams, go, openModal, lang, t, trackView } = useApp();
@@ -50,7 +51,7 @@ export default function TrainerProfilePage() {
           <Avatar user={trainer} size="xl" className="hero-avatar" />
           <div className="trainer-hero-main">
             <div className="trainer-title-row">
-              <h1>{trainer.name}</h1>
+              <h1>{trainer.name}{isPremium(trainer) && <span className="premium-badge"><Crown size={13} aria-hidden="true" /> {t('premium.badge')}</span>}</h1>
               <div className="trainer-title-actions">
                 {isOwn && (
                   <button className="btn ghost" onClick={() => go('profile')}><UserPen size={16} /> {t('trainer.editProfile')}</button>

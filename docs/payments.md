@@ -50,10 +50,12 @@ This is intentional. The old demo that activated programs from the client was re
 `POST /payments/sessions`
 
 ```json
-{ "orderId": "…", "kind": "coaching_initial | coaching_renewal | general_purchase", "targetId": "…", "returnUrl": "https://app/?pay=<orderId>" }
+{ "orderId": "…", "kind": "coaching_initial | coaching_renewal | general_purchase | premium_subscription", "targetId": "…", "returnUrl": "https://app/?pay=<orderId>" }
 ```
 
-The server must: authenticate the athlete; load the trainer's offer **from its own database** for `kind` + `targetId` and compute the amount itself; create (or return the existing, for the same `orderId`) payment with the provider; store `orderId → amount, gatewayRef, athlete`. Response:
+The server must: authenticate the athlete; load the trainer's offer **from its own database** for `kind` + `targetId` and compute the amount itself; create (or return the existing, for the same `orderId`) payment with the provider; store `orderId → amount, gatewayRef, athlete`. For `premium_subscription` the payer is a **trainer**, `targetId` is the trainer's own id, and the amount is the fixed Featured price (90,000 toman for 30 days, listed at 200,000). The platform is the payee: it is **not** trainer income and carries no `trainerId`. The server must also refuse it when the trainer's province has no free Featured place (6 per province) or when the trainer already has more than 7 days left.
+
+Response:
 
 ```json
 { "gateway": "zarinpal", "gatewayRef": "<provider authority/token>", "redirectUrl": "https://provider/pay/<token>" }
