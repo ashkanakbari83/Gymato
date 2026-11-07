@@ -345,3 +345,78 @@
 .score-list li { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; }
 .score-bar { grid-column: 1 / -1; grid-row: 2; height: 6px; border-radius: 99px; background: var(--soft); overflow: hidden; }
 .score-bar i { display: block; height: 100%; background: var(--accent-fill); border-radius: inherit; }
+
+/* ---- Featured card, stronger: dark ribbon on top, orange frame, warm fill, bigger photo, short intro ---- */
+.trainer-card.is-premium {
+  position: relative;
+  overflow: hidden;
+  padding-top: 52px;
+  border: 2px solid var(--accent-fill);
+  background-color: color-mix(in srgb, var(--accent-glow) 7%, var(--card));
+  background-image: radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--accent-glow) 16%, transparent), transparent 60%);
+  box-shadow: inset 0 1px 0 var(--hi), 0 14px 28px -14px color-mix(in srgb, var(--accent-glow) 55%, transparent);
+}
+.premium-ribbon {
+  position: absolute;
+  inset: 0 0 auto 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding-inline: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(90deg, #1a1c20, #34261c);
+}
+.premium-ribbon svg { color: #ff8a4d; }
+.trainer-card.is-premium .avatar { width: 76px; height: 76px; }
+.trainer-bio-line {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--mu);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.trainer-athletes { font-weight: 600; color: var(--ink); }
+.trainer-card.preview.is-premium { padding-top: 52px; }
+
+/* the way into Premium for a trainer who has none: a crown with a label in the top bar, and a card on the home page */
+.crown-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding-inline: 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-ink);
+  background: color-mix(in srgb, var(--accent-glow) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-glow) 45%, transparent);
+}
+.crown-btn.on { padding-inline: 10px; color: #fff; background: var(--ink); border-color: var(--ink); }
+.crown-btn.on svg { color: #ff8a4d; }
+.crown-btn.promo svg { animation: crown-pulse 2.4s ease-in-out infinite; }
+@keyframes crown-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+@media (prefers-reduced-motion: reduce) { .crown-btn.promo svg { animation: none; } }
+
+.premium-promo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  text-align: start;
+  border-radius: var(--r);
+  border: 2px solid var(--accent-fill);
+  background: color-mix(in srgb, var(--accent-glow) 9%, var(--card));
+  box-shadow: 0 12px 24px -14px color-mix(in srgb, var(--accent-glow) 60%, transparent);
+}
+.premium-promo-text { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.premium-promo-text small { color: var(--mu); }
+.premium-promo-text em { font-style: normal; font-size: 13px; }
+.premium-promo-text s { color: var(--mu); }
+.premium-promo-text strong { color: var(--accent-ink); }

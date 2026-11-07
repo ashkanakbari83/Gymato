@@ -13,13 +13,14 @@ import { isPremium, rankTrainers } from '../lib/premium.js';
 const NO_FILTERS = { query: '', province: '', city: '', focus: '', coachingOnly: false };
 
 export default function TrainersPage() {
-  const { db, go, t } = useApp();
-  const [filters, setFilters] = useState(NO_FILTERS);
+  const { db, go, pageParams, t } = useApp();
+  // A link can open the list already narrowed to a province (the Premium page does).
+  const [filters, setFilters] = useState({ ...NO_FILTERS, province: pageParams?.province ?? '' });
   // Featured (Premium) trainers first as their own labelled group; inside each group the best score first.
   const trainers = useMemo(() => rankTrainers(db, filterTrainers(db, filters)), [db, filters]);
   const featured = trainers.filter((trainer) => isPremium(trainer));
   const others = trainers.filter((trainer) => !isPremium(trainer));
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(Boolean(pageParams?.province));
   const set = (patch) => setFilters((f) => ({ ...f, ...patch }));
   // The extra filters stay folded away; the button says how many of them are on, so nothing hides silently.
   const extra = [filters.province, filters.city, filters.coachingOnly].filter(Boolean).length;

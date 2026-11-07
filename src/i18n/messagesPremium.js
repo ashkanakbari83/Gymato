@@ -2,6 +2,13 @@
 
 export const premium = {
   'nav.premium': ['پریمیوم', 'Premium'],
+  'premium.ribbon': ['مربی ویژه', 'Featured trainer'],
+  'premium.athletes': ['{n} ورزشکار', '{n} athletes'],
+  'premium.seeProvince': ['دیدن مربی‌های استان من', 'See trainers in my province'],
+  'premium.topbar': ['اشتراک ویژه', 'Featured subscription'],
+  'premium.promoTitle': ['در استانت دیده شو', 'Get seen in your province'],
+  'premium.promoText': ['بالای لیست مربی‌ها، با کارت برجسته و نشان ویژه.', 'At the top of the trainers list, with a highlighted card and badge.'],
+  'premium.promoCta': ['مزایا و فعال‌سازی', 'Benefits and activation'],
   'premium.badge': ['ویژه', 'Featured'],
   'premium.badgeTitle': ['مربی ویژه', 'Featured trainer'],
   'trainers.premiumGroup': ['مربیان ویژه', 'Featured trainers'],
@@ -32,7 +39,7 @@ export const premium = {
   'premium.slotsLeft': ['{left} جای خالی از {total}', '{left} of {total} places left'],
   'premium.benefits': ['چه چیزی می‌گیری', 'What you get'],
   'premium.b1': ['گروه جدا بالای لیست: در لیست مربی‌های استانت قبل از بقیه دیده می‌شوی.', 'A separate group at the top: you appear before everyone else in your province list.'],
-  'premium.b2': ['کارت متمایز: نشان «ویژه» و حاشیهٔ گرم دور کارتت.', 'A distinct card: a "Featured" badge and a warm outline.'],
+  'premium.b2': ['کارت برجسته: نوار «مربی ویژه»، قاب نارنجی، معرفی کوتاه و تعداد ورزشکارهایت دیده می‌شود.', 'A highlighted card: a "Featured trainer" ribbon, an orange frame, your short intro and athlete count.'],
   'premium.b3': ['رتبه‌بندی بین ویژه‌ها: جایگاهت از روی امتیاز تعیین می‌شود، پس کیفیت کارت دیده می‌شود.', 'Ranking among featured trainers: your place follows your score, so quality counts.'],
   'premium.b4': ['گزارش امتیاز: می‌بینی هر بخش چقدر امتیاز آورده و کجا می‌توانی بهتر شوی.', 'Score report: see what each part earns and where you can improve.'],
   'premium.honest': ['پرداخت به‌تنهایی جایگاه نمی‌خرد: بین ویژه‌ها فقط امتیاز تعیین‌کننده است، و ویژه‌ها همیشه با برچسب «ویژه» نشان داده می‌شوند.', 'Paying alone does not buy rank: among featured trainers only the score decides, and they are always labelled "Featured".'],
