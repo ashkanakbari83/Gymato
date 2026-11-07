@@ -22,8 +22,9 @@ export default function CheckoutModal({ paymentId }) {
   const gateway = getGateway();
   const configured = gateway.configured;
   const isGeneral = payment.kind === PAYMENT_KIND.GENERAL;
-  const subscription = isGeneral ? null : db.subscriptions.find((s) => s.id === payment.targetId);
-  const program = isGeneral ? db.programs.find((p) => p.id === payment.targetId) : db.customPrograms.find((p) => p.id === subscription?.customProgramId);
+  const isPremium = payment.kind === PAYMENT_KIND.PREMIUM;
+  const subscription = isGeneral || isPremium ? null : db.subscriptions.find((s) => s.id === payment.targetId);
+  const program = isPremium ? { title: t('pay.premiumItem') } : isGeneral ? db.programs.find((p) => p.id === payment.targetId) : db.customPrograms.find((p) => p.id === subscription?.customProgramId);
   const trainer = db.users.find((u) => u.id === payment.trainerId);
   const pending = payment.status === PAYMENT_STATUS.PENDING;
   const sent = Boolean(payment.gatewayRef); // the person was already sent to the provider once
@@ -52,7 +53,7 @@ export default function CheckoutModal({ paymentId }) {
       <dl className="detail-list">
         <div><dt>{t('pay.item')}</dt><dd>{program?.title}</dd></div>
         <div><dt>{t('pay.type')}</dt><dd>{t(`pay.kind.${payment.kind}`)}</dd></div>
-        <div><dt>{t('pay.trainer')}</dt><dd>{trainer?.name}</dd></div>
+        {!isPremium && <div><dt>{t('pay.trainer')}</dt><dd>{trainer?.name}</dd></div>}
         {subscription && <div><dt>{t('pay.duration')}</dt><dd>{t('co.forDays', { n: num(subscription.durationDays) })}</dd></div>}
         <div className="total"><dt>{t('pay.total')}</dt><dd>{formatPrice(payment.amount, t)}</dd></div>
       </dl>
@@ -81,7 +82,7 @@ export default function CheckoutModal({ paymentId }) {
 
       {pending && (
         <>
-          <p className="notice-text">{t(isGeneral ? 'pay.generalIncludes' : 'pay.coachingIncludes')}</p>
+          <p className="notice-text">{t(isPremium ? 'pay.premiumIncludes' : isGeneral ? 'pay.generalIncludes' : 'pay.coachingIncludes')}</p>
           <button className="btn wide" disabled={!configured || busy !== null} aria-busy={busy === 'pay'} onClick={pay}>
             {busy === 'pay' ? <Spinner /> : <CreditCard size={16} />} {t(busy === 'pay' ? 'pay.redirecting' : sent ? 'pay.continue' : 'pay.payNow')}
           </button>

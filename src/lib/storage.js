@@ -68,6 +68,10 @@ function addNewSeedContent(state) {
     seedRelease: SEED_RELEASE,
     exercises: [...(state.exercises ?? []), ...missing(state.exercises ?? [], seed.exercises)],
     programs: [...(state.programs ?? []), ...missing(state.programs ?? [], seed.programs)],
+    // The Gilan sample trainers (release 3): their people, likes and reviews arrive once, by id.
+    users: [...(state.users ?? []), ...missing(state.users ?? [], seed.users)],
+    likes: [...(state.likes ?? []), ...missing(state.likes ?? [], seed.likes)],
+    reviews: [...(state.reviews ?? []), ...missing(state.reviews ?? [], seed.reviews)],
   };
 }
 

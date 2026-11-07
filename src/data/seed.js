@@ -1,6 +1,7 @@
 // Initial app state: four starter accounts (all admins), a sample community of trainers with programs,
 // reviews and likes so the marketplace looks lived-in, and three programs from the original demo.
 // Coaching requests, payments, subscriptions and chats all start empty.
+import { gilanAthletes, gilanLikes, gilanPrograms, gilanReviews, gilanTrainers } from './gilan.js';
 import { communityAthletes, communityLikes, communityPrograms, communityReviews, communityTrainers, generalProgram } from './community.js';
 import { absPrograms } from './absPrograms.js';
 import { decks } from './decks.js';
@@ -94,10 +95,11 @@ const programs = [
   ),
   ...communityPrograms,
   ...absPrograms,
+  ...gilanPrograms,
 ];
 
 /** Accounts first, then the sample trainers and the athletes who reviewed them (neither can sign in). */
-const users = [...accounts, ...communityTrainers, ...communityAthletes];
+const users = [...accounts, ...communityTrainers, ...gilanTrainers, ...communityAthletes, ...gilanAthletes];
 
 export const createSeedState = () => ({
   version: STATE_VERSION,
@@ -114,8 +116,8 @@ export const createSeedState = () => ({
   payments: [], // simulated payments (demo: true)
   subscriptions: [], // coaching subscriptions
   events: [], // views of trainer profiles and programs (one per athlete per day)
-  likes: communityLikes, // { athleteId, programId, trainerId }
-  reviews: communityReviews, // ratings + comments on programs and on coaching
+  likes: [...communityLikes, ...gilanLikes], // { athleteId, programId, trainerId }
+  reviews: [...communityReviews, ...gilanReviews], // ratings + comments on programs and on coaching
   sessions: [], // finished workouts
   notifications: [],
   favorites: [],

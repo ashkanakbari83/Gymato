@@ -1,5 +1,5 @@
 // Trainer discovery: search plus location / specialty filters.
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Crown, Search, SlidersHorizontal } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import TrainerCard from '../components/marketplace/TrainerCard.jsx';
 import Empty from '../components/ui/Empty.jsx';
@@ -8,13 +8,17 @@ import { useApp } from '../context/AppContext.jsx';
 import { FOCUS_AREAS } from '../lib/constants.js';
 import { num } from '../lib/format.js';
 import { filterTrainers } from '../lib/marketplace.js';
+import { isPremium, rankTrainers } from '../lib/premium.js';
 
 const NO_FILTERS = { query: '', province: '', city: '', focus: '', coachingOnly: false };
 
 export default function TrainersPage() {
   const { db, go, t } = useApp();
   const [filters, setFilters] = useState(NO_FILTERS);
-  const trainers = useMemo(() => filterTrainers(db, filters), [db, filters]);
+  // Featured (Premium) trainers first as their own labelled group; inside each group the best score first.
+  const trainers = useMemo(() => rankTrainers(db, filterTrainers(db, filters)), [db, filters]);
+  const featured = trainers.filter((trainer) => isPremium(trainer));
+  const others = trainers.filter((trainer) => !isPremium(trainer));
   const [open, setOpen] = useState(false);
   const set = (patch) => setFilters((f) => ({ ...f, ...patch }));
   // The extra filters stay folded away; the button says how many of them are on, so nothing hides silently.
@@ -53,8 +57,24 @@ export default function TrainersPage() {
         </div>
       )}
 
+      {featured.length > 0 && (
+        <>
+          <div className="group-head">
+            <h2><Crown size={16} aria-hidden="true" /> {t('trainers.premiumGroup')}</h2>
+            <p className="muted">{t('trainers.premiumGroupHint')}</p>
+          </div>
+          <div className="grid-cards">
+            {featured.map((trainer) => (
+              <TrainerCard key={trainer.id} trainer={trainer} onOpen={() => go('trainer', { trainerId: trainer.id })} />
+            ))}
+          </div>
+        </>
+      )}
+      {featured.length > 0 && others.length > 0 && (
+        <div className="group-head"><h2>{t('trainers.allGroup')}</h2></div>
+      )}
       <div className="grid-cards">
-        {trainers.map((trainer) => (
+        {others.map((trainer) => (
           <TrainerCard key={trainer.id} trainer={trainer} onOpen={() => go('trainer', { trainerId: trainer.id })} />
         ))}
       </div>

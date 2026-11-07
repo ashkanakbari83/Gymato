@@ -20,6 +20,7 @@ const ProgramsPage = page(() => import('./pages/ProgramsPage.jsx'));
 const ClientsPage = page(() => import('./pages/ClientsPage.jsx'));
 const ExercisesPage = page(() => import('./pages/ExercisesPage.jsx'));
 const NutritionPage = page(() => import('./pages/NutritionPage.jsx'));
+const PremiumPage = page(() => import('./pages/PremiumPage.jsx'));
 const InsightsPage = page(() => import('./pages/InsightsPage.jsx'));
 const ProfilePage = page(() => import('./pages/ProfilePage.jsx'));
 const ProgressPage = page(() => import('./pages/ProgressPage.jsx'));
@@ -43,6 +44,7 @@ const PAGES = {
   profile: ProfilePage,
   settings: SettingsPage,
   nutrition: NutritionPage,
+  premium: PremiumPage,
 };
 
 function Shell() {

@@ -42,11 +42,11 @@ function activate(state) {
 test('1. athletes can browse trainers and filter by location and specialty', () => {
   const db = createSeedState();
   const ids = (filters) => filterTrainers(db, filters).map((t) => t.id).sort();
-  assert.equal(filterTrainers(db).length, 8, 'adel plus the seven sample trainers');
+  assert.equal(filterTrainers(db).length, 27, 'adel, the seven sample trainers and the nineteen more in Gilan');
   assert.deepEqual(ids({ province: 'isfahan' }), ['kian']);
   assert.deepEqual(ids({ province: 'tehran', city: 'tehran-c' }), ['adel']);
-  assert.deepEqual(ids({ focus: 'thighs' }), ['maryam']);
-  assert.deepEqual(ids({ coachingOnly: true }), ['adel', 'kian', 'neda', 'reza', 'sara']);
+  assert.deepEqual(ids({ focus: 'thighs' }).filter((id) => !id.startsWith('gl-')), ['maryam']);
+  assert.deepEqual(ids({ coachingOnly: true }).filter((id) => !id.startsWith('gl-')), ['adel', 'kian', 'neda', 'reza', 'sara']);
   assert.deepEqual(ids({ province: 'razavi', focus: 'strength' }), ['reza']);
   assert.deepEqual(ids({ query: 'الهام' }), ['elham']);
 });
