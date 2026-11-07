@@ -33,8 +33,9 @@ export default function GettingStarted({ steps }) {
         <span className="guide-count" aria-label={t('guide.progressLabel', { done: finished, total: steps.length })}>{num(finished)} / {num(steps.length)}</span>
       </div>
       <div className="guide-bar" role="presentation"><i style={{ width: `${(finished / steps.length) * 100}%` }} /></div>
+      {/* Finished steps are counted above, not listed again: the card shows only what is still to do. */}
       <ol className="guide-steps">
-        {steps.map((step, index) => (
+        {steps.map((step, index) => step.done ? null : (
           <li key={step.id} className={step.done ? 'done' : step === current ? 'current' : ''}>
             <span className="guide-mark" aria-hidden="true">{step.done ? <Check size={16} /> : num(index + 1)}</span>
             <span className="guide-text">
