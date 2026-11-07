@@ -6,6 +6,8 @@ export const premium = {
   'premium.athletes': ['{n} ورزشکار', '{n} athletes'],
   'premium.seeProvince': ['دیدن مربی‌های استان من', 'See trainers in my province'],
   'premium.topbar': ['اشتراک ویژه', 'Featured subscription'],
+  'premium.promoSlim': ['تو استانت دیده شو · ماهی {price} تومان', 'Get seen in your province · {price} toman a month'],
+  'trainer.exercisesLink': ['کتابخانه‌ی حرکت‌ها', 'Exercise library'],
   'premium.promoTitle': ['تو استانت دیده شو', 'Get seen in your province'],
   'premium.promoText': ['بالای لیست مربی‌ها، با کارت برجسته و نشان ویژه.', 'At the top of the trainers list, with a highlighted card and badge.'],
   'premium.promoCta': ['مزایا و فعال‌سازی', 'Benefits and activation'],

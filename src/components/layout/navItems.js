@@ -11,7 +11,7 @@ const ITEMS = {
   insights: TrendingUp,
 };
 
-const TRAINER_TABS = ['home', 'clients', 'programs', 'trainers', 'insights', 'exercises'];
+const TRAINER_TABS = ['home', 'clients', 'programs', 'trainers', 'insights'];
 const ATHLETE_TABS = ['home', 'exercises', 'trainers', 'programs', 'progress'];
 
 export const getNavItems = (isTrainer) => (isTrainer ? TRAINER_TABS : ATHLETE_TABS).map((id) => ({ id, icon: ITEMS[id] }));
