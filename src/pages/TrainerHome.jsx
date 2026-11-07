@@ -55,13 +55,9 @@ export default function TrainerHome() {
         </button>
       ) : (
         <button className="premium-promo" onClick={() => setPage('premium')}>
-          <span className="premium-crown" aria-hidden="true"><Crown size={20} /></span>
-          <span className="premium-promo-text">
-            <b>{t('premium.promoTitle')}</b>
-            <small>{t('premium.promoText')}</small>
-            <em><s>{groupNumber(PREMIUM.listPrice)}</s> <strong>{groupNumber(PREMIUM.price)}</strong> {t('common.currency')} · {t('premium.price')}</em>
-          </span>
-          <ArrowForward size={16} />
+          <Crown size={18} aria-hidden="true" />
+          <span>{t('premium.promoSlim', { price: groupNumber(PREMIUM.price) })}</span>
+          <ArrowForward size={14} />
         </button>
       )}
 
@@ -82,6 +78,8 @@ export default function TrainerHome() {
       ))}
 
       {!sections.length && <p className="calm-note">{t('home.emptyTitle')}</p>}
+
+      <button className="link quiet-link" onClick={() => setPage('exercises')}>{t('trainer.exercisesLink')} <ArrowForward size={14} /></button>
     </div>
   );
 }

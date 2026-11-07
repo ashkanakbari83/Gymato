@@ -30,7 +30,7 @@ export default function TrainerCard({ trainer, onOpen }) {
 
   return (
     <button className={`card trainer-card ${featured ? 'is-premium' : ''}`.trim()} onClick={onOpen}>
-      {featured && <span className="premium-ribbon"><Crown size={15} aria-hidden="true" /> {t('premium.ribbon')}</span>}
+      {featured && <span className="premium-ribbon"><Crown size={15} aria-hidden="true" /> {t('premium.ribbon')}{athletes > 0 && <em>{t('premium.athletes', { n: num(athletes) })}</em>}</span>}
       <Avatar user={trainer} size="lg" />
       <span className="trainer-main">
         <span className="trainer-name-row">
@@ -41,7 +41,6 @@ export default function TrainerCard({ trainer, onOpen }) {
         <span className="trainer-meta-line">
           <span className="trainer-place"><MapPin size={13} /> {locationLabel(trainer.province, trainer.city, lang) || t('trainer.noLocation')}</span>
           {entry && <span className="trainer-entry">{entry}</span>}
-          {athletes > 0 && <span className="trainer-athletes">{t('premium.athletes', { n: num(athletes) })}</span>}
         </span>
         <span className="listing-tags">
           {specialties.slice(0, SHOWN_SPECIALTIES).map((id) => (

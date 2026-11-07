@@ -1,7 +1,6 @@
 // Desktop top bar: brand, page tabs, notifications, settings and the account menu.
-import { Activity, Bell, Crown, Settings } from 'lucide-react';
+import { Activity, Bell, Settings } from 'lucide-react';
 import { useApp } from '../../context/AppContext.jsx';
-import { isPremium } from '../../lib/premium.js';
 import { getNotifications } from '../../lib/selectors.js';
 import { getNavItems, navTabFor } from './navItems.js';
 
@@ -29,12 +28,6 @@ export default function TopBar() {
         </nav>
 
         <div className="top-actions">
-          {isTrainer && (
-            <button className={`crown-btn ${isPremium(user) ? 'on' : 'promo'}`} aria-label={t('premium.topbar')} aria-current={page === 'premium' ? 'page' : undefined} onClick={() => setPage('premium')}>
-              <Crown size={18} aria-hidden="true" />
-              {!isPremium(user) && <span>{t('premium.badge')}</span>}
-            </button>
-          )}
           <button className="icon-btn" aria-label={t(hasUnread ? 'nav.notificationsUnread' : 'nav.notifications')} onClick={() => openModal({ type: 'notifications' })}>
             <Bell size={20} />
             {hasUnread && <i className="dot" aria-hidden="true" />}
