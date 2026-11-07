@@ -51,7 +51,7 @@ export default function AthleteHome() {
   return (
     <div className="stack desk-grid">
       {sessions.length === 0 && guide}
-      <section className="today">
+      <section className={`today ${!program && !workout ? 'is-free' : ''}`}>
         <span className="today-art" aria-hidden="true"><Icon3D name={workout ? 'timer' : 'dumbbell'} /></span>
         <small>{workout ? t('home.inProgress') : program ? t('home.todayWorkout') : t('home.freeWorkout')}</small>
         <h2>{workout ? t('home.continue') : session?.name ?? t('home.simpleWorkout')}</h2>

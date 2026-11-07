@@ -251,3 +251,29 @@
   border: 0;
   background: rgba(127, 127, 127, 0.1);
 }
+
+/* a free workout with no program: the card is a quick-start, not a headline (the first-steps card explains the rest) */
+@media (max-width: 899px) {
+  .today.is-free {
+    padding-block: 16px;
+  }
+
+  .today.is-free > p {
+    display: none;
+  }
+
+  .today.is-free .today-art {
+    width: 56px;
+    inset-block-start: 14px;
+  }
+
+  .today.is-free > small,
+  .today.is-free > h2 {
+    padding-inline-end: 68px;
+  }
+
+  .today.is-free > h2 {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+}
