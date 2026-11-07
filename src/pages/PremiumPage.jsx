@@ -1,7 +1,7 @@
 // Trainer: what the Featured (Premium) subscription gives, how the trainer's score is made, and the way to get it.
 // Nothing here promises more than the app does: featured trainers form a labelled group at the top of their province
 // list, and inside that group the score (not the payment) sets the order.
-import { Crown, Check, ShoppingBag } from 'lucide-react';
+import { Crown, Check, ShoppingBag, Users } from 'lucide-react';
 import Avatar from '../components/ui/Avatar.jsx';
 import Badge from '../components/ui/Badge.jsx';
 import Empty from '../components/ui/Empty.jsx';
@@ -17,12 +17,13 @@ const discountPercent = Math.round((1 - PREMIUM.price / PREMIUM.listPrice) * 100
 function PreviewCard({ user, featured, label, t }) {
   return (
     <div className={`card trainer-card preview ${featured ? 'is-premium' : ''}`.trim()} aria-hidden="true">
+      {featured && <span className="premium-ribbon"><Crown size={15} /> {t('premium.ribbon')}</span>}
       <Avatar user={user} size="lg" />
       <span className="trainer-main">
         <span className="trainer-name-row">
           <b>{user.name}</b>
-          {featured && <span className="premium-badge"><Crown size={12} /> {t('premium.badge')}</span>}
         </span>
+        {featured && user.bio && <span className="trainer-bio-line">{user.bio}</span>}
         <span className="trainer-meta-line"><span className="trainer-place">{label}</span></span>
       </span>
     </div>
@@ -65,6 +66,7 @@ export default function PremiumPage() {
           <Crown size={16} /> {t(active ? 'premium.renew' : 'premium.subscribe')}
         </button>
         {!can.ok && <p className="muted">{reasonText}</p>}
+        {user.province && <button className="btn ghost wide" onClick={() => go('trainers', { province: user.province })}><Users size={16} /> {t('premium.seeProvince')}</button>}
         {can.reason === 'no_province' && <button className="btn ghost wide" onClick={() => go('profile')}>{t('premium.goProfile')}</button>}
         <p className="muted">{t('premium.note')}</p>
       </section>

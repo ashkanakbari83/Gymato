@@ -5,8 +5,9 @@ import Metrics from '../components/ui/Metrics.jsx';
 import { ArrowForward } from '../components/ui/Arrow.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import { getIncome } from '../lib/analytics.js';
-import { PROGRAM_STATUS } from '../lib/constants.js';
-import { formatMoney, num } from '../lib/format.js';
+import { PREMIUM, PROGRAM_STATUS } from '../lib/constants.js';
+import { formatMoney, groupNumber, num } from '../lib/format.js';
+import { Crown } from 'lucide-react';
 import { getOwnPrograms, getTrainerClients } from '../lib/marketplace.js';
 import { isPremium, premiumDaysLeft } from '../lib/premium.js';
 
@@ -47,10 +48,22 @@ export default function TrainerHome() {
         <ArrowForward size={16} />
       </button>
 
-      <button className="attention calm" onClick={() => setPage('premium')}>
-        <span>{t('premium.home', { text: isPremium(user) ? t('premium.homeActive', { n: num(premiumDaysLeft(user)) }) : t('premium.homeOff') })}</span>
-        <ArrowForward size={16} />
-      </button>
+      {isPremium(user) ? (
+        <button className="attention calm" onClick={() => setPage('premium')}>
+          <span>{t('premium.home', { text: t('premium.homeActive', { n: num(premiumDaysLeft(user)) }) })}</span>
+          <ArrowForward size={16} />
+        </button>
+      ) : (
+        <button className="premium-promo" onClick={() => setPage('premium')}>
+          <span className="premium-crown" aria-hidden="true"><Crown size={20} /></span>
+          <span className="premium-promo-text">
+            <b>{t('premium.promoTitle')}</b>
+            <small>{t('premium.promoText')}</small>
+            <em><s>{groupNumber(PREMIUM.listPrice)}</s> <strong>{groupNumber(PREMIUM.price)}</strong> {t('common.currency')} · {t('premium.price')}</em>
+          </span>
+          <ArrowForward size={16} />
+        </button>
+      )}
 
       {sections.map(([title, items]) => (
         <section className="panel half" key={title}>
