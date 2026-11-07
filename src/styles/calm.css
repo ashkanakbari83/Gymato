@@ -225,3 +225,29 @@
 .fold[open] > summary {
   margin-bottom: 6px;
 }
+
+/* a single quiet line where an empty card used to be */
+.calm-note {
+  margin: 0;
+  padding: 4px 6px;
+  color: var(--mu);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* numbers + week in one card: the tiles lose their own boxes */
+.summary {
+  display: grid;
+  gap: 14px;
+}
+
+.summary .metrics {
+  gap: 8px;
+}
+
+.summary .metrics > div,
+.summary .metrics > div + div {
+  box-shadow: none;
+  border: 0;
+  background: rgba(127, 127, 127, 0.1);
+}

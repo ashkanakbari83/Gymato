@@ -1,8 +1,6 @@
 // Trainer dashboard: headline numbers and what needs attention (requests, payments, renewals).
-import { Users } from 'lucide-react';
 import GettingStarted from '../components/GettingStarted.jsx';
 import CoachingRow from '../components/coaching/CoachingRow.jsx';
-import Empty from '../components/ui/Empty.jsx';
 import Metrics from '../components/ui/Metrics.jsx';
 import { ArrowForward } from '../components/ui/Arrow.jsx';
 import { useApp } from '../context/AppContext.jsx';
@@ -64,11 +62,7 @@ export default function TrainerHome() {
         </section>
       ))}
 
-      {!sections.length && (
-        <section className="panel">
-          <Empty icon={Users} art="chat" title={t('home.emptyTitle')} text={t('home.emptyText')} actionLabel={t('nav.programs')} onAction={() => setPage('programs')} />
-        </section>
-      )}
+      {!sections.length && <p className="calm-note">{t('home.emptyTitle')}</p>}
     </div>
   );
 }

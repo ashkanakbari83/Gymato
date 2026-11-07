@@ -92,28 +92,25 @@ export default function AthleteHome() {
       </button>
 
       {/* Before the first workout these would only show zeros and empty dots; the first-steps card says what to do instead. */}
+      {/* The numbers and the week belong together: one card, not two. */}
       {sessions.length > 0 && (
-        <>
+        <section className="panel half summary">
           <Metrics
-            className="half"
             items={[
               { value: sessions.length, label: t('stat.workouts') },
               { value: countActiveDays(sessions), label: t('stat.activeDays') },
               { value: sessionsCalories(sessions, db.exercises), label: t('stat.kcal') },
             ]}
           />
-
-          <section className="panel half">
-            <div className="week">
-              {week.map((day, i) => (
-                <span key={i} className={day.count ? 'on' : ''}>
-                  <i />
-                  {day.label}
-                </span>
-              ))}
-            </div>
-          </section>
-        </>
+          <div className="week">
+            {week.map((day, i) => (
+              <span key={i} className={day.count ? 'on' : ''}>
+                <i />
+                {day.label}
+              </span>
+            ))}
+          </div>
+        </section>
       )}
 
       {sessions[0] && (
