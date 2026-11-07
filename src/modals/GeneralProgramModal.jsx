@@ -1,4 +1,5 @@
 // A general program: details and price up front; instructions only after access (free or confirmed purchase).
+import PremiumMark from '../components/marketplace/PremiumMark.jsx';
 import { Check, Lock, Share2, Utensils, X } from 'lucide-react';
 import { useEffect } from 'react';
 import MealPlanView from '../components/nutrition/MealPlanView.jsx';
@@ -39,7 +40,7 @@ export default function GeneralProgramModal({ programId }) {
           </button>
         )}
       </div>
-      <p className="muted">{t('gp.by', { name: trainer.name })}</p>
+      <p className="muted">{t('gp.by', { name: trainer.name })} <PremiumMark trainer={trainer} /></p>
       <div className="stats-line">
         <LikeButton programId={program.id} />
         <Stars {...ratingOf(getProgramReviews(db, program.id))} value={ratingOf(getProgramReviews(db, program.id)).avg} />

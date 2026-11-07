@@ -1,5 +1,5 @@
 // Account sheets: account menu (profile, admin account switcher, sign out) and notifications.
-import { Bell, Check, LogOut, UserRound } from 'lucide-react';
+import { Bell, Check, LogOut, ShieldCheck, UserRound } from 'lucide-react';
 import Empty from '../components/ui/Empty.jsx';
 import Sheet from '../components/ui/Sheet.jsx';
 import { ArrowForward } from '../components/ui/Arrow.jsx';
@@ -29,6 +29,9 @@ export function AccountMenuModal() {
 
       {user.isAdmin && (
         <>
+          <button className="btn wide" onClick={() => { closeModal(); go('admin'); }}>
+            <ShieldCheck size={16} /> {t('acct.adminPanel')}
+          </button>
           <p className="modal-description sep">{t('acct.switchAdmin')}</p>
           <div className="list">
             {accounts.map((u) => (

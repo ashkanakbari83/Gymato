@@ -10,7 +10,7 @@ import { num } from '../lib/format.js';
 import { filterTrainers } from '../lib/marketplace.js';
 import { isPremium, rankTrainers } from '../lib/premium.js';
 
-const NO_FILTERS = { query: '', province: '', city: '', focus: '', coachingOnly: false };
+const NO_FILTERS = { query: '', province: '', city: '', focus: '', coachingOnly: false, premiumOnly: false };
 
 export default function TrainersPage() {
   const { db, go, pageParams, t } = useApp();
@@ -39,6 +39,9 @@ export default function TrainersPage() {
       </div>
 
       <div className="chips" role="group" aria-label={t('trainers.specialty')}>
+        <button className={`chip-premium ${filters.premiumOnly ? 'on' : ''}`} aria-pressed={filters.premiumOnly} onClick={() => set({ premiumOnly: !filters.premiumOnly })}>
+          <Crown size={13} aria-hidden="true" /> {t('trainers.premiumOnly')}
+        </button>
         {['', ...FOCUS_AREAS].map((id) => (
           <button key={id} className={filters.focus === id ? 'on' : ''} onClick={() => set({ focus: id })}>
             {id ? t(`focus.${id}`) : t('common.all')}

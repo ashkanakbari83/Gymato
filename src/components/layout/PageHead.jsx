@@ -20,7 +20,7 @@ export default function PageHead() {
           <Plus size={18} /> {t('programs.newGeneral')}
         </button>
       )}
-      {(page === 'settings' || page === 'nutrition') && (
+      {(page === 'settings' || page === 'nutrition' || page === 'admin') && (
         <button className="btn ghost" onClick={() => go('home')}>
           <ArrowBack size={16} /> {t('common.back')}
         </button>

@@ -5,20 +5,7 @@
 // every device. None of these people has an account.
 import { DAY_MS } from '../lib/constants.js';
 import { generalProgram } from './community.js';
-
-const daysAgo = (days) => new Date(Date.now() - days * DAY_MS).toISOString();
-
-/** Small deterministic random generator (mulberry32), so the sample data never changes between loads. */
-function random(seed) {
-  let a = seed >>> 0;
-  return () => {
-    a = (a + 0x6d2b79f5) >>> 0;
-    let t = a;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
+import { BIOS, COMMENTS, daysAgo, goalMatch, random } from './sampleKit.js';
 
 const NAMES = ['نیکا', 'آرمان', 'سپیده', 'کیارش', 'یگانه', 'امید', 'نرگس', 'دانیال', 'روشنک', 'سینا', 'پگاه', 'مانی', 'ترگل', 'آیدین', 'فرزانه', 'بهراد', 'شبنم', 'میلاد'];
 
@@ -54,34 +41,6 @@ const TRAINERS = [
   ['nazanin', 'نازنین', 'siahkal', ['mobility', 'fatloss'], 1, true, false, 0.08, 0],
   ['saman', 'سامان', 'masal', ['fitness'], 1, false, false, 0.03, 0],
 ];
-
-const BIOS = [
-  'مربی با تمرکز روی پیشرفت تدریجی و فرم درست حرکت؛ برنامه‌هایم ساده و قابل‌اجرا در باشگاه و خانه هستند.',
-  'همراه تو از اولین جلسه تا رسیدن به هدف؛ تمرین، تغذیه ساده و پیگیری منظم.',
-  'برنامه‌ها را بر اساس سطح و زمان آزاد خودت تنظیم می‌کنم، نه یک نسخه برای همه.',
-  'سال‌ها کار با مبتدی‌ها و کسانی که بعد از وقفه برمی‌گردند؛ صبور و دقیق.',
-];
-const COMMENTS = [
-  'برنامه منظم و قابل اجراست، بعد از چند هفته تفاوت رو حس کردم.',
-  'توضیح حرکت‌ها واضح بود و جواب پیام‌ها رو سریع می‌داد.',
-  'ارزش پولش رو داشت.',
-  'برای مبتدی‌ها خیلی مناسبه.',
-  'کمی سنگین بود ولی نتیجه داد.',
-  'ممنون از پیگیری‌هاتون.',
-  'خوب بود، فقط ای کاش ویدیوی بیشتری داشت.',
-  'عالی؛ پیشنهاد می‌کنم.',
-  'برای من که وقت کمی دارم مناسب بود.',
-  'متوسط بود، انتظار بیشتری داشتم.',
-];
-const TEMPLATES = [
-  { title: 'تمام بدن ۴ هفته‌ای', goals: ['fitness', 'fullbody'], level: 'beginner', weeks: 4, days: 3, sessions: [{ name: 'تمام بدن', items: ['squat', 'pushup', 'plank', 'lunge'] }], plan: ['squat', 'pushup', 'plank', 'lunge'] },
-  { title: 'چربی‌سوزی ۶ هفته‌ای', goals: ['fatloss', 'endurance'], level: 'intermediate', weeks: 6, days: 4, sessions: [{ name: 'قلبی و شکم', items: ['jacks', 'climber', 'burpee', 'plank'] }], plan: ['jacks', 'climber', 'burpee', 'plank'] },
-  { title: 'عضله‌سازی بالا‌تنه', goals: ['muscle', 'chest', 'back'], level: 'intermediate', weeks: 8, days: 4, sessions: [{ name: 'بالاتنه', items: ['pushup', 'pullup', 'dbpress', 'curl'] }], plan: ['pushup', 'pullup', 'dbpress', 'curl'] },
-  { title: 'پایین‌تنه و باسن', goals: ['thighs', 'glutes'], level: 'intermediate', weeks: 6, days: 3, sessions: [{ name: 'پایین‌تنه', items: ['squat', 'lunge', 'deadlift', 'hamstring'] }], plan: ['squat', 'lunge', 'deadlift', 'hamstring'] },
-  { title: 'شکم و میان‌تنه', goals: ['abs'], level: 'beginner', weeks: 4, days: 4, sessions: [{ name: 'شکم', items: ['crunch', 'legraise', 'plank', 'twist'] }], plan: ['crunch', 'legraise', 'plank', 'twist'] },
-  { title: 'تحرک و انعطاف', goals: ['mobility', 'fitness'], level: 'beginner', weeks: 3, days: 5, sessions: [{ name: 'کشش و تحرک', items: ['hamstring', 'plank', 'squat'] }], plan: ['hamstring', 'plank', 'squat'] },
-];
-const goalMatch = (specialties) => TEMPLATES.find((t) => t.goals.some((g) => specialties.includes(g))) ?? TEMPLATES[0];
 
 export const gilanTrainers = TRAINERS.map(([id, name, city, specialties, years, coaching, premium, quality], i) => ({
   id: `gl-${id}`,

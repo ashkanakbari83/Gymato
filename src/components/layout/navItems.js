@@ -17,7 +17,7 @@ const ATHLETE_TABS = ['home', 'exercises', 'trainers', 'programs', 'progress'];
 export const getNavItems = (isTrainer) => (isTrainer ? TRAINER_TABS : ATHLETE_TABS).map((id) => ({ id, icon: ITEMS[id] }));
 
 /** The tab to highlight for a page (a trainer's profile belongs to "trainers", the food log to "home"). */
-export const navTabFor = (page) => (page === 'trainer' ? 'trainers' : page === 'nutrition' || page === 'premium' ? 'home' : page);
+export const navTabFor = (page) => (page === 'trainer' ? 'trainers' : page === 'nutrition' || page === 'premium' || page === 'admin' ? 'home' : page);
 
 export function getPageTitle(page, user, isTrainer, t) {
   if (page === 'home') return t(isTrainer ? 'nav.home' : 'home.greeting', { name: user.name });

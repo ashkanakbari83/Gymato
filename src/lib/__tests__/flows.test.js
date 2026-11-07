@@ -2,17 +2,17 @@
 //   node --test src/lib/__tests__/
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createSeedState } from '../../data/seed.js';
 import { canStartProgram, chatState, hasCustomAccess, hasGeneralAccess, requestPhase, subscriptionState } from '../access.js';
 import { DAY_MS, PHASE } from '../constants.js';
 import { claimFreeProgram, deleteGeneralProgram, saveGeneralProgram, setProgramStatus } from '../domain/catalog.js';
 import { CUSTOM_MODE, acceptRequest, cancelRequest, rejectRequest, saveCustomProgram, sendMessage, submitRequest, validateCustomProgram, validateRequestForm } from '../domain/coaching.js';
 import { applyGatewayResult, attachGatewaySession, cancelPayment, startCheckout } from '../domain/payments.js';
-import { sendToGateway, serverAnswer, settlePaid } from './helpers.js';
+import { cleanSeed, sendToGateway, serverAnswer, settlePaid } from './helpers.js';
 import { filterTrainers, getAthleteLibrary, getTrainerClients } from '../marketplace.js';
 import { canTransition } from '../transitions.js';
 
 const NOW = Date.UTC(2026, 9, 21, 9, 0, 0);
+const GENERATED = /^(gl|th|al|is|rz|fr|ea|mz|kh|km)-|^kamran$/;
 const ATHLETE = 'ashkan';
 const TRAINER = 'adel';
 const form = { name: 'اشکان', age: 27, height: 182, weight: 84, goal: 'muscle', muscles: ['abs'], level: 'intermediate', daysPerWeek: 4, schedule: '', notes: '', photo: '', wantsMealPlan: true };
@@ -26,7 +26,7 @@ const must = (result) => {
 };
 
 /** Runs the whole path up to a published, unpaid custom program. */
-function untilProposal(db = createSeedState()) {
+function untilProposal(db = cleanSeed()) {
   const { db: d1, request } = must(submitRequest(db, ATHLETE, TRAINER, form, NOW));
   const { db: d2 } = must(acceptRequest(d1, TRAINER, request.id, offer, NOW));
   const { db: d3, program } = must(saveCustomProgram(d2, TRAINER, request.id, draft, { publish: true }, NOW));
@@ -40,19 +40,21 @@ function activate(state) {
 }
 
 test('1. athletes can browse trainers and filter by location and specialty', () => {
-  const db = createSeedState();
+  const db = cleanSeed();
   const ids = (filters) => filterTrainers(db, filters).map((t) => t.id).sort();
-  assert.equal(filterTrainers(db).length, 27, 'adel, the seven sample trainers and the nineteen more in Gilan');
-  assert.deepEqual(ids({ province: 'isfahan' }), ['kian']);
-  assert.deepEqual(ids({ province: 'tehran', city: 'tehran-c' }), ['adel']);
-  assert.deepEqual(ids({ focus: 'thighs' }).filter((id) => !id.startsWith('gl-')), ['maryam']);
-  assert.deepEqual(ids({ coachingOnly: true }).filter((id) => !id.startsWith('gl-')), ['adel', 'kian', 'neda', 'reza', 'sara']);
-  assert.deepEqual(ids({ province: 'razavi', focus: 'strength' }), ['reza']);
-  assert.deepEqual(ids({ query: 'الهام' }), ['elham']);
+  // The generated sample trainers (Gilan and the other provinces, plus the professional one) have ids with a province prefix.
+  const handmade = (list) => list.filter((id) => !GENERATED.test(id));
+  assert.equal(filterTrainers(db).length, 116, 'adel, kamran, the seven sample trainers, 19 in Gilan and 78 in the other provinces');
+  assert.deepEqual(handmade(ids({ province: 'isfahan' })), ['kian']);
+  assert.deepEqual(handmade(ids({ province: 'tehran', city: 'tehran-c' })), ['adel']);
+  assert.deepEqual(handmade(ids({ focus: 'thighs' })), ['maryam']);
+  assert.deepEqual(handmade(ids({ coachingOnly: true })), ['adel', 'kian', 'neda', 'reza', 'sara']);
+  assert.deepEqual(handmade(ids({ province: 'razavi', focus: 'strength' })), ['reza']);
+  assert.deepEqual(handmade(ids({ query: 'الهام' })), ['elham']);
 });
 
 test('2. a free general program is accessible without payment', () => {
-  const db = createSeedState();
+  const db = cleanSeed();
   const free = db.programs.find((p) => p.id === 'gp-beginner-full-body');
   assert.equal(hasGeneralAccess(db, ATHLETE, free), true);
   const next = must(claimFreeProgram(db, ATHLETE, free.id, NOW)).db;
@@ -61,7 +63,7 @@ test('2. a free general program is accessible without payment', () => {
 });
 
 test('3. a paid general program stays locked until the payment is confirmed', () => {
-  const db = createSeedState();
+  const db = cleanSeed();
   const paid = db.programs.find((p) => p.id === 'gp-six-pack');
   assert.equal(hasGeneralAccess(db, ATHLETE, paid), false);
   assert.equal(claimFreeProgram(db, ATHLETE, paid.id, NOW).error, 'payment_required');
@@ -81,7 +83,7 @@ test('3. a paid general program stays locked until the payment is confirmed', ()
 });
 
 test('4. buying a general program does not create or activate coaching', () => {
-  const db = createSeedState();
+  const db = cleanSeed();
   const { db: d1, payment } = must(startCheckout(db, ATHLETE, { kind: 'general_purchase', targetId: 'gp-six-pack' }, NOW));
   const bought = settlePaid(d1, ATHLETE, payment.id, NOW);
   assert.equal(bought.requests.length, 0);
@@ -92,7 +94,7 @@ test('4. buying a general program does not create or activate coaching', () => {
 });
 
 test('5. a coaching request validates, keeps optional fields optional, and starts as pending', () => {
-  const db = createSeedState();
+  const db = cleanSeed();
   const bad = submitRequest(db, ATHLETE, TRAINER, { ...form, goal: '', daysPerWeek: 9, height: 10 }, NOW);
   assert.equal(bad.error, 'validation');
   assert.deepEqual(Object.keys(bad.fields).sort(), ['daysPerWeek', 'goal', 'height']);
@@ -109,7 +111,7 @@ test('5. a coaching request validates, keeps optional fields optional, and start
 });
 
 test('6/7. the trainer decides; chat is locked until acceptance', () => {
-  const db = createSeedState();
+  const db = cleanSeed();
   const { db: d1, request } = must(submitRequest(db, ATHLETE, TRAINER, form, NOW));
   assert.equal(chatState(d1, request, NOW), 'locked');
   assert.equal(acceptRequest(d1, 'kian', request.id, offer, NOW).error, 'forbidden', 'another trainer cannot decide');
@@ -136,7 +138,7 @@ test('8. the trainer builds a private program for that athlete only', () => {
   const { db, program } = untilProposal();
   assert.equal(program.athleteId, ATHLETE);
   assert.equal(program.kind, 'custom');
-  assert.equal(db.programs.length, createSeedState().programs.length, 'a custom program never joins the public catalog');
+  assert.equal(db.programs.length, cleanSeed().programs.length, 'a custom program never joins the public catalog');
   assert.equal(db.subscriptions[0].status, 'pending_payment');
   assert.equal(hasCustomAccess(db, 'bardia', program, NOW), false, 'another athlete has no access');
   assert.equal(saveCustomProgram(db, 'kian', program.requestId, draft, { publish: true }, NOW).error, 'forbidden', 'another trainer cannot edit it');
@@ -210,7 +212,7 @@ test('13. expiry stops access but keeps every record; renewing restores it', () 
 });
 
 test('trainers manage only their own general programs; buyers keep access when unpublished', () => {
-  const db = createSeedState();
+  const db = cleanSeed();
   const own = db.programs.find((p) => p.id === 'gp-six-pack');
   assert.equal(saveGeneralProgram(db, 'kian', { ...own, title: 'x' }, 'published', NOW).error, 'forbidden');
   assert.equal(saveGeneralProgram(db, TRAINER, { ...own, exercises: [] }, 'published', NOW).error, 'validation');
@@ -225,7 +227,7 @@ test('trainers manage only their own general programs; buyers keep access when u
 });
 
 test('request: the meal-plan choice is stored on the request and kept as asked', () => {
-  const db = createSeedState();
+  const db = cleanSeed();
   const yes = must(submitRequest(db, ATHLETE, TRAINER, { ...form, wantsMealPlan: true }, NOW));
   assert.equal(yes.request.form.wantsMealPlan, true);
   const no = must(submitRequest(db, ATHLETE, TRAINER, { ...form, wantsMealPlan: false }, NOW));
@@ -248,7 +250,7 @@ test('custom program validation: a draft needs the basics, sending needs everyth
 });
 
 test('custom program: saving without exercises works as a draft but is refused when sending', () => {
-  const db0 = createSeedState();
+  const db0 = cleanSeed();
   const { request, db: submitted } = must(submitRequest(db0, ATHLETE, TRAINER, form, NOW));
   const db = must(acceptRequest(submitted, TRAINER, request.id, offer, NOW)).db;
   const bare = { ...draft, exercises: [] };

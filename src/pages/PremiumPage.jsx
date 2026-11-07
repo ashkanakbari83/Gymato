@@ -55,7 +55,7 @@ export default function PremiumPage() {
           <Badge tone="ok">{t('premium.discount', { n: num(discountPercent) })}</Badge>
         </p>
         <p className={active ? 'premium-status on' : 'premium-status'} role="status">
-          {active ? t('premium.statusActive', { date: formatDate(user.premium.until), n: num(daysLeft) }) : t('premium.statusOff')}
+          {active ? t('premium.statusActive', { date: formatDate(user.premium.until), n: num(daysLeft) }) : user.premium?.until ? t('premium.statusEnded', { date: formatDate(user.premium.until) }) : t('premium.statusOff')}
         </p>
         {user.province && (
           <p className="muted">

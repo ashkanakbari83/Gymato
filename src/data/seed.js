@@ -1,13 +1,18 @@
 // Initial app state: four starter accounts (all admins), a sample community of trainers with programs,
 // reviews and likes so the marketplace looks lived-in, and three programs from the original demo.
-// Coaching requests, payments, subscriptions and chats all start empty.
+// Plus one busy professional trainer (kamran) with clients, income, reviews and views, so the trainer screens and the
+// admin panel have volume to show. Everything else (requests, payments, subscriptions, chats) starts empty.
 import { gilanAthletes, gilanLikes, gilanPrograms, gilanReviews, gilanTrainers } from './gilan.js';
+import { premiumPaymentsFor, regionAthletes, regionLikes, regionPrograms, regionReviews, regionTrainers } from './regions.js';
+import {
+  proAthletes, proConversations, proCustomPrograms, proEvents, proLikes, proMessages, proNotifications, proPayments, proPrograms, proRequests, proReviews, proSubscriptions, proTrainer,
+} from './proTrainer.js';
 import { communityAthletes, communityLikes, communityPrograms, communityReviews, communityTrainers, generalProgram } from './community.js';
 import { absPrograms } from './absPrograms.js';
 import { decks } from './decks.js';
 import { exercises } from './exercises.js';
 import { users as accounts } from './users.js';
-import { SEED_RELEASE, STATE_VERSION } from '../lib/constants.js';
+import { DEFAULT_SETTINGS, SEED_RELEASE, STATE_VERSION } from '../lib/constants.js';
 import { DEFAULT_FEEDBACK } from '../lib/feedback.js';
 
 const programs = [
@@ -96,10 +101,17 @@ const programs = [
   ...communityPrograms,
   ...absPrograms,
   ...gilanPrograms,
+  ...regionPrograms,
+  ...proPrograms,
 ];
 
 /** Accounts first, then the sample trainers and the athletes who reviewed them (neither can sign in). */
-const users = [...accounts, ...communityTrainers, ...gilanTrainers, ...communityAthletes, ...gilanAthletes];
+const users = [
+  ...accounts, proTrainer, ...communityTrainers, ...gilanTrainers, ...regionTrainers,
+  ...communityAthletes, ...gilanAthletes, ...regionAthletes, ...proAthletes,
+];
+/** The payments behind the sample premium subscriptions (the trainer paid the platform), plus the pro trainer's income. */
+const payments = [...premiumPaymentsFor([...gilanTrainers, ...regionTrainers]), ...proPayments];
 
 export const createSeedState = () => ({
   version: STATE_VERSION,
@@ -109,17 +121,18 @@ export const createSeedState = () => ({
   decks,
   programs, // general programs published by trainers
   freeLibrary: [], // free programs an athlete added: { athleteId, programId }
-  customPrograms: [], // private, athlete-specific programs
-  requests: [], // custom coaching requests
-  conversations: [],
-  messages: [],
-  payments: [], // simulated payments (demo: true)
-  subscriptions: [], // coaching subscriptions
-  events: [], // views of trainer profiles and programs (one per athlete per day)
-  likes: [...communityLikes, ...gilanLikes], // { athleteId, programId, trainerId }
-  reviews: [...communityReviews, ...gilanReviews], // ratings + comments on programs and on coaching
+  customPrograms: proCustomPrograms, // private, athlete-specific programs
+  requests: proRequests, // custom coaching requests
+  conversations: proConversations,
+  messages: proMessages,
+  payments, // simulated payments (demo: true)
+  subscriptions: proSubscriptions, // coaching subscriptions
+  events: proEvents, // views of trainer profiles and programs (one per athlete per day)
+  likes: [...communityLikes, ...gilanLikes, ...regionLikes, ...proLikes], // { athleteId, programId, trainerId }
+  reviews: [...communityReviews, ...gilanReviews, ...regionReviews, ...proReviews], // ratings + comments on programs and on coaching
   sessions: [], // finished workouts
-  notifications: [],
+  notifications: proNotifications,
+  settings: { ...DEFAULT_SETTINGS }, // platform settings the admin can change
   favorites: [],
   foodLog: [], // meals an athlete logged: { userId, date, meal, name, servings, kcal, ... }
   waterLog: [], // { userId, date, glasses } (one row per person per day)

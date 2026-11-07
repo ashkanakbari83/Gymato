@@ -1,7 +1,17 @@
 // Test-only stand-in for the payment server. In the app, the answer below comes from the real payment server through
 // lib/payments/gateway.js; here we write it by hand so the domain rules can be exercised.
 import assert from 'node:assert/strict';
+import { createSeedState } from '../../data/seed.js';
 import { applyGatewayResult, attachGatewaySession } from '../domain/payments.js';
+
+/**
+ * The starter data without the sample business (the professional trainer's clients, payments, chats and views), so the
+ * rules can be checked from an empty marketplace. The people, programs, reviews and likes stay.
+ */
+export const cleanSeed = () => ({
+  ...createSeedState(),
+  requests: [], subscriptions: [], conversations: [], messages: [], customPrograms: [], payments: [], events: [], notifications: [],
+});
 
 /** The order was sent to the provider (a session exists). */
 export function sendToGateway(db, athleteId, paymentId, now) {
