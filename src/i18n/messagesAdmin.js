@@ -30,8 +30,6 @@ export const admin = {
   'admin.legendPremium': ['اشتراک ویژه', 'Featured subscriptions'],
 
   'admin.settings': ['تنظیمات', 'Settings'],
-  'admin.slots': ['جای ویژه در هر استان', 'Featured places per province'],
-  'admin.slotsHint': ['اگه کمترش کنی کسی از گروه ویژه حذف نمی‌شه؛ فقط تا وقتی جا باز نشه کسی جدید نمی‌تونه بخره.', 'Lowering it removes nobody; it only stops new subscriptions until a place frees up.'],
   'admin.commissionRate': ['درصد کمیسیون', 'Commission rate'],
   'admin.commissionHint': ['فقط برای تخمین پنل؛ هنوز از کسی کم نمی‌شه.', 'Only used for the panel estimate; nothing is charged yet.'],
   'admin.saved': ['تنظیمات ذخیره شد', 'Settings saved'],
@@ -40,8 +38,7 @@ export const admin = {
 
   'admin.provinces': ['استان‌ها', 'Provinces'],
   'admin.provinceLine': ['{trainers} مربی · {athletes} ورزشکار', '{trainers} trainers · {athletes} athletes'],
-  'admin.slotsUsed': ['{used} از {total} ویژه', '{used} of {total} featured'],
-  'admin.full': ['پر', 'Full'],
+  'admin.featuredCount': ['{n} ویژه', '{n} featured'],
 
   'admin.top': ['مربی‌های برتر', 'Top trainers'],
   'admin.sort.score': ['امتیاز', 'Score'],

@@ -9,7 +9,7 @@ import { useApp } from '../context/AppContext.jsx';
 import { getProvince, locationLabel } from '../data/locations.js';
 import { PAYMENT_KIND, PREMIUM } from '../lib/constants.js';
 import { decimal, formatDate, groupNumber, num } from '../lib/format.js';
-import { PREMIUM_BENEFITS, canGoPremium, isPremium, premiumDaysLeft, premiumSlots, provinceStanding, trainerScore } from '../lib/premium.js';
+import { PREMIUM_BENEFITS, canGoPremium, isPremium, premiumDaysLeft, premiumInProvince, provinceStanding, trainerScore } from '../lib/premium.js';
 
 const discountPercent = Math.round((1 - PREMIUM.price / PREMIUM.listPrice) * 100);
 
@@ -37,7 +37,7 @@ export default function PremiumPage() {
   const active = isPremium(user);
   const daysLeft = premiumDaysLeft(user);
   const can = canGoPremium(db, user);
-  const slots = premiumSlots(db, user.province);
+  const featuredHere = user.province ? premiumInProvince(db, user.province).length : 0;
   const { score, parts } = trainerScore(db, user.id);
   const standing = user.province ? provinceStanding(db, user) : null;
   const weakest = [...parts].sort((a, b) => a.points / a.weight - b.points / b.weight)[0];
@@ -59,7 +59,7 @@ export default function PremiumPage() {
         </p>
         {user.province && (
           <p className="muted">
-            {t('premium.slots', { province: lang === 'fa' ? getProvince(user.province)?.fa : getProvince(user.province)?.en })}: <b>{t('premium.slotsLeft', { left: num(slots.left), total: num(slots.total) })}</b>
+            {t('premium.featuredHere', { province: lang === 'fa' ? getProvince(user.province)?.fa : getProvince(user.province)?.en, n: num(featuredHere) })}
           </p>
         )}
         <button className="btn wide" disabled={!can.ok} onClick={() => openCheckout(PAYMENT_KIND.PREMIUM, user.id)}>

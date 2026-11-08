@@ -7,11 +7,11 @@
 import { DAY_MS, DEFAULT_SETTINGS, PAYMENT_KIND, PAYMENT_STATUS, PREMIUM, REQUEST_STATUS, SUBSCRIPTION_STATUS } from './constants.js';
 import { subscriptionState } from './access.js';
 import { PROVINCES } from '../data/locations.js';
-import { athleteCount, isPremium, premiumDaysLeft, slotLimit, trainerScore } from './premium.js';
+import { athleteCount, isPremium, premiumDaysLeft, trainerScore } from './premium.js';
 import { getIncome, ratingOf, getTrainerReviews } from './analytics.js';
 import { fail, ok } from './domain/shared.js';
 
-export const SETTING_LIMITS = { premiumSlots: { min: 1, max: 50 }, commissionRate: { min: 0, max: 50 } };
+export const SETTING_LIMITS = { commissionRate: { min: 0, max: 50 } };
 
 export const isAdmin = (user) => Boolean(user?.isAdmin);
 const paid = (db) => db.payments.filter((p) => p.status === PAYMENT_STATUS.PAID);
@@ -56,9 +56,8 @@ export function platformStats(db, now = Date.now()) {
   };
 }
 
-/** One row per province: trainers, featured places used / available, and the best featured trainer's name. */
+/** One row per province: trainers, athletes and how many trainers are featured there (there is no limit). */
 export function provinceTable(db, now = Date.now()) {
-  const total = slotLimit(db);
   return PROVINCES.map((province) => {
     const trainers = db.users.filter((u) => u.role === 'coach' && u.province === province.id);
     const featured = trainers.filter((u) => isPremium(u, now));
@@ -66,9 +65,7 @@ export function provinceTable(db, now = Date.now()) {
       id: province.id,
       trainers: trainers.length,
       athletes: db.users.filter((u) => u.role === 'athlete' && u.province === province.id).length,
-      used: featured.length,
-      total,
-      full: featured.length >= total,
+      featured: featured.length,
     };
   }).sort((a, b) => b.trainers - a.trainers || a.id.localeCompare(b.id));
 }
@@ -131,7 +128,6 @@ export function monthlyRevenue(db, now = Date.now(), months = 6) {
 
 /**
  * Changes platform settings. Only an admin may; each value is a whole number inside SETTING_LIMITS.
- * Lowering `premiumSlots` below what a province already uses never removes anyone: it only stops new subscriptions there.
  */
 export function updateSettings(db, adminId, patch) {
   if (!isAdmin(db.users.find((u) => u.id === adminId))) return fail('forbidden');

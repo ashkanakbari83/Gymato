@@ -35,9 +35,9 @@ export const PAYMENT_KIND = { GENERAL: 'general_purchase', COACHING: 'coaching_i
  * list of their province, with a distinct card. `price` is what is charged (the payment server must use the same
  * figure); `listPrice` is only the struck-through "before" price shown next to it.
  */
-export const PREMIUM = { price: 90000, listPrice: 200000, days: 30, slotsPerProvince: 6, renewWindowDays: 7 };
-/** Platform settings the admin can change (db.settings). `premiumSlots`: featured places per province; `commissionRate`: percent the platform keeps of coaching and program sales (shown as an estimate in the admin panel). */
-export const DEFAULT_SETTINGS = { premiumSlots: PREMIUM.slotsPerProvince, commissionRate: 10 };
+export const PREMIUM = { price: 90000, listPrice: 200000, days: 30, renewWindowDays: 7 };
+/** Platform settings the admin can change (db.settings). `commissionRate`: percent the platform keeps of coaching and program sales (shown as an estimate in the admin panel). */
+export const DEFAULT_SETTINGS = { commissionRate: 10 };
 export const SUBSCRIPTION_STATUS = { PENDING: 'pending_payment', ACTIVE: 'active', EXPIRED: 'expired', CANCELLED: 'cancelled' };
 
 /** What an athlete sees for one coaching relationship; derived by requestPhase(). */

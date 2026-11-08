@@ -43,7 +43,6 @@ export default function AdminPage() {
   const payments = recentPayments(db, 8);
   const money = (amount) => formatMoney(amount, t);
   const name = (id) => getProvince(id)?.[lang] ?? id;
-  const slots = db.settings?.premiumSlots ?? 6;
   const rate = stats.commissionRate;
 
   const save = (patch) => {
@@ -107,7 +106,6 @@ export default function AdminPage() {
 
       <section className="panel half">
         <div className="section-title"><h2>{t('admin.settings')}</h2></div>
-        <SettingStepper id="premiumSlots" value={slots} label={t('admin.slots')} hint={t('admin.slotsHint')} onChange={(value) => save({ premiumSlots: value })} t={t} />
         <SettingStepper id="commissionRate" value={rate} suffix="٪" label={t('admin.commissionRate')} hint={t('admin.commissionHint')} onChange={(value) => save({ commissionRate: value })} t={t} />
       </section>
 
@@ -121,8 +119,7 @@ export default function AdminPage() {
                 <small>{t('admin.provinceLine', { trainers: num(row.trainers), athletes: num(row.athletes) })}</small>
               </span>
               <span className="row-end">
-                {row.full && <Badge tone="warn">{t('admin.full')}</Badge>}
-                <span className="admin-slots"><Crown size={13} aria-hidden="true" /> {t('admin.slotsUsed', { used: num(row.used), total: num(row.total) })}</span>
+                <span className="admin-slots"><Crown size={13} aria-hidden="true" /> {t('admin.featuredCount', { n: num(row.featured) })}</span>
               </span>
             </div>
           ))}

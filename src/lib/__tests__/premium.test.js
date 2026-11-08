@@ -6,7 +6,7 @@ import { createSeedState } from '../../data/seed.js';
 import { PAYMENT_KIND, PREMIUM, DAY_MS, SEED_RELEASE } from '../constants.js';
 import { startCheckout } from '../domain/payments.js';
 import { filterTrainers } from '../marketplace.js';
-import { canGoPremium, isPremium, premiumDaysLeft, premiumSlots, provinceStanding, rankTrainers, trainerScore } from '../premium.js';
+import { canGoPremium, isPremium, premiumDaysLeft, premiumInProvince, provinceStanding, rankTrainers, trainerScore } from '../premium.js';
 import { withDefaults } from '../storage.js';
 import { settlePaid } from './helpers.js';
 
@@ -53,14 +53,17 @@ test('ranking: featured first, then by score; payment alone does not decide the 
   assert.deepEqual(rankTrainers(db, gilan(db), NOW).map((u) => u.id), order.map((u) => u.id), 'stable between calls');
 });
 
-test('slots and eligibility', () => {
+test('eligibility: no limit on how many trainers in a province can be featured', () => {
   const db = createSeedState();
-  assert.deepEqual(premiumSlots(db, 'gilan', NOW), { used: 5, total: PREMIUM.slotsPerProvince, left: 1 });
+  assert.equal(premiumInProvince(db, 'gilan', NOW).length, 5);
   assert.equal(canGoPremium(db, db.users.find((u) => u.id === 'gl-ghazal'), NOW).ok, true);
   assert.equal(canGoPremium(db, db.users.find((u) => u.id === 'gl-aryan'), NOW).reason, 'already_active');
   assert.equal(canGoPremium(db, db.users.find((u) => u.id === 'ashkan'), NOW).reason, 'not_trainer');
-  const full = { ...db, users: db.users.map((u) => (u.id === 'gl-ghazal' ? { ...u, premium: { until: new Date(NOW + 20 * DAY_MS).toISOString() } } : u)) };
-  assert.equal(canGoPremium(full, full.users.find((u) => u.id === 'gl-soheil'), NOW).reason, 'province_full');
+  // However many are already featured, the next trainer can still join (no waiting list, no cap).
+  const crowded = { ...db, users: db.users.map((u) => (u.province === 'gilan' && u.role === 'coach' ? { ...u, premium: { until: new Date(NOW + 20 * DAY_MS).toISOString() } } : u)) };
+  assert.equal(premiumInProvince(crowded, 'gilan', NOW).length, 20);
+  const newcomer = { ...crowded.users.find((u) => u.id === 'gl-soheil'), premium: null };
+  assert.equal(canGoPremium({ ...crowded, users: crowded.users.map((u) => (u.id === newcomer.id ? newcomer : u)) }, newcomer, NOW).ok, true);
   const noProvince = { ...db, users: db.users.map((u) => (u.id === 'adel' ? { ...u, province: '' } : u)) };
   assert.equal(canGoPremium(noProvince, noProvince.users.find((u) => u.id === 'adel'), NOW).reason, 'no_province');
 });
@@ -86,13 +89,13 @@ test('checkout: the order is pending, only a verified answer activates it, renew
   assert.equal(premiumDaysLeft(renewed.users.find((u) => u.id === 'gl-ghazal'), NOW), 3 + PREMIUM.days);
 });
 
-test('checkout is refused for athletes, for someone else, and when the province is full', () => {
+test('checkout is refused for athletes and for someone else, and never because the province is crowded', () => {
   const db = createSeedState();
   assert.equal(startCheckout(db, 'ashkan', { kind: PAYMENT_KIND.PREMIUM, targetId: 'ashkan' }, NOW).ok, false);
   assert.equal(startCheckout(db, 'gl-ghazal', { kind: PAYMENT_KIND.PREMIUM, targetId: 'gl-soheil' }, NOW).ok, false);
   const taken = must(startCheckout(db, 'gl-ghazal', { kind: PAYMENT_KIND.PREMIUM, targetId: 'gl-ghazal' }, NOW));
-  const full = { ...taken.db, users: taken.db.users.map((u) => (u.id === 'gl-soheil' ? { ...u, premium: { until: new Date(NOW + 20 * DAY_MS).toISOString() } } : u)) };
-  assert.equal(startCheckout(full, 'gl-ghazal', { kind: PAYMENT_KIND.PREMIUM, targetId: 'gl-ghazal' }, NOW).ok, false);
+  const crowded = { ...taken.db, users: taken.db.users.map((u) => (u.province === 'gilan' && u.role === 'coach' && u.id !== 'gl-ghazal' ? { ...u, premium: { until: new Date(NOW + 20 * DAY_MS).toISOString() } } : u)) };
+  assert.equal(startCheckout(crowded, 'gl-ghazal', { kind: PAYMENT_KIND.PREMIUM, targetId: 'gl-ghazal' }, NOW).ok, true, 'the open order is reused');
 });
 
 test('standing: the place a trainer would take among the featured follows the score', () => {

@@ -9,7 +9,7 @@ import { requestPhase } from '../access.js';
 import { getIncome, getStudentStats } from '../analytics.js';
 import { startCheckout } from '../domain/payments.js';
 import { filterTrainers } from '../marketplace.js';
-import { canGoPremium, isPremium, premiumSlots, reconcilePremium, slotLimit } from '../premium.js';
+import { canGoPremium, isPremium, reconcilePremium } from '../premium.js';
 import { withDefaults } from '../storage.js';
 
 const NOW = Date.now();
@@ -39,13 +39,13 @@ test('seed: the professional trainer is an admin account with a big, believable 
   assert.equal(new Set(db.payments.map((p) => p.id)).size, db.payments.length, 'payment ids are unique');
 });
 
-test('seed: every province has sample trainers and some of them are featured, never more than the limit', () => {
+test('seed: every province has sample trainers and some of them are featured', () => {
   const db = createSeedState();
   const table = provinceTable(db, NOW);
   for (const id of ['tehran', 'alborz', 'isfahan', 'razavi', 'fars', 'east-azerbaijan', 'mazandaran', 'khuzestan', 'kerman', 'gilan']) {
     const row = table.find((r) => r.id === id);
     assert.ok(row.trainers >= 8, `${id} has trainers`);
-    assert.ok(row.used >= 2 && row.used <= row.total, `${id} has featured trainers within the limit`);
+    assert.ok(row.featured >= 2, `${id} has featured trainers`);
   }
   assert.equal(new Set(db.users.map((u) => u.id)).size, db.users.length);
   assert.equal(new Set(db.users.map((u) => u.publicId)).size, db.users.length);
@@ -76,26 +76,20 @@ test('top trainers: sorted by the chosen measure; the professional trainer leads
   assert.equal(recentPayments(db, 5).length, 5);
 });
 
-test('settings: only an admin changes them, values are checked, and the slot limit is used everywhere', () => {
+test('settings: only an admin changes them, values are checked; there is no cap on featured places', () => {
   const db = createSeedState();
   assert.equal(isAdmin(db.users.find((u) => u.id === 'adel')), true);
   assert.equal(isAdmin(db.users.find((u) => u.id === 'kian')), false);
-  assert.equal(updateSettings(db, 'kian', { premiumSlots: 3 }).error, 'forbidden');
-  assert.equal(updateSettings(db, 'adel', { premiumSlots: 0 }).error, 'validation');
+  assert.equal(updateSettings(db, 'kian', { commissionRate: 5 }).error, 'forbidden');
   assert.equal(updateSettings(db, 'adel', { commissionRate: 80 }).error, 'validation');
-  assert.equal(updateSettings(db, 'adel', { premiumSlots: 2.5 }).error, 'validation');
-
-  const fewer = updateSettings(db, 'adel', { premiumSlots: 4 }).db;
-  assert.equal(slotLimit(fewer), 4);
-  assert.equal(premiumSlots(fewer, 'tehran', NOW).total, 4);
-  // Tehran uses 5 places: lowering the limit removes nobody, but nobody new can join.
-  assert.equal(filterTrainers(fewer, { province: 'tehran', premiumOnly: true }, NOW).length, 5);
-  const newcomer = fewer.users.find((u) => u.id === 'th-2');
-  assert.equal(canGoPremium(fewer, newcomer, NOW).reason, 'province_full');
-
-  const more = updateSettings(db, 'adel', { premiumSlots: 9 }).db;
-  assert.equal(canGoPremium(more, more.users.find((u) => u.id === 'th-2'), NOW).ok, true);
-  assert.equal(slotLimit({ users: [], settings: {} }), PREMIUM.slotsPerProvince, 'default when nothing is set');
+  assert.equal(updateSettings(db, 'adel', { commissionRate: 2.5 }).error, 'validation');
+  const changed = updateSettings(db, 'adel', { commissionRate: 12 }).db;
+  assert.equal(changed.settings.commissionRate, 12);
+  assert.equal(platformStats(changed, NOW).commissionRate, 12);
+  assert.equal('premiumSlots' in changed.settings, false);
+  // Tehran already has five featured trainers; one more can join.
+  assert.equal(filterTrainers(db, { province: 'tehran', premiumOnly: true }, NOW).length, 5);
+  assert.equal(canGoPremium(db, db.users.find((u) => u.id === 'th-2'), NOW).ok, true);
 });
 
 test('featured only: the filter keeps just trainers with an active subscription', () => {
@@ -141,6 +135,9 @@ test('migration: a save from release 3 gets the other provinces and the professi
   assert.ok(migrated.payments.some((p) => p.id === 'mine'), 'their own order stays');
   assert.equal(migrated.payments.length, seed.payments.length + 1);
   assert.equal(migrated.users.find((u) => u.id === 'ashkan').name, 'نام من');
-  assert.equal(migrated.settings.premiumSlots, PREMIUM.slotsPerProvince);
+  assert.equal(migrated.settings.commissionRate, 10);
+  assert.equal('premiumSlots' in migrated.settings, false);
+  assert.equal('premiumSlots' in withDefaults({ ...old, settings: { premiumSlots: 3, commissionRate: 15 } }).settings, false, 'the old setting is dropped');
+  assert.equal(withDefaults({ ...old, settings: { premiumSlots: 3, commissionRate: 15 } }).settings.commissionRate, 15);
   assert.equal(withDefaults(migrated).payments.length, migrated.payments.length, 'running it again adds nothing');
 });

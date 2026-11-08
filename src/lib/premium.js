@@ -62,16 +62,6 @@ export function rankTrainers(db, trainers, now = Date.now()) {
 /** Active premium trainers of one province. */
 export const premiumInProvince = (db, province, now = Date.now()) => (province ? db.users.filter((u) => u.province === province && isPremium(u, now)) : []);
 
-/** How many featured places each province has. The admin can change it (db.settings.premiumSlots); there is no waiting list. */
-export const slotLimit = (db) => Math.max(1, Math.round(Number(db.settings?.premiumSlots)) || PREMIUM.slotsPerProvince);
-
-/** { used, total, left } featured places in a province. */
-export function premiumSlots(db, province, now = Date.now()) {
-  const used = premiumInProvince(db, province, now).length;
-  const total = slotLimit(db);
-  return { used, total, left: Math.max(0, total - used) };
-}
-
 /**
  * Time-based premium events that need a notification, found when the app opens (and now and then while it stays open):
  * a heads-up in the last days, and a note when the subscription ended. Each is sent once per subscription (flags live
@@ -123,7 +113,6 @@ export function canGoPremium(db, trainer, now = Date.now()) {
   if (!trainer.province) return { ok: false, reason: 'no_province' };
   const active = isPremium(trainer, now);
   if (active && premiumDaysLeft(trainer, now) > PREMIUM.renewWindowDays) return { ok: false, reason: 'already_active' };
-  if (!active && premiumSlots(db, trainer.province, now).left === 0) return { ok: false, reason: 'province_full' };
   return { ok: true };
 }
 
