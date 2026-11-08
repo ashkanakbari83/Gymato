@@ -1,5 +1,5 @@
 // Trainer: manage general programs (publish, edit, unpublish, delete) and decks.
-// Buyers are listed as customers; they are not coaching clients.
+// Only the number of buyers is shown (never their names); they are customers, not coaching clients.
 import { Eye, EyeOff, Pencil, Plus, Trash2 } from 'lucide-react';
 import ProgramListing from '../components/marketplace/ProgramListing.jsx';
 import Badge from '../components/ui/Badge.jsx';
@@ -11,13 +11,13 @@ import { getBuyers, getOwnPrograms } from '../lib/marketplace.js';
 import { CalendarDays } from 'lucide-react';
 
 function Buyers({ programId }) {
-  const { db, lang, t } = useApp();
+  const { db, t } = useApp();
   const buyers = getBuyers(db, programId);
   const saved = db.freeLibrary.filter((e) => e.programId === programId).length;
   if (!buyers.length && !saved) return null;
   return (
     <p className="muted buyers">
-      {buyers.length > 0 && t('programs.buyers', { n: num(buyers.length), names: buyers.map((b) => b.name).join(lang === 'fa' ? '، ' : ', ') })}
+      {buyers.length > 0 && t('programs.buyers', { n: num(buyers.length) })}
       {saved > 0 && t('programs.savedBy', { n: num(saved) })}
     </p>
   );

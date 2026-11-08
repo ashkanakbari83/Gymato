@@ -62,6 +62,12 @@ const normalizePayment = ({ confirmedAt, ...payment }) => ({
 /** Collections whose sample rows (release 4) are added by id to saves from before. */
 const SEEDED_COLLECTIONS = ['requests', 'subscriptions', 'conversations', 'messages', 'customPrograms', 'payments', 'events', 'notifications'];
 
+/** Only the settings that exist today, with their defaults (an old `premiumSlots` from the first admin version is dropped: there is no limit on featured places). */
+function normalizeSettings(saved) {
+  const { commissionRate } = saved ?? {};
+  return { ...DEFAULT_SETTINGS, ...(Number.isFinite(commissionRate) ? { commissionRate } : {}) };
+}
+
 function addNewSeedContent(state) {
   if ((state.seedRelease ?? 1) >= SEED_RELEASE) return state;
   const seed = createSeedState();
@@ -86,7 +92,7 @@ export const withDefaults = (raw) => {
     ...Object.fromEntries(ADDED_COLLECTIONS.map((key) => [key, []])),
     ...state,
     payments: (state.payments ?? []).map(normalizePayment),
-    settings: { ...DEFAULT_SETTINGS, ...(state.settings ?? {}) },
+    settings: normalizeSettings(state.settings),
     feedback: { ...DEFAULT_FEEDBACK, ...(state.feedback ?? {}) }, // sound / vibration / keep-awake preferences
   };
 };

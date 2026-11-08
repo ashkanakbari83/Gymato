@@ -278,7 +278,7 @@ const programs = {
   'programs.myTitle': ['برنامه‌های من', 'My programs'],
   'programs.newGeneral': ['برنامه عمومی جدید', 'New general program'],
   'programs.generalHelp': ['برنامه‌های عمومی‌ت رو منتشر کن تا هر ورزشکاری بتونه رایگان یا با خرید بهشون برسه. خرید برنامه‌ی عمومی، مربی‌گری شخصی حساب نمی‌شه.', 'Publish general programs any athlete can get for free or by buying. Buying a general program does not create personal coaching.'],
-  'programs.buyers': ['خریداران ({n}): {names}. ', 'Buyers ({n}): {names}. '],
+  'programs.buyers': ['{n} نفر خریدن. ', '{n} bought this. '],
   'programs.savedBy': ['{n} نفر اینو تو کتابخونه‌شون گذاشتن.', 'Saved by {n} athlete(s).'],
   'programs.emptyTrainerTitle': ['هنوز برنامه‌ی عمومی نساختی', 'No general programs yet'],
   'programs.emptyTrainerText': ['اولین برنامه‌ت رو بساز و منتشرش کن.', 'Create and publish your first program.'],
