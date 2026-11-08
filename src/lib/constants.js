@@ -6,7 +6,7 @@ export const LEGACY_STORAGE_KEY = 'jimato:state:v4';
 export const ONBOARDING_KEY = 'jimato:onboarding:v2';
 export const STATE_VERSION = 6;
 /** Bumped when the starter exercises / programs grow; saves from an older release get the new ones added (see withDefaults). */
-export const SEED_RELEASE = 3;
+export const SEED_RELEASE = 4;
 
 export const DEFAULT_FREE_WORKOUT = ['pushup', 'squat'];
 export const DAY_MS = 86400000;
@@ -36,6 +36,8 @@ export const PAYMENT_KIND = { GENERAL: 'general_purchase', COACHING: 'coaching_i
  * figure); `listPrice` is only the struck-through "before" price shown next to it.
  */
 export const PREMIUM = { price: 90000, listPrice: 200000, days: 30, slotsPerProvince: 6, renewWindowDays: 7 };
+/** Platform settings the admin can change (db.settings). `premiumSlots`: featured places per province; `commissionRate`: percent the platform keeps of coaching and program sales (shown as an estimate in the admin panel). */
+export const DEFAULT_SETTINGS = { premiumSlots: PREMIUM.slotsPerProvince, commissionRate: 10 };
 export const SUBSCRIPTION_STATUS = { PENDING: 'pending_payment', ACTIVE: 'active', EXPIRED: 'expired', CANCELLED: 'cancelled' };
 
 /** What an athlete sees for one coaching relationship; derived by requestPhase(). */

@@ -399,3 +399,26 @@
 .premium-promo span { flex: 1; min-width: 0; }
 .quiet-link { justify-self: center; color: var(--mu); }
 .premium-ribbon em { margin-inline-start: auto; font-style: normal; font-weight: 600; opacity: 0.85; }
+
+.chips .chip-premium { display: inline-flex; align-items: center; gap: 4px; color: var(--accent-ink); border-color: color-mix(in srgb, var(--accent-glow) 55%, var(--line)); }
+.chips .chip-premium.on { color: #fff; background: var(--ink); border-color: var(--ink); }
+.chips .chip-premium.on svg { color: #ff8a4d; }
+
+/* ---- Admin panel ---- */
+.admin-note { margin: 0; font-size: 13px; }
+.admin-setting { display: grid; gap: 10px; padding: 12px 0; }
+.admin-setting + .admin-setting { border-top: 1px solid var(--line); }
+.admin-setting > div:first-child { display: grid; gap: 2px; }
+.admin-setting small { color: var(--mu); font-size: 12px; line-height: 1.6; }
+.admin-slots { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--accent-ink); }
+.admin-trainer { width: 100%; text-align: start; }
+.admin-rank { flex: none; width: 22px; text-align: center; color: var(--mu); font-size: 13px; }
+.admin-crown { color: var(--accent-ink); vertical-align: -1px; }
+.admin-bars .admin-bar { display: flex; flex-direction: column; width: 100%; max-width: 38px; border-radius: 6px; overflow: hidden; background: var(--soft); }
+.admin-bar i { display: block; min-height: 0; }
+.admin-bar i.volume, .dot.volume { background: var(--accent-fill); }
+.admin-bar i.premium, .dot.premium { background: var(--ink); }
+.admin-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px 0 0; font-size: 12px; }
+.admin-legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-start: 6px; }
+.admin-legend .dot:first-child { margin-inline-start: 0; }
+.admin-page .chips { margin-bottom: 8px; }

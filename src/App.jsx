@@ -9,6 +9,7 @@ import Toast from './components/ui/Toast.jsx';
 import { AppProvider, useApp } from './context/AppContext.jsx';
 import { useDeepLink } from './hooks/useDeepLink.js';
 import { useDeviceNotifications } from './hooks/useDeviceNotifications.js';
+import { usePremiumReminders } from './hooks/usePremiumReminders.js';
 import { useOnboardingDialog } from './hooks/useOnboardingDialog.js';
 import ModalHost from './modals/ModalHost.jsx';
 
@@ -21,6 +22,7 @@ const ClientsPage = page(() => import('./pages/ClientsPage.jsx'));
 const ExercisesPage = page(() => import('./pages/ExercisesPage.jsx'));
 const NutritionPage = page(() => import('./pages/NutritionPage.jsx'));
 const PremiumPage = page(() => import('./pages/PremiumPage.jsx'));
+const AdminPage = page(() => import('./pages/AdminPage.jsx'));
 const InsightsPage = page(() => import('./pages/InsightsPage.jsx'));
 const ProfilePage = page(() => import('./pages/ProfilePage.jsx'));
 const ProgressPage = page(() => import('./pages/ProgressPage.jsx'));
@@ -45,6 +47,7 @@ const PAGES = {
   settings: SettingsPage,
   nutrition: NutritionPage,
   premium: PremiumPage,
+  admin: AdminPage,
 };
 
 function Shell() {
@@ -52,6 +55,7 @@ function Shell() {
   const Page = PAGES[page];
   useDeepLink();
   useDeviceNotifications();
+  usePremiumReminders();
   useOnboardingDialog();
   useEffect(() => {
     if (!db.signedIn) return undefined;

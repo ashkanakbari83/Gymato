@@ -11,10 +11,10 @@ import { loadState } from '../storage.js';
 const must = (r) => { assert.equal(r.ok, true, `expected ok, got ${r.error} ${JSON.stringify(r.fields ?? {})}`); return r; };
 const form = { name: 'سارا', phone: '09121234567', password: 'secret1', role: 'athlete', province: '', city: '', goal: 'fitness', level: 'beginner' };
 
-test('only the four starter accounts can sign in, and all of them are admins with admin / admin', () => {
+test('only the five starter accounts can sign in, and all of them are admins with admin / admin', () => {
   const db = createSeedState();
   const accounts = db.users.filter(hasAccount);
-  assert.deepEqual(accounts.map((u) => u.name), ['اشکان', 'عادل', 'بردیا', 'محمد']);
+  assert.deepEqual(accounts.map((u) => u.name), ['اشکان', 'عادل', 'بردیا', 'محمد', 'کامران']);
   for (const user of accounts) {
     assert.equal(user.isAdmin, true);
     assert.equal(user.username, 'admin');
@@ -25,10 +25,10 @@ test('only the four starter accounts can sign in, and all of them are admins wit
   assert.equal(db.signedIn, false, 'the app starts signed out');
 });
 
-test('admin / admin matches all four accounts (the person picks one); wrong passwords match none', () => {
+test('admin / admin matches all five accounts (the person picks one); wrong passwords match none', () => {
   const db = createSeedState();
-  assert.equal(findAccounts(db, 'admin', 'admin').length, 4);
-  assert.equal(findAccounts(db, ' ADMIN ', 'admin').length, 4, 'username ignores case and spaces');
+  assert.equal(findAccounts(db, 'admin', 'admin').length, 5);
+  assert.equal(findAccounts(db, ' ADMIN ', 'admin').length, 5, 'username ignores case and spaces');
   assert.equal(findAccounts(db, 'admin', 'Admin').length, 0, 'password is case sensitive');
   assert.equal(findAccounts(db, 'admin', '').length, 0);
   assert.equal(findAccounts(db, '', 'admin').length, 0);
@@ -108,8 +108,9 @@ test('every review, like and program points at someone who exists', () => {
   const db = createSeedState();
   const users = new Set(db.users.map((u) => u.id));
   const programs = new Set(db.programs.map((p) => p.id));
+  const requests = new Set(db.requests.map((r) => r.id));
   const exercises = new Set(db.exercises.map((e) => e.id));
-  for (const r of db.reviews) assert.ok(users.has(r.athleteId) && users.has(r.trainerId) && programs.has(r.targetId), r.id);
+  for (const r of db.reviews) assert.ok(users.has(r.athleteId) && users.has(r.trainerId) && (r.targetKind === 'coaching' ? requests : programs).has(r.targetId), r.id);
   for (const l of db.likes) assert.ok(users.has(l.athleteId) && users.has(l.trainerId) && programs.has(l.programId), l.id);
   for (const p of db.programs) {
     assert.ok(users.has(p.ownerId), p.id);

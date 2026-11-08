@@ -27,7 +27,7 @@ export default function TrainerHome() {
     <div className="stack desk-grid">
       <GettingStarted
         steps={[
-          { id: 'profile', title: t('guide.trainer.profile'), text: t('guide.trainer.profile.text'), actionLabel: t('guide.trainer.profile.cta'), onAction: () => setPage('profile', { from: 'guide' }), done: Boolean(user.avatar && user.bio) },
+          { id: 'profile', title: t('guide.trainer.profile'), text: t('guide.trainer.profile.text'), actionLabel: t('guide.trainer.profile.cta'), onAction: () => setPage('profile', { from: 'guide' }), done: Boolean(user.bio && (user.avatar || user.resume?.length)) },
           { id: 'program', title: t('guide.trainer.program'), text: t('guide.trainer.program.text'), actionLabel: t('guide.trainer.program.cta'), onAction: () => setPage('programs'), done: published > 0 },
           { id: 'share', title: t('guide.trainer.share'), text: t('guide.trainer.share.text'), actionLabel: t('guide.trainer.share.cta'), onAction: () => openModal({ type: 'share', kind: 'trainer', id: user.id }),
             done: db.requests.some((r) => r.trainerId === user.id) },

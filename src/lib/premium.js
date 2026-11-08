@@ -5,6 +5,7 @@
 // (their ratings and how many people wrote one) and how many athletes the trainer actually worked with or sold to.
 import { DAY_MS, PAYMENT_KIND, PAYMENT_STATUS, PREMIUM } from './constants.js';
 import { getTrainerReviews, ratingOf } from './analytics.js';
+import { hasAccount } from './auth.js';
 
 /** How much each part counts toward the 0-100 score, and where it stops growing. */
 export const SCORE_PARTS = [
@@ -61,11 +62,47 @@ export function rankTrainers(db, trainers, now = Date.now()) {
 /** Active premium trainers of one province. */
 export const premiumInProvince = (db, province, now = Date.now()) => (province ? db.users.filter((u) => u.province === province && isPremium(u, now)) : []);
 
+/** How many featured places each province has. The admin can change it (db.settings.premiumSlots); there is no waiting list. */
+export const slotLimit = (db) => Math.max(1, Math.round(Number(db.settings?.premiumSlots)) || PREMIUM.slotsPerProvince);
+
 /** { used, total, left } featured places in a province. */
 export function premiumSlots(db, province, now = Date.now()) {
   const used = premiumInProvince(db, province, now).length;
-  return { used, total: PREMIUM.slotsPerProvince, left: Math.max(0, PREMIUM.slotsPerProvince - used) };
+  const total = slotLimit(db);
+  return { used, total, left: Math.max(0, total - used) };
 }
+
+/**
+ * Time-based premium events that need a notification, found when the app opens (and now and then while it stays open):
+ * a heads-up in the last days, and a note when the subscription ended. Each is sent once per subscription (flags live
+ * on `user.premium`; a renewal writes a new object, so the flags start over). Returns a state patch, or null when
+ * nothing changed.
+ */
+export function reconcilePremium(db, now = Date.now()) {
+  let notifications = db.notifications;
+  let changed = false;
+  const users = db.users.map((user) => {
+    if (user.role !== 'coach' || !user.premium?.until || !hasAccount(user)) return user; // sample trainers have no account to notify
+    const left = premiumDaysLeft(user, now);
+    const flags = {};
+    if (left > 0 && left <= PREMIUM.renewWindowDays && !user.premium.notifiedSoon) {
+      flags.notifiedSoon = true;
+      notifications = [makeNote(user.id, 'premium_expiring', { n: left }, now), ...notifications];
+    }
+    if (!isPremium(user, now) && !user.premium.notifiedEnded) {
+      flags.notifiedEnded = true;
+      notifications = [makeNote(user.id, 'premium_expired', {}, now), ...notifications];
+    }
+    if (!Object.keys(flags).length) return user;
+    changed = true;
+    return { ...user, premium: { ...user.premium, ...flags } };
+  });
+  return changed ? { users, notifications } : null;
+}
+
+const makeNote = (userId, type, params, now) => ({
+  id: `n-${type}-${userId}-${now}`, userId, type, params, target: { kind: 'page', page: 'premium' }, read: false, createdAt: new Date(now).toISOString(),
+});
 
 /**
  * Where a trainer stands in their province: `rank` among all trainers there today, and `featuredRank`: the place they

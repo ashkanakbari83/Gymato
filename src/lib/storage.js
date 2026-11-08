@@ -1,7 +1,7 @@
 // localStorage persistence. All reads/writes of the app state go through here.
 import { createSeedState } from '../data/seed.js';
 import { DEFAULT_FEEDBACK } from './feedback.js';
-import { LEGACY_STORAGE_KEY, PREVIOUS_STORAGE_KEY, SEED_RELEASE, STATE_VERSION, STORAGE_KEY } from './constants.js';
+import { DEFAULT_SETTINGS, LEGACY_STORAGE_KEY, PREVIOUS_STORAGE_KEY, SEED_RELEASE, STATE_VERSION, STORAGE_KEY } from './constants.js';
 
 const readJson = (key) => {
   try {
@@ -59,6 +59,9 @@ const normalizePayment = ({ confirmedAt, ...payment }) => ({
  * Saves from before the abs release lack the new starter exercises and programs. Add whatever is missing by id
  * (never overwrite or re-add anything the person already has), once per release.
  */
+/** Collections whose sample rows (release 4) are added by id to saves from before. */
+const SEEDED_COLLECTIONS = ['requests', 'subscriptions', 'conversations', 'messages', 'customPrograms', 'payments', 'events', 'notifications'];
+
 function addNewSeedContent(state) {
   if ((state.seedRelease ?? 1) >= SEED_RELEASE) return state;
   const seed = createSeedState();
@@ -72,6 +75,8 @@ function addNewSeedContent(state) {
     users: [...(state.users ?? []), ...missing(state.users ?? [], seed.users)],
     likes: [...(state.likes ?? []), ...missing(state.likes ?? [], seed.likes)],
     reviews: [...(state.reviews ?? []), ...missing(state.reviews ?? [], seed.reviews)],
+    // The other provinces and the professional trainer (release 4): their clients, income, chats and views arrive once, by id.
+    ...Object.fromEntries(SEEDED_COLLECTIONS.map((key) => [key, [...(state[key] ?? []), ...missing(state[key] ?? [], seed[key])]])),
   };
 }
 
@@ -81,6 +86,7 @@ export const withDefaults = (raw) => {
     ...Object.fromEntries(ADDED_COLLECTIONS.map((key) => [key, []])),
     ...state,
     payments: (state.payments ?? []).map(normalizePayment),
+    settings: { ...DEFAULT_SETTINGS, ...(state.settings ?? {}) },
     feedback: { ...DEFAULT_FEEDBACK, ...(state.feedback ?? {}) }, // sound / vibration / keep-awake preferences
   };
 };

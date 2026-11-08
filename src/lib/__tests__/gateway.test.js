@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { GatewayError, getGateway, httpGateway, setGateway, unconfiguredGateway } from '../payments/gateway.js';
+import { SEED_RELEASE } from '../constants.js';
 import { withDefaults } from '../storage.js';
 
 const order = { id: 'o1', kind: 'coaching_initial', targetId: 's1', gatewayRef: 'R1', amount: 800000 };
@@ -43,7 +44,7 @@ test('a verification answer must be about this order and have a known status and
 });
 
 test('saved orders from before the rework are read as pending / paid with their dates kept', () => {
-  const state = withDefaults({ payments: [
+  const state = withDefaults({ seedRelease: SEED_RELEASE, payments: [
     { id: 'a', status: 'initiated', confirmedAt: null },
     { id: 'b', status: 'confirmed', confirmedAt: '2026-10-01T00:00:00.000Z' },
     { id: 'c', status: 'failed', confirmedAt: null },

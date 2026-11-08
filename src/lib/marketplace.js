@@ -1,4 +1,5 @@
 // Marketplace selectors: trainer discovery, athlete library and trainer dashboards.
+import { isPremium } from './premium.js';
 import { PAYMENT_KIND, PAYMENT_STATUS, PHASE, PROGRAM_STATUS, DAY_MS } from './constants.js';
 import { getCustomProgram, getSubscription, requestPhase, subscriptionState } from './access.js';
 
@@ -10,7 +11,7 @@ export const getPublishedPrograms = (db, trainerId) =>
 export const getOwnPrograms = (db, trainerId) => db.programs.filter((p) => p.ownerId === trainerId);
 
 /** Trainer discovery. Filters are all optional; `focus` matches the trainer's specialties. */
-export function filterTrainers(db, { query = '', province = '', city = '', focus = '', coachingOnly = false } = {}) {
+export function filterTrainers(db, { query = '', province = '', city = '', focus = '', coachingOnly = false, premiumOnly = false } = {}, now = Date.now()) {
   const q = query.trim().toLowerCase();
   return getCoaches(db).filter(
     (trainer) =>
@@ -18,6 +19,7 @@ export function filterTrainers(db, { query = '', province = '', city = '', focus
       (!city || trainer.city === city) &&
       (!focus || trainer.specialties?.includes(focus)) &&
       (!coachingOnly || trainer.offersCoaching) &&
+      (!premiumOnly || isPremium(trainer, now)) &&
       (!q || trainer.name.toLowerCase().includes(q) || (trainer.bio ?? '').toLowerCase().includes(q)),
   );
 }

@@ -1,6 +1,7 @@
 // Checkout. Shows the order (price taken from the trainer's offer) and its payment status.
 // The "Pay" button sends the person to the payment provider through the payment server; nothing here can mark an order
 // as paid by itself. If no payment server is configured, the order is shown as pending and the button is disabled.
+import PremiumMark from '../components/marketplace/PremiumMark.jsx';
 import { AlertTriangle, CreditCard, RefreshCw } from 'lucide-react';
 import PaymentStatus from '../components/payments/PaymentStatus.jsx';
 import Sheet from '../components/ui/Sheet.jsx';
@@ -53,7 +54,7 @@ export default function CheckoutModal({ paymentId }) {
       <dl className="detail-list">
         <div><dt>{t('pay.item')}</dt><dd>{program?.title}</dd></div>
         <div><dt>{t('pay.type')}</dt><dd>{t(`pay.kind.${payment.kind}`)}</dd></div>
-        {!isPremium && <div><dt>{t('pay.trainer')}</dt><dd>{trainer?.name}</dd></div>}
+        {!isPremium && <div><dt>{t('pay.trainer')}</dt><dd>{trainer?.name} {trainer && <PremiumMark trainer={trainer} />}</dd></div>}
         {subscription && <div><dt>{t('pay.duration')}</dt><dd>{t('co.forDays', { n: num(subscription.durationDays) })}</dd></div>}
         <div className="total"><dt>{t('pay.total')}</dt><dd>{formatPrice(payment.amount, t)}</dd></div>
       </dl>
