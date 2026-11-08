@@ -422,3 +422,40 @@
 .admin-legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-start: 6px; }
 .admin-legend .dot:first-child { margin-inline-start: 0; }
 .admin-page .chips { margin-bottom: 8px; }
+
+/* ---- Trainer: client cards (requests, waiting for payment, active, ended) ---- */
+.list > .client-card + .client-card { margin-top: 10px; }
+.client-card {
+  position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px 12px;
+  width: 100%; padding: 12px 14px 12px 14px; text-align: start; font: inherit; color: inherit;
+  background: var(--soft); border: 1px solid transparent; border-radius: 18px; cursor: pointer;
+  transition: background .15s, border-color .15s, transform .15s;
+}
+.client-card::before { content: ''; position: absolute; inset-block: 12px; inset-inline-start: 0; width: 4px; border-radius: 0 4px 4px 0; background: var(--line-strong); }
+[dir='rtl'] .client-card::before { border-radius: 4px 0 0 4px; }
+.client-card.is-pending::before, .client-card.is-awaiting_payment::before { background: var(--star); }
+.client-card.is-preparing::before { background: var(--info); }
+.client-card.is-active::before { background: var(--ok); }
+.client-card.is-expired::before { background: var(--red); opacity: .55; }
+.client-card:hover { border-color: var(--line-strong); }
+.client-card:active { transform: scale(.992); }
+.client-card:focus-visible { outline: 3px solid var(--accent-fill); outline-offset: 2px; }
+.client-card .avatar { width: 44px; height: 44px; }
+.cc-main { display: grid; gap: 2px; min-width: 0; }
+.cc-main b, .cc-main small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cc-main b { font-size: 15px; }
+.cc-main small { color: var(--mu); font-size: 12.5px; }
+.client-card .badge { white-space: nowrap; }
+.cc-foot { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; min-width: 0; overflow: hidden; padding-top: 10px; border-top: 1px dashed var(--line-strong); font-size: 12.5px; }
+.cc-fact { display: inline-flex; align-items: center; gap: 5px; flex: none; color: var(--mu); white-space: nowrap; }
+.cc-fact svg { flex: none; }
+.cc-fact.warn { color: var(--accent-ink); font-weight: 600; }
+.cc-meter { flex: 1 1 60px; min-width: 40px; height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.cc-meter i { display: block; height: 100%; border-radius: inherit; background: var(--ok); }
+.client-card.is-active .cc-meter i { background: var(--ok); }
+.client-card { background: var(--card); border-color: var(--line); box-shadow: 0 1px 0 rgba(0, 0, 0, .03); }
+.client-card.is-pending, .client-card.is-awaiting_payment { background: color-mix(in srgb, var(--star) 8%, var(--card)); border-color: color-mix(in srgb, var(--star) 28%, var(--line)); }
+.client-card.is-active { background: color-mix(in srgb, var(--ok) 6%, var(--card)); border-color: color-mix(in srgb, var(--ok) 22%, var(--line)); }
+.client-card.is-preparing { background: color-mix(in srgb, var(--info) 6%, var(--card)); border-color: color-mix(in srgb, var(--info) 22%, var(--line)); }
+.client-card.is-expired { background: var(--soft); }
+.cc-foot { border-top-color: color-mix(in srgb, var(--ink) 14%, transparent); }
