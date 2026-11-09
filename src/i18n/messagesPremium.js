@@ -22,6 +22,7 @@ export const premium = {
   'trainers.premiumGroup': ['مربیان ویژه', 'Featured trainers'],
   'trainers.premiumGroupHint': ['اشتراک ویژه دارن؛ بینشون هم بر اساس امتیاز، نظرها و تعداد ورزشکار مرتب شدن.', 'They have a Featured subscription; among themselves they are ordered by score, reviews and athletes.'],
   'trainers.allGroup': ['همهٔ مربی‌ها', 'All trainers'],
+  'trainers.showMore': ['نمایش بیشتر ({left} مربی دیگه)', 'Show more ({left} more trainers)'],
 
   'pay.kind.premium_subscription': ['اشتراک ویژهٔ مربی (یک ماه)', 'Featured trainer subscription (1 month)'],
   'pay.premiumItem': ['اشتراک ویژه · ۳۰ روز', 'Featured subscription · 30 days'],

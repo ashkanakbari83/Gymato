@@ -459,3 +459,6 @@
 .client-card.is-preparing { background: color-mix(in srgb, var(--info) 6%, var(--card)); border-color: color-mix(in srgb, var(--info) 22%, var(--line)); }
 .client-card.is-expired { background: var(--soft); }
 .cc-foot { border-top-color: color-mix(in srgb, var(--ink) 14%, transparent); }
+
+/* ---- Performance: rows far below the fold skip layout and paint until they scroll near (trainer cards are left out: premium cards glow past their box). ---- */
+.client-card, .list > .row { content-visibility: auto; contain-intrinsic-size: auto 76px; }

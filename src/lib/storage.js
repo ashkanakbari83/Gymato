@@ -1,7 +1,21 @@
 // localStorage persistence. All reads/writes of the app state go through here.
-import { createSeedState } from '../data/seed.js';
 import { DEFAULT_FEEDBACK } from './feedback.js';
 import { DEFAULT_SETTINGS, LEGACY_STORAGE_KEY, PREVIOUS_STORAGE_KEY, SEED_RELEASE, STATE_VERSION, STORAGE_KEY } from './constants.js';
+
+/**
+ * The starter data (people, programs, sample business) is big and is only needed on a first run, for a migration, or
+ * when an older backup is restored. So it is NOT bundled with the app's first load: `ensureSeed()` fetches it on
+ * demand and everything below reads it through `createSeedState()`. A normal start (an up-to-date save) never loads it.
+ */
+let seedFactory = null;
+export const provideSeed = (factory) => { seedFactory = factory; };
+export async function ensureSeed() {
+  if (!seedFactory) provideSeed((await import('../data/seed.js')).createSeedState);
+}
+const createSeedState = () => {
+  if (!seedFactory) throw new Error('Starter data is not loaded yet: call ensureSeed() first.');
+  return seedFactory();
+};
 
 const readJson = (key) => {
   try {
@@ -97,6 +111,18 @@ export const withDefaults = (raw) => {
   };
 };
 
+/** True when starting needs the starter data: nothing saved yet, an older format, or an older seed release. */
+// A first run or an upgrade has to be written once; a plain start already matches what is saved, so it skips that write.
+let bootNeedsSave = true;
+let firstSave = true;
+let storedBefore = false;
+export function needsSeed() {
+  const saved = readJson(STORAGE_KEY);
+  bootNeedsSave = !(saved?.version === STATE_VERSION && saved.users && saved.requests && (saved.seedRelease ?? 1) >= SEED_RELEASE);
+  storedBefore = !bootNeedsSave;
+  return bootNeedsSave;
+}
+
 export function loadState() {
   const saved = readJson(STORAGE_KEY);
   if (saved?.version === STATE_VERSION && saved.users && saved.requests) return withDefaults(saved);
@@ -108,5 +134,50 @@ export function loadState() {
 }
 
 export const saveState = (state) => localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+
+/**
+ * Saving writes the whole state (hundreds of KB), which blocks the page for a moment. So changes are collected and
+ * written once, shortly after the last one (`SAVE_DELAY`), and always right away when the page is hidden or closed.
+ * A burst of changes (typing, a workout timer, several actions in a row) costs one write instead of many.
+ */
+const SAVE_DELAY = 250;
+let pending = null;
+let timer = 0;
+export function flushState() {
+  clearTimeout(timer);
+  timer = 0;
+  if (!pending) return;
+  const state = pending;
+  pending = null;
+  try {
+    // The saved data was wiped from outside (another tab, site data cleared) after we had written it: do not bring it back.
+    if (storedBefore && localStorage.getItem(STORAGE_KEY) === null) return;
+    saveState(state);
+    storedBefore = true;
+  } catch (error) {
+    console.error('Could not save the app data', error); // storage full or blocked; the app keeps working from memory
+  }
+}
+export function scheduleSave(state) {
+  if (firstSave) {
+    firstSave = false;
+    if (!bootNeedsSave) return; // the state on screen is the state that was just read
+    pending = state;
+    flushState();
+    return;
+  }
+  pending = state;
+  clearTimeout(timer);
+  timer = setTimeout(flushState, SAVE_DELAY);
+}
+if (typeof window !== 'undefined') {
+  window.addEventListener('pagehide', flushState);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushState(); });
+}
 /** Reset: also drops older saves, otherwise they would be migrated straight back in. */
-export const clearState = () => [STORAGE_KEY, PREVIOUS_STORAGE_KEY, LEGACY_STORAGE_KEY].forEach((key) => localStorage.removeItem(key));
+export const clearState = () => {
+  clearTimeout(timer); // a save still waiting must not bring the data back when the page reloads
+  timer = 0;
+  pending = null;
+  [STORAGE_KEY, PREVIOUS_STORAGE_KEY, LEGACY_STORAGE_KEY].forEach((key) => localStorage.removeItem(key));
+};

@@ -15,7 +15,7 @@ import { useToast } from '../hooks/useToast.js';
 import { useWorkoutActions } from '../hooks/useWorkoutActions.js';
 import { translate } from '../i18n/index.js';
 import { setFormatLanguage } from '../lib/format.js';
-import { loadState, saveState } from '../lib/storage.js';
+import { loadState, scheduleSave } from '../lib/storage.js';
 
 const AppContext = createContext(null);
 
@@ -40,7 +40,7 @@ export function AppProvider({ children, initial = {} }) {
   setFormatLanguage(lang); // digits/dates/currency follow the language (read during render)
   const t = useCallback((key, params) => translate(lang, key, params), [lang]);
 
-  useEffect(() => saveState({ ...db, activeWorkout: workout }), [db, workout]);
+  useEffect(() => scheduleSave({ ...db, activeWorkout: workout }), [db, workout]);
   useTheme(db.theme, lang);
 
   // Domain functions are pure (db, ...args) => result. `dispatch` runs one against the latest db and

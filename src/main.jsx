@@ -3,6 +3,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
 import { initPwa } from './lib/pwa.js';
+import { ensureSeed, needsSeed } from './lib/storage.js';
 import '@fontsource/vazirmatn/arabic-400.css';
 import '@fontsource/vazirmatn/arabic-600.css';
 import '@fontsource/vazirmatn/arabic-700.css';
@@ -28,8 +29,12 @@ import './styles/calm.css';
 
 initPwa();
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+// The big starter data is fetched only on a first run or when an older save has to be upgraded.
+(async () => {
+  if (needsSeed()) await ensureSeed();
+  createRoot(document.getElementById('root')).render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  );
+})();
