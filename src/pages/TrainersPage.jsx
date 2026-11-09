@@ -1,6 +1,6 @@
 // Trainer discovery: search plus location / specialty filters.
 import { Crown, Search, SlidersHorizontal } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import TrainerCard from '../components/marketplace/TrainerCard.jsx';
 import Empty from '../components/ui/Empty.jsx';
 import LocationFields from '../components/ui/LocationFields.jsx';
@@ -10,6 +10,8 @@ import { num } from '../lib/format.js';
 import { filterTrainers } from '../lib/marketplace.js';
 import { isPremium, rankTrainers } from '../lib/premium.js';
 
+// The list shows this many trainers at first, then this many more per tap: 100+ cards at once cost real time on slow phones.
+const PAGE_SIZE = 24;
 const NO_FILTERS = { query: '', province: '', city: '', focus: '', coachingOnly: false, premiumOnly: false };
 
 export default function TrainersPage() {
@@ -18,8 +20,13 @@ export default function TrainersPage() {
   const [filters, setFilters] = useState({ ...NO_FILTERS, province: pageParams?.province ?? '' });
   // Featured (Premium) trainers first as their own labelled group; inside each group the best score first.
   const trainers = useMemo(() => rankTrainers(db, filterTrainers(db, filters)), [db, filters]);
-  const featured = trainers.filter((trainer) => isPremium(trainer));
-  const others = trainers.filter((trainer) => !isPremium(trainer));
+  const [shown, setShown] = useState(PAGE_SIZE);
+  // A new search or filter starts again from the top of the list.
+  useEffect(() => setShown(PAGE_SIZE), [filters]);
+  // Featured first, so paging never cuts a featured trainer off: only the cards that are on screen get built.
+  const visible = trainers.slice(0, shown);
+  const featured = visible.filter((trainer) => isPremium(trainer));
+  const others = visible.filter((trainer) => !isPremium(trainer));
   const [open, setOpen] = useState(Boolean(pageParams?.province));
   const set = (patch) => setFilters((f) => ({ ...f, ...patch }));
   // The extra filters stay folded away; the button says how many of them are on, so nothing hides silently.
@@ -82,6 +89,12 @@ export default function TrainersPage() {
           <TrainerCard key={trainer.id} trainer={trainer} onOpen={() => go('trainer', { trainerId: trainer.id })} />
         ))}
       </div>
+
+      {trainers.length > shown && (
+        <button className="btn ghost wide" onClick={() => setShown((n) => n + PAGE_SIZE)}>
+          {t('trainers.showMore', { left: num(trainers.length - shown) })}
+        </button>
+      )}
 
       {!trainers.length && (
         <Empty icon={Search} title={t('trainers.emptyTitle')} text={t('trainers.emptyText')} actionLabel={t('common.clearFilters')} onAction={() => setFilters(NO_FILTERS)} />
