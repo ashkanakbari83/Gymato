@@ -817,8 +817,9 @@ const engagement = {
 import { features } from './messagesFeatures.js';
 import { admin } from './messagesAdmin.js';
 import { premium } from './messagesPremium.js';
+import { services } from './messagesServices.js';
 
 export const messages = {
   ...common, ...options, ...statuses, ...home, ...trainers, ...programs, ...coaching, ...payments,
-  ...notifications, ...engagement, ...account, ...exercisesAndPlayer, ...settings, ...features, ...premium, ...admin,
+  ...notifications, ...engagement, ...account, ...exercisesAndPlayer, ...settings, ...features, ...premium, ...admin, ...services,
 };

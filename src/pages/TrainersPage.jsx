@@ -17,7 +17,7 @@ const NO_FILTERS = { query: '', province: '', city: '', focus: '', coachingOnly:
 export default function TrainersPage() {
   const { db, go, pageParams, t } = useApp();
   // A link can open the list already narrowed to a province (the Premium page does).
-  const [filters, setFilters] = useState({ ...NO_FILTERS, province: pageParams?.province ?? '' });
+  const [filters, setFilters] = useState({ ...NO_FILTERS, province: pageParams?.province ?? '', premiumOnly: Boolean(pageParams?.premiumOnly) });
   // Featured (Premium) trainers first as their own labelled group; inside each group the best score first.
   const trainers = useMemo(() => rankTrainers(db, filterTrainers(db, filters)), [db, filters]);
   const [shown, setShown] = useState(PAGE_SIZE);

@@ -1,5 +1,6 @@
 // Trainer dashboard: headline numbers and what needs attention (requests, payments, renewals).
 import GettingStarted from '../components/GettingStarted.jsx';
+import ServiceGrid from '../components/home/ServiceGrid.jsx';
 import CoachingRow from '../components/coaching/CoachingRow.jsx';
 import Metrics from '../components/ui/Metrics.jsx';
 import { ArrowForward } from '../components/ui/Arrow.jsx';
@@ -25,6 +26,8 @@ export default function TrainerHome() {
 
   return (
     <div className="stack desk-grid">
+      <ServiceGrid />
+
       <GettingStarted
         steps={[
           { id: 'profile', title: t('guide.trainer.profile'), text: t('guide.trainer.profile.text'), actionLabel: t('guide.trainer.profile.cta'), onAction: () => setPage('profile', { from: 'guide' }), done: Boolean(user.bio && (user.avatar || user.resume?.length)) },
@@ -79,7 +82,6 @@ export default function TrainerHome() {
 
       {!sections.length && <p className="calm-note">{t('home.emptyTitle')}</p>}
 
-      <button className="link quiet-link" onClick={() => setPage('exercises')}>{t('trainer.exercisesLink')} <ArrowForward size={14} /></button>
     </div>
   );
 }

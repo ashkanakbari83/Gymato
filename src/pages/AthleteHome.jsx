@@ -1,16 +1,16 @@
 // Athlete dashboard: today's workout (from a program the athlete may actually use), headline numbers,
 // week streak, items needing attention (payment / pending request) and the last workout.
-import { Droplets, Play, UtensilsCrossed } from 'lucide-react';
+import { Play } from 'lucide-react';
 import Icon3D from '../components/story/Icon3D.jsx';
 import GettingStarted from '../components/GettingStarted.jsx';
+import ServiceGrid from '../components/home/ServiceGrid.jsx';
 import SessionRow from '../components/SessionRow.jsx';
 import Metrics from '../components/ui/Metrics.jsx';
 import { ArrowForward } from '../components/ui/Arrow.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import { canStartProgram } from '../lib/access.js';
 import { sessionsCalories } from '../lib/calories.js';
-import { dailyTarget, dayKey, totalsFor, waterFor, waterGoal } from '../lib/domain/nutrition.js';
-import { groupNumber, num } from '../lib/format.js';
+import { num } from '../lib/format.js';
 import { getAthleteLibrary } from '../lib/marketplace.js';
 import { nextSession } from '../lib/programs.js';
 import { countActiveDays, exerciseName, getCompletedSessions, lastSevenDays } from '../lib/selectors.js';
@@ -26,9 +26,6 @@ export default function AthleteHome() {
   const session = program ? nextSession(program, finished) : null;
   const moves = (session?.items ?? []).map((id) => db.exercises.find((e) => e.id === id)).filter(Boolean);
   const week = lastSevenDays(sessions);
-  const today = dayKey();
-  const eaten = totalsFor(db, user.id, today);
-  const target = dailyTarget(user);
 
   const goToWorkout = () => (workout ? setPage('player') : startWorkout(program, session));
   const attention = [
@@ -36,7 +33,7 @@ export default function AthleteHome() {
     library.pending.length && { key: 'home.pendingRequests', n: library.pending.length },
   ].filter(Boolean);
 
-  // A newcomer sees the first steps (profile, trainer, workout last) before the workout card; once they have trained it moves below it.
+  // The first steps sit right under the service grid; the card hides itself once everything is done or dismissed.
   const guide = (
     <GettingStarted
       steps={[
@@ -50,7 +47,6 @@ export default function AthleteHome() {
 
   return (
     <div className="stack desk-grid">
-      {sessions.length === 0 && guide}
       <section className={`today ${!program && !workout ? 'is-free' : ''}`}>
         <span className="today-art" aria-hidden="true"><Icon3D name={workout ? 'timer' : 'dumbbell'} /></span>
         <small>{workout ? t('home.inProgress') : program ? t('home.todayWorkout') : t('home.freeWorkout')}</small>
@@ -70,7 +66,9 @@ export default function AthleteHome() {
         </button>
       </section>
 
-      {sessions.length > 0 && guide}
+      <ServiceGrid />
+
+      {guide}
 
       {attention.map(({ key, n }) => (
         <button key={key} className="attention" onClick={() => setPage('programs')}>
@@ -78,18 +76,6 @@ export default function AthleteHome() {
           <ArrowForward size={16} />
         </button>
       ))}
-
-      <button className="nutri-card half" onClick={() => setPage('nutrition')}>
-        <span className="nutri-card-icon"><UtensilsCrossed size={20} /></span>
-        <span className="nutri-card-text">
-          <b>{t('nutrition.homeTitle')}</b>
-          <small>
-            {eaten.count || target ? t(target ? 'nutrition.homeLine' : 'nutrition.homeLineNoTarget', { kcal: groupNumber(eaten.kcal), target: target ? groupNumber(target.kcal) : '' }) : t('nutrition.homeEmpty')}
-          </small>
-          <small><Droplets size={13} /> {t('nutrition.homeWater', { n: num(waterFor(db, user.id, today)), goal: num(waterGoal(user)) })}</small>
-        </span>
-        <ArrowForward size={16} />
-      </button>
 
       {/* Before the first workout these would only show zeros and empty dots; the first-steps card says what to do instead. */}
       {/* The numbers and the week belong together: one card, not two. */}
