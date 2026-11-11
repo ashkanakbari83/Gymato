@@ -469,7 +469,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 4px;
-  padding: 16px 8px 12px;
+  padding: 14px 6px 10px;
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 22px;
@@ -477,12 +477,12 @@
 }
 .svc-group { display: grid; gap: 10px; }
 .svc-title { margin: 0; padding-inline: 4px; font-size: 0.95rem; font-weight: 800; color: var(--mu); }
-.svc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px 4px; }
+.svc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 4px; }
 .svc {
   display: grid;
   justify-items: center;
   align-content: start;
-  gap: 8px;
+  gap: 6px;
   min-width: 0;
   padding: 4px 2px;
   background: none;
@@ -500,16 +500,16 @@
   position: relative;
   display: grid;
   place-items: center;
-  width: 58px;
-  height: 58px;
-  border-radius: 18px;
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
   color: #fff;
   background: linear-gradient(160deg, color-mix(in srgb, var(--tone), #fff 14%), var(--tone));
   box-shadow: 0 6px 14px -8px var(--tone);
   transition: transform 0.12s ease;
 }
-.svc.big .svc-icon { width: 64px; height: 64px; border-radius: 20px; }
-.svc-label { max-width: 100%; font-size: 0.82rem; font-weight: 700; line-height: 1.35; text-align: center; overflow-wrap: anywhere; }
+.svc.big .svc-icon { width: 56px; height: 56px; border-radius: 18px; }
+.svc-label { max-width: 100%; font-size: 0.78rem; font-weight: 700; line-height: 1.35; text-align: center; overflow-wrap: anywhere; }
 .svc-badge {
   position: absolute;
   inset-block-start: -7px;

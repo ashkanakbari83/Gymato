@@ -24,7 +24,7 @@ function Tile({ tile, big, onRun }) {
   return (
     <button className={`svc ${big ? 'big' : ''}`} onClick={() => onRun(tile.action)} aria-label={spoken}>
       <span className={`svc-icon tone-${tile.tone}`} aria-hidden="true">
-        <Icon size={big ? 30 : 26} strokeWidth={2} />
+        <Icon size={big ? 26 : 22} strokeWidth={2} />
         {badge && <i className={`svc-badge ${tile.badge.kind}`}>{badge}</i>}
       </span>
       <span className="svc-label" aria-hidden="true">{label}</span>
