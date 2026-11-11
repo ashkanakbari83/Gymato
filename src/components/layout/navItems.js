@@ -14,6 +14,12 @@ const ITEMS = {
 const TRAINER_TABS = ['home', 'clients', 'programs', 'trainers', 'insights'];
 const ATHLETE_TABS = ['home', 'exercises', 'trainers', 'programs', 'progress'];
 
+// The phone dock stays short: the home launcher already reaches everything else (trainers, moves, stats), and the full set remains in the desktop top bar.
+const DOCK_TABS_TRAINER = ['home', 'clients', 'programs'];
+const DOCK_TABS_ATHLETE = ['home', 'programs', 'progress'];
+
+export const getDockItems = (isTrainer) => (isTrainer ? DOCK_TABS_TRAINER : DOCK_TABS_ATHLETE).map((id) => ({ id, icon: ITEMS[id] }));
+
 export const getNavItems = (isTrainer) => (isTrainer ? TRAINER_TABS : ATHLETE_TABS).map((id) => ({ id, icon: ITEMS[id] }));
 
 /** The tab to highlight for a page (a trainer's profile belongs to "trainers", the food log to "home"). */
