@@ -8,9 +8,9 @@ import { num } from '../lib/format.js';
 import { filterExercises } from '../lib/selectors.js';
 
 export default function ExercisesPage() {
-  const { db, update, openModal, t } = useApp();
+  const { db, update, openModal, pageParams, t } = useApp();
   const [query, setQuery] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState(pageParams?.category ?? '');
 
   const categories = useMemo(() => [...new Set(db.exercises.map((e) => e.cat))], [db.exercises]);
   const visible = useMemo(() => filterExercises(db.exercises, query, category), [db.exercises, query, category]);
