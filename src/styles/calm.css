@@ -467,7 +467,7 @@
 .svc-wrap { display: grid; gap: 18px; }
 .svc-main {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(4.6rem, 1fr));
   gap: 4px;
   padding: 14px 6px 10px;
   background: var(--card);
@@ -477,7 +477,7 @@
 }
 .svc-group { display: grid; gap: 10px; }
 .svc-title { margin: 0; padding-inline: 4px; font-size: 0.95rem; font-weight: 800; color: var(--mu); }
-.svc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 4px; }
+.svc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(4.6rem, 1fr)); gap: 12px 4px; } /* columns follow the text size: larger text, fewer columns */
 .svc {
   display: grid;
   justify-items: center;
@@ -509,7 +509,7 @@
   transition: transform 0.12s ease;
 }
 .svc.big .svc-icon { width: 56px; height: 56px; border-radius: 18px; }
-.svc-label { max-width: 100%; font-size: 0.78rem; font-weight: 700; line-height: 1.35; text-align: center; overflow-wrap: anywhere; }
+.svc-label { max-width: 100%; font-size: max(12px, 0.78rem); font-weight: 700; line-height: 1.4; text-align: center; overflow-wrap: break-word; text-wrap: balance; }
 .svc-badge {
   position: absolute;
   inset-block-start: -7px;
@@ -518,7 +518,7 @@
   padding: 1px 6px;
   border: 2px solid var(--card);
   border-radius: 99px;
-  font-size: 0.7rem;
+  font-size: max(12px, 0.7rem);
   font-style: normal;
   font-weight: 800;
   line-height: 1.35;
@@ -541,3 +541,11 @@
   .svc-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
 }
 @media (prefers-reduced-motion: reduce) { .svc-icon { transition: none; } }
+
+/* ---- Phone ergonomics ---- */
+/* No double-tap zoom or tap delay on controls; scrolling inside a sheet never drags the page behind it; a swipe during a workout never pulls the page to refresh. */
+button, a, input, select, textarea, label, summary, [role="button"], [role="tab"] { touch-action: manipulation; }
+.modal-body, .modal-card, .sheet, .modal { overscroll-behavior: contain; }
+.player-screen { overscroll-behavior: none; }
+/* The note that a set was saved sits at the top while a workout runs, so it never covers the Back / Pause / Next buttons. */
+body:has(.player-screen) .toast { bottom: auto; top: calc(64px + env(safe-area-inset-top)); }

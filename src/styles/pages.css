@@ -124,7 +124,7 @@
   background: var(--card);
   border: 1px solid var(--line-strong);
   color: var(--mu);
-  height: var(--control-h);
+  height: max(var(--control-h), 44px);
   border-radius: var(--control-r);
 }
 

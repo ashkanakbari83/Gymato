@@ -27,7 +27,7 @@ export default function ExercisesPage() {
     <section className="stack">
       <div className="search-box">
         <Search size={18} />
-        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('ex.search')} aria-label={t('ex.search')} />
+        <input inputMode="search" enterKeyHint="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('ex.search')} aria-label={t('ex.search')} />
       </div>
 
       <div className="chips">
