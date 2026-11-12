@@ -37,7 +37,7 @@ export default function TrainersPage() {
       <div className="search-row">
         <div className="search-box">
           <Search size={18} />
-          <input value={filters.query} onChange={(e) => set({ query: e.target.value })} placeholder={t('trainers.search')} aria-label={t('trainers.search')} />
+          <input inputMode="search" enterKeyHint="search" value={filters.query} onChange={(e) => set({ query: e.target.value })} placeholder={t('trainers.search')} aria-label={t('trainers.search')} />
         </div>
         <button className={`filter-btn ${open || extra ? 'on' : ''}`} onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label={t('trainers.moreFilters')}>
           <SlidersHorizontal size={18} />

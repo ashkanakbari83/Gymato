@@ -96,7 +96,7 @@ export default function FoodModal({ meal: initialMeal, date }) {
             <>
               <div className="search-box">
                 <Search size={18} />
-                <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('food.search')} aria-label={t('food.search')} />
+                <input inputMode="search" enterKeyHint="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('food.search')} aria-label={t('food.search')} />
               </div>
               {!needle && recent.length > 0 && (
                 <section>
