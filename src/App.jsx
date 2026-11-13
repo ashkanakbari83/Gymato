@@ -11,6 +11,7 @@ import { useDeepLink } from './hooks/useDeepLink.js';
 import { useDeviceNotifications } from './hooks/useDeviceNotifications.js';
 import { usePremiumReminders } from './hooks/usePremiumReminders.js';
 import { useOnboardingDialog } from './hooks/useOnboardingDialog.js';
+import { useTourDialog } from './hooks/useTourDialog.js';
 import ModalHost from './modals/ModalHost.jsx';
 
 // Pages and the player load on first use, so the first screen only downloads what it shows. The service worker caches
@@ -57,6 +58,7 @@ function Shell() {
   useDeviceNotifications();
   usePremiumReminders();
   useOnboardingDialog();
+  useTourDialog();
   useEffect(() => {
     if (!db.signedIn) return undefined;
     const idle = window.requestIdleCallback ?? ((fn) => setTimeout(fn, 1500));

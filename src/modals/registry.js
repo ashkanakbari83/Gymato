@@ -17,6 +17,7 @@ export const MODALS = {
   coaching: modal(() => import('./CoachingModal.jsx')),
   checkout: modal(() => import('./CheckoutModal.jsx')),
   onboarding: modal(() => import('../components/Onboarding.jsx')),
+  tour: modal(() => import('../components/Tour.jsx')),
   'how-to': modal(() => import('../player/HowTo.jsx'), 'HowToModal'),
   'image-viewer': modal(() => import('./ImageViewerModal.jsx')),
 };
