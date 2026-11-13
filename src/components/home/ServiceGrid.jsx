@@ -33,23 +33,23 @@ function Tile({ tile, big, onRun }) {
 }
 
 export default function ServiceGrid() {
-  const { db, user, go, openModal, openGeneralEditor, onboarding, t } = useApp();
+  const { db, user, go, openModal, openGeneralEditor, t } = useApp();
   const { main, groups } = useMemo(() => homeServices(db, user), [db, user]);
 
   const run = (action) => {
     if (action.type === 'page') go(action.page, action.params ?? {});
     else if (action.type === 'modal') openModal(action.modal);
     else if (action.type === 'editor') openGeneralEditor();
-    else if (action.type === 'onboarding') onboarding.reopen();
+    else if (action.type === 'tour') openModal({ type: 'tour' });
   };
 
   return (
     <nav className="svc-wrap" aria-label={t('svc.aria')}>
-      <div className="svc-main">
+      <div className="svc-main" data-tour="main">
         {main.map((tile) => <Tile key={tile.id} tile={tile} big onRun={run} />)}
       </div>
       {groups.map((group) => (
-        <section className="svc-group" key={group.id}>
+        <section className="svc-group" key={group.id} data-tour={group.id === 'tools' ? 'tools' : undefined}>
           <h2 className="svc-title">{t(group.title)}</h2>
           <div className="svc-grid">
             {group.items.map((tile) => <Tile key={tile.id} tile={tile} onRun={run} />)}

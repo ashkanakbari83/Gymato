@@ -549,3 +549,35 @@ button, a, input, select, textarea, label, summary, [role="button"], [role="tab"
 .player-screen { overscroll-behavior: none; }
 /* The note that a set was saved sits at the top while a workout runs, so it never covers the Back / Pause / Next buttons. */
 body:has(.player-screen) .toast { bottom: auto; top: calc(64px + env(safe-area-inset-top)); }
+
+/* ---- Interface tour: the screen is dimmed except for one ringed part, and a note sits beside it ---- */
+.modal-backdrop.tour-backdrop { padding: 0; background: transparent; align-items: stretch; justify-content: stretch; }
+.modal-card.tour-card { width: 100%; max-width: none; max-height: none; height: 100dvh; overflow: hidden; border: 0; border-radius: 0; background: transparent; box-shadow: none; animation: none; }
+.tour-spot {
+  position: fixed;
+  border-radius: 20px;
+  outline: 2px solid var(--accent-fill);
+  outline-offset: 0;
+  box-shadow: 0 0 0 200vmax rgba(10, 11, 14, 0.66);
+  pointer-events: none;
+  transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease;
+}
+.tour-note {
+  position: fixed;
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.5);
+}
+.tour-count { margin: 0 0 2px; font-size: 12px; font-weight: 700; color: var(--mu); }
+.tour-title { margin: 0 0 4px; font-size: 18px; font-weight: 800; }
+.tour-text { margin: 0; font-size: 14px; line-height: 1.8; color: var(--ink); }
+.tour-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.tour-dots { display: flex; gap: 6px; }
+.tour-dots i { width: 7px; height: 7px; border-radius: 99px; background: var(--line-strong); }
+.tour-dots i.on { width: 20px; background: var(--accent-fill); }
+.tour-actions { display: flex; gap: 8px; margin-inline-start: auto; }
+.tour-actions .btn { min-height: 44px; }

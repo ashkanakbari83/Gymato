@@ -24,7 +24,7 @@ const unread = (db, user) => getNotifications(db, user.id).filter((n) => !n.read
 const common = (db, user) => ({
   notifications: { id: 'notifications', icon: 'bell', tone: 'amber', label: 'svc.notifications', badge: count(unread(db, user)), action: { type: 'modal', modal: { type: 'notifications' } } },
   settings: { id: 'settings', icon: 'settings', tone: 'slate', label: 'svc.settings', action: page('settings') },
-  guide: { id: 'guide', icon: 'help', tone: 'blue', label: 'svc.guide', action: { type: 'onboarding' } },
+  guide: { id: 'guide', icon: 'help', tone: 'blue', label: 'svc.guide', action: { type: 'tour' } },
 });
 
 function athleteServices(db, user) {

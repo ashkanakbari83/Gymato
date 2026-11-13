@@ -106,7 +106,7 @@ export function AppProvider({ children, initial = {} }) {
   const value = useMemo(
     () => ({ ...base, ...catalog, ...coaching, ...engagement, ...nutrition, ...payments, ...workouts, ...accounts, ...backup }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [db, page, pageParams, modal, draft, workout, toast, toastTone, onboarding.open, lang],
+    [db, page, pageParams, modal, draft, workout, toast, toastTone, onboarding.open, onboarding.tourPending, lang],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

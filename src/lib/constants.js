@@ -4,6 +4,8 @@ export const STORAGE_KEY = 'jimato:state:v6';
 export const PREVIOUS_STORAGE_KEY = 'jimato:state:v5'; // marketplace without sign-in
 export const LEGACY_STORAGE_KEY = 'jimato:state:v4';
 export const ONBOARDING_KEY = 'jimato:onboarding:v2';
+/** The interface tour that follows the first-run story: absent = never decided, 'pending' = show it, 'done' = seen. */
+export const TOUR_KEY = 'jimato:tour:v1';
 export const STATE_VERSION = 6;
 /** Bumped when the starter exercises / programs grow; saves from an older release get the new ones added (see withDefaults). */
 export const SEED_RELEASE = 4;

@@ -1,5 +1,5 @@
 // Settings: theme, language, onboarding replay and data backup.
-import { Bell, CircleHelp, Download, Moon, RotateCcw, Settings, Sun, Upload, Volume2 } from 'lucide-react';
+import { Bell, CircleHelp, Compass, Download, Moon, RotateCcw, Settings, Sun, Upload, Volume2 } from 'lucide-react';
 import InstallCard from '../components/pwa/InstallCard.jsx';
 import Switch from '../components/ui/Switch.jsx';
 import { useApp } from '../context/AppContext.jsx';
@@ -10,7 +10,12 @@ const THEMES = [['light', Sun], ['dark', Moon], ['system', Settings]];
 const LANGUAGES = [['fa', 'فارسی'], ['en', 'English']];
 
 export default function SettingsPage() {
-  const { db, update, exportData, importData, resetData, onboarding, t } = useApp();
+  const { db, update, exportData, importData, resetData, onboarding, go, openModal, t } = useApp();
+  // The tour points at the home screen, so go there first and let it settle.
+  const replayTour = () => {
+    go('home');
+    setTimeout(() => openModal({ type: 'tour' }), 400);
+  };
   const prefs = feedbackPrefs(db);
   const setPref = (key) => (value) => update({ feedback: { ...prefs, [key]: value } });
   const testCue = () => {
@@ -52,6 +57,13 @@ export default function SettingsPage() {
         <div className="setting">
           <b>{t('settings.guide')}</b>
           <button className="btn ghost" onClick={onboarding.reopen}><CircleHelp size={16} /> {t('settings.showAgain')}</button>
+        </div>
+        <div className="setting">
+          <div>
+            <b>{t('tour.replay')}</b>
+            <small className="field-hint">{t('tour.replayHint')}</small>
+          </div>
+          <button className="btn ghost" onClick={replayTour}><Compass size={16} /> {t('tour.replay')}</button>
         </div>
       </section>
 

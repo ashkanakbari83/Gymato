@@ -18,7 +18,7 @@ export default function TopBar() {
           {t('app.name')}
         </button>
 
-        <nav className="tabs" aria-label={t('nav.pages')}>
+        <nav className="tabs" data-tour="nav" aria-label={t('nav.pages')}>
           {getNavItems(isTrainer).map(({ id, icon: Icon }) => (
             <button key={id} className={navTabFor(page) === id ? 'active' : ''} aria-current={navTabFor(page) === id ? 'page' : undefined} onClick={() => setPage(id)}>
               <Icon size={19} className="tab-icon" aria-hidden="true" />
@@ -27,7 +27,7 @@ export default function TopBar() {
           ))}
         </nav>
 
-        <div className="top-actions">
+        <div className="top-actions" data-tour="top">
           <button className="icon-btn" aria-label={t(hasUnread ? 'nav.notificationsUnread' : 'nav.notifications')} onClick={() => openModal({ type: 'notifications' })}>
             <Bell size={20} />
             {hasUnread && <i className="dot" aria-hidden="true" />}
